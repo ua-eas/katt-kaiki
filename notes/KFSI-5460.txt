@@ -1,0 +1,145 @@
+Requisition
+  Description: XXX
+  check "Receiving Required"
+  Building: 10
+  Room: 0001
+  Suggested Vendor Lookup:
+	Vendor Name: Micron
+	Return with first result
+  Add Item:
+    QUANTITY TAXABLE
+    Quantity: 1
+    UOM: ea
+    Description: XXX
+    Unit Cost: 1000
+  First Item: show accounting lines
+  First Item Accounting Lines
+    Chart: UA
+    Account Number: 1080000
+    Object: 5230
+    Percent: 100
+  click "calculate"
+  click "submit"
+
+backdoor as kdenman
+open action list
+  open last  (GO TO THE LAST PAGE) (a link-text = 'Last')
+  click "approve"
+
+backdoor as kfs-test-sec40
+Contract Manager Assignment
+  Under Assign A Contract Manager, find the Vendor Name and General Description we used (MAY NEED TO RELOAD)
+  Contract Manager: 10
+  click "submit"
+doc search
+  click "search"
+  open first
+  Under Vendor, then Vendor Info:
+    Vendor Choice: Other
+  click "calculate"
+  click "submit"
+
+backdoor as kfs-test-sec52
+open doc search
+  click "search"
+  open first
+  click "approve"
+
+backdoor as kfs-test-sec40
+open doc search
+  click "search"
+  open first
+  remember the Purchase Order #
+  click "print"
+
+backdoor as kfs-test-sec36
+open Central Admin tab
+open Payment Request
+  Purchase Order: the remembered one
+  Invoice Date: today (mm/dd/yyyy)
+  Invoice Number: xxxxx (unique)
+  Vendor Invoice Amount: 1000
+  continue
+  (if blows up, do it again)
+  Under Invoice Info
+    check Immediate Pay (id, name: document.immediatePaymentIndicator, title: Immediate Payment Indicator)
+  Under Process Items, Items, Item Line # 1
+    Qty Invoiced: 1
+  click "calculate"
+  click "submit"
+open Main Menu tab
+open Receiving
+  Purchase Order #: the remembered one
+  Vendor Date: today (mm/dd/yyyy)
+  click "continue"
+  Under Items, Receiving Line Items, Line # 1
+    Qty Received: 1
+  click "submit"
+
+Batch JOBSSSSSSS
+logged in as me
+open Administration tab
+open Schedule
+  Job Name: receivingPaymentRequestJob
+  Modify the first result
+  run
+
+
+
+
+
+
+
+Recreate again:
+
+On one of the findByDocumentHeaderIds() line 99 clicks, the Preq Item jumped:
+
+BEFORE
+>> pp preq_items_for(preq).first
+#<PaymentRequestItem @values={:itemIdentifier=>1821, :objectId=>"41EAC069-6E66-E84F-1171-82EA6F3594C5", :versionNumber=>5, :purapDocumentIdentifier=>1401, :itemLineNumber=>1, :itemTypeCode=>"ITEM", :itemDescription=>"a 5460 widget", :itemUnitOfMeasureCode=>"EA", :itemQuantity=>1.0, :itemUnitPrice=>1000.0, :purchaseOrderItemUnitPrice=>1000.0, :extendedPrice=>1000.0, :itemAssignedToTradeInIndicator=>"N", :UNT_PRC_OVRG_IND=>"N"}>
+
+AFTER
+>> pp preq_items_for(preq).first
+#<PaymentRequestItem @values={:itemIdentifier=>1821, :objectId=>"41EAC069-6E66-E84F-1171-82EA6F3594C5", :versionNumber=>6, :purapDocumentIdentifier=>1401, :itemLineNumber=>1, :itemTypeCode=>"ITEM", :itemDescription=>"a 5460 widget", :itemUnitOfMeasureCode=>"EA", :itemQuantity=>1.0, :itemUnitPrice=>1000.0, :purchaseOrderItemUnitPrice=>1000.0, :extendedPrice=>1000.0, :itemAssignedToTradeInIndicator=>"N", :UNT_PRC_OVRG_IND=>"N"}>
+
+
+LATER
+
+processCollections is called, with (null, orig=document, copy=retreivedDocument)   document and retreivedDocument both have proxied items.
+
+originalCollections becomes 3 items. The second is List of PaymentRequestItems. One entry here, with a populated item, but a proxied useTaxItems.
+copyCollections     becomes 3 items. The second is List of PaymentRequestItems. One entry here, with a populated item, but a proxied useTaxItems.
+On line 63, list    becomes an empty List
+
+LATER
+
+save, aboute to call processCollections(), has a document with actual  PaymentRequestItems. There are TWO of them!
+                                  has a retreivedDocument with proxied PaymentRequestItems.
+
+>> pp preq_items_for(preq).first.useTaxItems
+[#<PaymentRequestItemUseTax @values={:useTaxId=>1421, :objectId=>"C2DED1A4-0164-DE3C-F1C7-1BACFCA981B9", :versionNumber=>4, :itemIdentifier=>1821, :rateCode=>"ARIZONAUSE", :taxAmount=>66.0, :chartOfAccountsCode=>"UA", :accountNumber=>"2892000", :financialObjectCode=>"9190"}>, #<PaymentRequestItemUseTax @values={:useTaxId=>1422, :objectId=>"D4E7EF79-DA6F-7A91-C654-254C32766A93", :versionNumber=>1, :itemIdentifier=>1821, :rateCode=>"ARIZONAUSE", :taxAmount=>66.0, :chartOfAccountsCode=>"UA", :accountNumber=>"2892000", :financialObjectCode=>"9190"}>]
+
+LATER
+
+>> pp preq_items_for(preq).first
+#<PaymentRequestItem @values={:itemIdentifier=>1821, :objectId=>"41EAC069-6E66-E84F-1171-82EA6F3594C5", :versionNumber=>8, :purapDocumentIdentifier=>1401, :itemLineNumber=>1, :itemTypeCode=>"ITEM", :itemDescription=>"a 5460 widget", :itemUnitOfMeasureCode=>"EA", :itemQuantity=>1.0, :itemUnitPrice=>1000.0, :purchaseOrderItemUnitPrice=>1000.0, :extendedPrice=>1000.0, :itemAssignedToTradeInIndicator=>"N", :UNT_PRC_OVRG_IND=>"N"}>
+
+>> pp preq_items_for(preq).first.useTaxItems
+[#<PaymentRequestItemUseTax @values={:useTaxId=>1421, :objectId=>"C2DED1A4-0164-DE3C-F1C7-1BACFCA981B9", :versionNumber=>6, :itemIdentifier=>1821, :rateCode=>"ARIZONAUSE", :taxAmount=>66.0, :chartOfAccountsCode=>"UA", :accountNumber=>"2892000", :financialObjectCode=>"9190"}>, #<PaymentRequestItemUseTax @values={:useTaxId=>1422, :objectId=>"D4E7EF79-DA6F-7A91-C654-254C32766A93", :versionNumber=>3, :itemIdentifier=>1821, :rateCode=>"ARIZONAUSE", :taxAmount=>66.0, :chartOfAccountsCode=>"UA", :accountNumber=>"2892000", :financialObjectCode=>"9190"}>]
+
+
+
+
+
+RECREATE AGAIN
+==============
+
+I only debug on OjbCollectionHelper#45
+After clicking run, the Item's version number is 5, and the Item.useTaxItems.first version number is 4.
+
+After clicking through 1x on OjbCollectionHelper#45:
+		the Item's version number is 6, and the Item.useTaxItems.first version number is 4.
+After clicking through 2x on OjbCollectionHelper#45:
+		the Item's version number is 6, and the Item.useTaxItems.first version number is 4. There are two Use Tax Items.
+After clicking through 3x on OjbCollectionHelper#45:
+		the Item's version number is 8, and the Item.useTaxItems.first version number is 4. There are two Use Tax Items.

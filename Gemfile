@@ -1,0 +1,13 @@
+source 'http://rubygems.org'
+
+gem 'actionpack'
+gem 'capybara', '< 2.0'
+gem 'chunky_png'
+gem 'cucumber'
+gem 'headless'
+gem 'highline'
+gem 'json'
+gem 'log4r'
+gem 'nokogiri'
+gem 'rspec'
+gem 'selenium-webdriver'

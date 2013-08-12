@@ -1,0 +1,34 @@
+{
+  "cdf": {
+    "code":             "cdf"
+  },
+  "cfg": {
+    "code":             "cfg"
+  },
+  "cnv": {
+    "code":             "cnv"
+  },
+  "dev": {
+    "code":             "dev"
+  },
+  "dmo": {
+    "code":             "dmo"
+  },
+  "prd": {
+    "code":             "prd",
+    "url": "https://financials.uaccess.arizona.edu"
+  },
+  "stg": {
+    "code":             "stg"
+  },
+  "sup": {
+    "code":             "sup",
+    "url": "https://financialsup.uaccess.arizona.edu"
+  },
+  "trn": {
+    "code":             "trn"
+  },
+  "tst": {
+    "code":             "tst"
+  }
+}
