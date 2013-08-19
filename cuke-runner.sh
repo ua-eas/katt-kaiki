@@ -1,3 +1,11 @@
+#
+# Description: This file acts as the options menu when running cucumber features.
+#              Each option provides a different function when you run the 
+#              feature from a terminal window.
+#
+# Original Date: August 20, 2011
+#
+
 function usage {
   echo "Various cucumber commands:"
   echo ""
@@ -30,32 +38,39 @@ test_suite=$2; shift
 
 case $command in
 1)
+  # Opens the Cucumber book
   echo xdg-open ~/Documents/the-cucumber-book_b6_0.pdf
   xdg-open ~/Documents/the-cucumber-book_b6_0.pdf
   ;;
 2)
+  # Runs cucumber command
   echo cucumber
   cucumber
   ;;
 3)
+  # Displays undefined steps
   echo cucumber --dry-run
   cucumber --dry-run
   ;;
 4)
+  # Run all cucumber tests, except for the cucumber examples
   echo cucumber --tags ~@cucumber_example --tags ~@incomplete --tags ~@not_a_test $@
   cucumber --tags ~@cucumber_example --tags ~@incomplete --tags ~@not_a_test $@
   ;;
 5)
+  # Run a specific KFSI feature file (eg cuke_runner.sh 5 1021)
   jira=$1; shift
   echo cucumber features/${jira}.feature -r features $@
   cucumber features/${jira}.feature -r features $@
   ;;
 6)
+  # Run a specific KFSI feature file (eg cuke_runner.sh 6 1021)
   jira=$1; shift
   echo cucumber features/${jira}.feature -s -r features $@
   cucumber features/${jira}.feature -s -r features $@
   ;;
 7)
+  # Runs KC test scenario one
   echo cucumber features/create_and_submit_proposal_basic.feature
   cucumber features/create_and_submit_proposal_basic.feature
   ;;

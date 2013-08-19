@@ -1,3 +1,11 @@
+#
+# Description: This file looks to be a test case for the KFS website.
+#			          (KFSI-5460 JIRA Ticket)
+#              This file may have been used to create the feature file for this ticket.
+#
+# Original Date: August 20, 2011
+#
+
 Requisition
   Description: XXX
   check "Receiving Required"

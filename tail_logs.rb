@@ -1,7 +1,22 @@
+#
+# Description:
+#
+#
+# Original Date: August 20, 2011
+#
+
+
 require 'file-tail'
 require 'find'
 require 'highline/import'
 
+
+# Public: This method checks to see if a specific path is a directory.
+#
+# Example:
+#     <present directory>\features\logs
+#
+# Returns nothing
 def log_files
   files = []
   Find.find(File.join(Dir.pwd, 'features', 'logs')) do |p|
@@ -11,10 +26,16 @@ def log_files
   files
 end
 
+# Public: Sorts the log files by date/time.
+#
+# Returns nothing
 def last_log
   log_files.sort_by { |f| File.mtime(f) }.max
 end
 
+# Public: Opens the log file and
+#
+# Returns nothing
 def tail_last
   log_name = last_log
   File.open log_name do |f|
@@ -29,6 +50,12 @@ def tail_last
   end
 end
 
+# Public:
+#
+# Parameters:
+#   s - line from the file
+#
+# Returns nothing
 def color_print(s)
   if s =~ /^(\s*[A-Z]+)\s+(.+)$/
     colors = {

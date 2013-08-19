@@ -1,3 +1,9 @@
+#
+# Description: List of Scenario Fields.  
+#
+# Original Date: August 20, 2011
+#
+
 @background
 @comment
 @current_visitor

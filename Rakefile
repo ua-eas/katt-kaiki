@@ -1,11 +1,23 @@
+#
+# Description: This is the Rakefile that is used to run the features from Jenkins.
+#			         This sets environment variables and starts a video.
+#              This can run all features, a certain feature, a certain 
+#              scenario inside a feature, or a certain feature multiple times. 
+#
+# Original Date: August 20, 2011
+#
+
 require 'rake/clean'
 require 'cucumber'
 require 'cucumber/rake/task'
 
 # Getting a weird warning about CLEAN...
+
 #CLEAN = FileList['features/logs/*']
 
 # Rake stuff needs to be non-interactive. So we'll set the things that will make it non-interactive.
+# This sets environment variables.
+
 def set_env_defaults
   ENV['KAIKI_NETID'] = "kfs-test-sec1" if ENV['KAIKI_NETID'].nil?
   ENV['KAIKI_ENV']   = "dev"           if ENV['KAIKI_ENV'].nil?
@@ -13,6 +25,8 @@ end
 
 
 # Experimental... not sure we'll use this...
+# This creates a .mov video file when the rake starts.
+
 task :merge_videos do
   Dir.glob("features/videos/*__*.mov").group_by {|n| n =~ /^(.+)__(\d+)\.mov/; $1 }.each do |prefix,videos|
     final_merged_file = prefix+".mov"
@@ -36,6 +50,7 @@ end
 # This will run all feature files in the features/ directory, according to the
 # tag rules: anything that is NOT a cucumber_example, and NOT incomplete, and
 # NOT not_a_test.
+
 Cucumber::Rake::Task.new(:features) do |t|
   set_env_defaults
   t.cucumber_opts = "--format pretty --tags ~@cucumber_example --tags ~@incomplete --tags ~@not_a_test"
@@ -50,6 +65,7 @@ end
 # tag rules: anything that is NOT a cucumber_example, and NOT incomplete, and
 # NOT not_a_test. It uses `--format progress` so that it looks better in
 # Jenkins.
+
 Cucumber::Rake::Task.new(:ci_features) do |t|
   set_env_defaults
   t.cucumber_opts = "--format progress --tags ~@cucumber_example --tags ~@incomplete --tags ~@not_a_test"
@@ -64,6 +80,7 @@ end
 # what features will match, you can run:
 #
 #     find features ! -path "*/example_syntax/*" ! -path "*/ceremonies/*" -name "*KFSI-1021*.feature"
+
 task :feature, :name do |t, args|
   set_env_defaults
   feature = `find features ! -path "*/example_syntax/*" ! -path "*/ceremonies/*" -name "*#{args[:name]}*.feature"`
@@ -86,6 +103,7 @@ end
 # supplied. To test what features will match, you can run:
 #
 #     find features ! -path "*/example_syntax/*" ! -path "*/ceremonies/*" -name "*KFSI-1021*.feature"
+
 task :scenario, :name, :line do |t, args|
   set_env_defaults
   feature = `find features ! -path "*/example_syntax/*" ! -path "*/ceremonies/*" -name "*#{args[:name]}*.feature"`
@@ -123,6 +141,7 @@ end
 # times. To test what features will match, you can run:
 #
 #     find features ! -path "*/example_syntax/*" ! -path "*/ceremonies/*" -name "*KFSI-1021*.feature"
+
 task :vet_feature, :name do |t, args|
   set_env_defaults
   feature = `find features ! -path "*/example_syntax/*" -name "*#{args[:name]}*.feature"`
@@ -148,6 +167,7 @@ end
 # supplied, ten times. To test what features will match, you can run:
 #
 #     find features ! -path "*/example_syntax/*" ! -path "*/ceremonies/*" -name "*KFSI-1021*.feature"
+
 task :vet, :name, :line do |t, args|
   set_env_defaults
   feature = `find features ! -path "*/example_syntax/*" -name "*#{args[:name]}*.feature"`

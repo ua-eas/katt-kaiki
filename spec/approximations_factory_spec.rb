@@ -1,7 +1,19 @@
-#approximations_factory_spec.rb
+#
+# Description: File Defines Rspec Approximations 
+#
+# Original Date: August 20, 2011
+#
 
 require './lib/approximations_factory.rb'
 
+# Public: Set of examples Rspec Approximations 
+#
+# Example:
+#	 [1,2,3].should include(3)
+#	 [1,2,3].should include(2,3) #would pass
+#	 [1,2,3].should include(2,3,4) #would fail
+#  [1,2,3].should_not include(4)
+#
 describe ApproximationsFactory, ".build" do
   it 'returns singleton approximations correctly' do
     appr = ApproximationsFactory.build(
@@ -105,6 +117,7 @@ describe ApproximationsFactory, ".build" do
   end
 end
 
+# Sets a return path for Approximations Factory
 describe ApproximationsFactory, ".transpose_build" do
   it 'returns the right stuff for my crazy xpaths' do
     appr = ApproximationsFactory.transpose_build(
