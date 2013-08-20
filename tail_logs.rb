@@ -1,15 +1,13 @@
 #
-# Description:
+# Description: This file will create and format the log file.
 #
 #
 # Original Date: August 20, 2011
 #
 
-
 require 'file-tail'
 require 'find'
 require 'highline/import'
-
 
 # Public: This method checks to see if a specific path is a directory.
 #
@@ -33,7 +31,8 @@ def last_log
   log_files.sort_by { |f| File.mtime(f) }.max
 end
 
-# Public: Opens the log file and
+# Public: Opens the log file, reads the line and assigns a color to the 
+#         line based on the information in the line.
 #
 # Returns nothing
 def tail_last
@@ -50,7 +49,11 @@ def tail_last
   end
 end
 
-# Public:
+# Public: Sets the log line to a specific color based on the type of log.
+#         *Information = Green and bold
+#         *Debug = Green
+#         *Warning = Yellow and bold
+#         *Error = Red and bold
 #
 # Parameters:
 #   s - line from the file

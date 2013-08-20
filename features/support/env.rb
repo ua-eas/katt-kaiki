@@ -14,21 +14,11 @@ require 'yaml'
 
 STDOUT.sync = true
 
-# Public: Collects user info and password for a yml file
-#
-# Parameters: 
-#	  username- name used to login
-#	  password- special combination to gain access to something
-#	  env- env path
-#	  yml- a text file that stores information 
+# Public: This method sets up the environment to start the test.
 #
 # Returns nothing
 class KaikiWorld  
-  # username   = ENV["KAIKI_NETID"]
-  username = "ahaberer" # Until the 'export KAIKI_NETID=username' works, this
-                       # will do for auto login
-                       # Each user will have to manually change this for now
-                       # until the test user is set up
+  username   = ENV["KAIKI_NETID"]
   password   = ENV["KAIKI_PASSWORD"]
   env        = ENV["KAIKI_ENV"]
   env.split(',') if env
@@ -39,18 +29,18 @@ class KaikiWorld
   # accidentally sent to each other.
   # For example, my actual shared_password.yml file is 
   # ~/code/shared_password.yml and the symbolic link points to here.
-  SHARED_PASSWORDS_FILE = \
-    '/home/vagrant/code/katt-kaiki/features/support/shared_passwords.yml'
-  
-  if File.exist? SHARED_PASSWORDS_FILE
-   shared_passwords = YAML::load_file(File.join(File.dirname( \
-     File.expand_path(__FILE__)), 'shared_passwords.yml'))
-   # print shared_passwords
-   if password.nil? and username and shared_passwords.keys.any? { |user| username[user] }
-     user_group = shared_passwords.keys.select { |user| username[user] }[0]
-     password = shared_passwords[user_group]
-   end
-  end
+  # SHARED_PASSWORDS_FILE = \
+    # '/home/vagrant/code/katt-kaiki/features/support/shared_passwords.yml'
+  # 
+  # if File.exist? SHARED_PASSWORDS_FILE
+   # shared_passwords = YAML::load_file(File.join(File.dirname( \
+     # File.expand_path(__FILE__)), 'shared_passwords.yml'))
+   #print shared_passwords
+   # if password.nil? and username and shared_passwords.keys.any? { |user| username[user] }
+     # user_group = shared_passwords.keys.select { |user| username[user] }[0]
+     # password = shared_passwords[user_group]
+   # end
+  # end
   if password.nil? && username
     password = Kaiki::CapybaraDriver::Base.shared_password_for username  if password.nil? && username
   end
@@ -144,7 +134,7 @@ end
 ##  end
 #end
 
-# Public: Defines where the recorded video is being saved and saved too
+# Public: Defines where the recorded video is being saved
 #
 # Parameters: 
 #	  scenario- set of tests or tasks 

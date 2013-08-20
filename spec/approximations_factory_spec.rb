@@ -1,12 +1,13 @@
 #
-# Description: File Defines Rspec Approximations 
+# Description: This file is used to test the approximation factory file. 
 #
 # Original Date: August 20, 2011
 #
 
 require './lib/approximations_factory.rb'
 
-# Public: Set of examples Rspec Approximations 
+# Public: This method tests the approximations factory file to verify
+#         that it is returning the value correctly. 
 #
 # Example:
 #	 [1,2,3].should include(3)

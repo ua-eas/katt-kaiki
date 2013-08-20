@@ -26,6 +26,9 @@ function usage {
   echo ""
   echo "6. cucumber features/login.feature -s -r features"
   echo "      Run a specific KFSI feature file (eg cuke_runner.sh 6 1021)"
+  echo ""
+  echo "7. cucumber features/create_and_submit_proposal_basic.feature"
+  echo "      Run a KC feature file (eg cuke_runner.sh 7 )"
 }
 
 if [[ $1 = "" ]]; then

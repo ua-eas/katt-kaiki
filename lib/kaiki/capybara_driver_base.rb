@@ -52,6 +52,7 @@ class Kaiki::CapybaraDriver::Base
   # Parameters:
   #   username - name used by the user to log in with
   #   password - password for said user
+  #   options - environment options
   #
   # Returns nothing
   def initialize(username, password, options={})
@@ -118,13 +119,6 @@ class Kaiki::CapybaraDriver::Base
     driver.switch_to.frame id
   end
 
-  # Public: Changes focus to the most recent window opened
-  #
-  # Returns: nothing
-  def change_last_window
-    driver.switch_to.window(driver.browser.window.last)
-  end
-
   # Public: Switch to the default tab/window/frame, and backdoor login as `user`
   #
   # Parameters:
@@ -149,7 +143,7 @@ class Kaiki::CapybaraDriver::Base
     click_button 'login'
   end
 
-  # Public: Logs in to the Coeus system using the backdoor method 
+  # Public: Logs in to the Kuali system using the backdoor method 
   #         for the given user
   #
   # Parameters:
@@ -602,9 +596,14 @@ class Kaiki::CapybaraDriver::Base
   #   xpath - xpath of the item you're looking for
   #
   # Returns: nothing
-  def click_by_xpath(xpath)
+  def click_by_xpath(xpath, option)
+  if option == "button"
     find(:xpath, xpath).click
+    @log.debug "  Start click_by_xpath(#{xpath})"
+  elsif option == "radio"
+    find(:xpath, xpath).set(true)
   end
+end
   
   # Public: Click a radio button, selecting by xpath
   #
@@ -789,31 +788,6 @@ class Kaiki::CapybaraDriver::Base
     find(method, locator)
   end
   
-  # Public: Finds the xpath of the given element, using locator and
-  #         method variables to describe the element. 
-  #         i.e. find_element(:name, "username")
-  #
-  # Parameters:
-  #   method - actual id, name, title, etc.
-  #   locator - by id, name, title, etc. or the element
-  #
-  # Returns: nothing
-  def get_xpath(method, locator)
-    @log.debug "    wait_for: Waiting up to #{DEFAULT_TIMEOUT} "          \
-                   "seconds to find_element(#{method}, #{locator})..."
-    element = wait_for(method, locator)
-    xpath = driver.execute_script("gPt=function(c){if(c.id!=='')                 \
-                           {return'id(\"'+c.id+'\")'}if(c===document.body)\
-                           {return c.tagName}var a=0;var                  \
-                           e=c.parentNode.childNodes;for(var b=0;         \
-                           b<e.length;b++){var d=e[b];if(d===c)           \
-                           {return gPt(c.parentNode)+'/'+c.tagName        \
-                           +'['+(a+1)+']'}if(d.nodeType===1&&d.tagName=== \
-                           c.tagName){a++}}};                             \
-                           return gPt(arguments[0]);", element)
-    # That line used to end with: return gPt(arguments[0]).toLowerCase();
-  end
-  
  # Public: This fills in a text field, given its xpath
  #
  # Parameters:
@@ -828,28 +802,28 @@ class Kaiki::CapybaraDriver::Base
       @driver.find_element(:xpath, selector).clear
       @driver.find_element(:xpath, selector).send_keys(value)
     end
-end
+  end
+  
+# Public: Same as get_field, but if there are multiple fields
+#         using the same name
+#
+# selectors - input, text area, select, etc.
+#
+# Returns: nothing
+def get_approximate_field(selectors)
+  timeout = DEFAULT_TIMEOUT
+  selectors.each do |selector|
+    begin
+      return get_field(selector, {:timeout => timeout})
+    rescue Selenium::WebDriver::Error::NoSuchElementError,              \
+                                     Selenium::WebDriver::Error::TimeOutError
+      timeout = 0.2
+      # Try the next selector
+    end
+  end
 
- # Hardcoded method for page 4
- # Public: Inputs the Prj Location value into the field 
- #
- # Parameters:
- #  value - 
- #
- # Returns
-	def fill(value)
-	  fill_in('customAttributeValues(id2)', :with => '0211-0124-')
-	end
-	
- # Hardcoded method for page 4
- # Public: Inputs the FA value into the field
- #
- # Parameters:
- #  value - 
- #
- # Returns
-	def fill2(value)
-	  fill_in('customAttributeValues(id1)', :with => '51.500')
-	end
-
+  puts "Failed to get approximate field."                               \
+       "Selectors are:\n#{selectors.join("\n") }"
+  raise Selenium::WebDriver::Error::NoSuchElementError
+  end  
 end

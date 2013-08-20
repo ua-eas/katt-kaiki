@@ -65,6 +65,7 @@ class KaikiFS::WebDriver::Base
   # Parameters:
   #   username - name used by the user to log in with
   #   password - password for said user
+  #   options - environment options
   #
   # Returns: nothing
   def initialize(username, password, options={})

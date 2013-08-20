@@ -7,13 +7,14 @@
 # Public: Defines what is to be printed into a given field
 #
 # Parameters:
-#	  field- name of text field
-#	  value-a text or numeral value
+#   field - name of text field
+#   value - a text or numeral value
 #
 # Example:
-#	  And I set the "Description" to "testing: KFSI-4479"
+#   And I set the "Description" to "testing: KFSI-4479"
 #
 # Returns nothing
+#
 When /^I set the "([^"]*)" to "([^"]*)"$/ do |field, value|
   kaiki.pause
   kaiki.switch_default_content
@@ -21,6 +22,18 @@ When /^I set the "([^"]*)" to "([^"]*)"$/ do |field, value|
   kaiki.set_approximate_field(
     ApproximationsFactory.transpose_build(
       "//%s[contains(text()%s, '#{field}')]/../following-sibling::td/%s",
+      ['th/label',    '',       'select[1]'],
+      ['th/div',      '[1]',    'input[1]'],
+      [nil,           '[2]',    nil]
+    ) +
+    ApproximationsFactory.transpose_build(
+      "//%s[contains(text()%s, '#{field}')]/../../following-sibling::tr/td/label/%s",
+      ['th/label',    '',       'select[1]'],
+      ['th/div',      '[1]',    'input[1]'],
+      [nil,           '[2]',    nil]
+    ) +
+    ApproximationsFactory.transpose_build(
+      "//%s[contains(text()%s, '#{field}')]/../../following-sibling::tr/td/div/%s[contains(@title, '#{field}')]",
       ['th/label',    '',       'select[1]'],
       ['th/div',      '[1]',    'input[1]'],
       [nil,           '[2]',    nil]
@@ -38,13 +51,14 @@ end
 # Public: Defines what is to be printed into a given field
 #
 # Parameters:
-#	  field- name of text field
-#	  value-a text or numeral value
+#	field - name of text field
+#	value - a text or numeral value
 #
 # Example:
-#	  And I set the "Description" to "testing: KFSI-4479"
+#   And I set the "Description" to "testing: KFSI-4479"
 #
 # Returns nothing
+#
 When /^I set "([^"]*)" to "([^"]*)"$/ do |field, value|
   kaiki.pause
   kaiki.switch_default_content
@@ -57,64 +71,38 @@ When /^I set "([^"]*)" to "([^"]*)"$/ do |field, value|
       [nil,           '[2]',    nil]
     ) +
     ApproximationsFactory.transpose_build(
-      "//th[contains(text()%s, '#{field}')]/../following-sibling::tr/td/div/%s[contains(@title, '#{field}')]",
+      "//%s[contains(text()%s, '#{field}')]/following-sibling::td/%s",
+      ['th',    '',       'select[1]'],
+      [nil,     '[1]',    'input[1]'],
+      [nil,     '[2]',    nil]
+    ) +
+    ApproximationsFactory.transpose_build(
+      "//th[contains(text()%s, '#{field}')]/../following-sibling::tr/td/div/" \
+        "%s[contains(@title, '#{field}')]",
       ['',       'select'],
       ['[1]',    'input'],
-      ['[2]',    nil]
-    ) + 
+      ['[2]',    nil]) +
     ApproximationsFactory.transpose_build(
-      "//th/div[contains(text()%s, '#{field}')]/../following-sibling::td/span/%s[contains(@title, '#{field}')]",
+      "//th/div[contains(text()%s, '#{field}')]/../following-sibling::td/spa" \
+        "n/%s[contains(@title, '#{field}')]",
       ['',       'input'],
       ['[1]',    nil],
-      ['[2]',    nil]
-    ),
+      ['[2]',    nil]),
     value
   )
 end
-
-
-  # Public: takes Prj Location and inputs the value
-  #
-  # Why hardcoded: as the html lable id dos not match the html field id 
-  #                we must tell it what to fill in  
-  #
-  # Parameters: 
-  #	  value: text value, from feature file
-  #
-  # Example:  And I set Prj Location to "0211-0124-"
-  # 	0211-0124- will be filled in
-  #
-  # Returns nothing
-	When /^I set Prj Location to "(.*)"$/ do |value|
-	  kaiki.fill(value)
-	end
   
-  # Public: takes R&A Rate and inputs the value
-  #
-  # Why hardcoded: as the html lable id dos not match the html field id 
-  #                we must tell it what to fill in
-  #
-  # Parameters 
-  #	  value: text value, from feature file
-  #
-  # Example:   And I set F&A Rate to "51.500"
-  #	           51.500 will be filled in
-  #
-  # Returns nothing
-	When /^I set F&A Rate to "(.*?)"$/ do |value|
-	  kaiki.fill2(value)
-	end
-  
-  # Public: Defines what is to be printed into a given field
-  #
-  # Parameters:
-  #	  field- name of text field
-  #	  value-a text or numeral value
-  #
-  # Example:
-  #	  And I set the "Description" to something like "testing: KFSI-4479"  
-  #
-  # Returns nothing  
+# Public: Defines what is to be printed into a given field
+#
+# Parameters:
+#   field- name of text field
+#   value-a text or numeral value
+#
+# Example:
+# And I set the "Description" to something like "testing: KFSI-4479"  
+#
+# Returns nothing  
+#
 When /^I set the "([^"]*)" to something like "([^"]*)"$/ do |field, value|
   kaiki.pause
   kaiki.switch_default_content
@@ -135,30 +123,13 @@ end
 # Public: Sets the dropdown to the given value in the found in the 
 #         cucumber file
 #
-# field - name of the dropdown
-# value - data to be used
-#
-# Returns: nothing  
-  When /^I set the field "([^"]*)" to "([^"]*)"$/ do |field, value|
-  kaiki.pause
-  kaiki.switch_default_content
-  kaiki.select_frame "iframeportlet"
-  if field == "Type"
-    kaiki.set_field('//*[@id="specialReviewHelper.newSpecialReview.specialReviewTypeCode"]',value)
-  elsif field == "Approval Status"
-    kaiki.set_field('//*[@id="specialReviewHelper.newSpecialReview.approvalTypeCode"]',value)
-  end
-end
-
-# Public: Sets the dropdown to the given value in the found in the 
-#         cucumber file
-#
 # Parameters:
 #   field - name of the dropdown
 #   name  - name of the person 
 #   value - data to be used
 #
 # Returns: nothing    
+#
 When /^I set "(.*?)" for "(.*?)" as "(.*?)"$/ do |field, name, value|
   kaiki.pause
   kaiki.switch_default_content
@@ -169,6 +140,61 @@ When /^I set "(.*?)" for "(.*?)" as "(.*?)"$/ do |field, name, value|
     kaiki.set_field('//*[@id="document.developmentProposalList[0].proposalPersons[1].percentageEffort"]', value)
   end
 end
+
+# Public: This method may need another ApproximationsFactory segment added
+#         but as is, it will fill in an input/select field given the line number
+#         the field is on, and the name of the table.
+#
+# line_number - line number the field is on
+# table_name - name of the table
+# table - data to be used
+#
+# Returns: nothing
+When /^I fill out line "([^"]*)" of the "([^"]*)" table with:$/              \
+                                            do |line_number, table_name, table|
+  table.rows_hash
+  kaiki.pause
+  kaiki.switch_default_content
+  kaiki.select_frame "iframeportlet"
+  kaiki.should have_content table_name
+  
+  table.rows_hash.each do |key, value|
+    kaiki.set_approximate_field(
+    ApproximationsFactory.transpose_build(
+      "//%s[contains(text()%s, '#{key}')]/../../following-sibling::"         \
+      "tr/th[contains(text(), '#{line_number}')]/following-sibling::"        \
+      "td/div/%s[contains(@title, '#{key}')]",
+      ['th/label',    '',       'select[1]'],
+      ['th/div',      '[1]',    'input[1]'],
+      [nil,           '[2]',    nil]
+    ),
+    value
+  )
+  end
+end
+
+
+
+
+
+
+# Public: Sets the dropdown to the given value in the found in the 
+#         cucumber file
+#
+# field - name of the dropdown
+# value - data to be used
+#
+# Returns: nothing  
+  # When /^I set the field "([^"]*)" to "([^"]*)"$/ do |field, value|
+  # kaiki.pause
+  # kaiki.switch_default_content
+  # kaiki.select_frame "iframeportlet"
+  # if field == "Type"
+    # kaiki.set_field('//*[@id="specialReviewHelper.newSpecialReview.specialReviewTypeCode"]',value)
+  # elsif field == "Approval Status"
+    # kaiki.set_field('//*[@id="specialReviewHelper.newSpecialReview.approvalTypeCode"]',value)
+  # end
+# end
 
 # Public: Defines what is to be printed into a given field
 #

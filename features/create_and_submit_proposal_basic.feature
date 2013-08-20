@@ -49,36 +49,36 @@ Feature: proposal creation and submission
       And I click the "Add Person" button
       And I click "Show" on the "Linda L Garland" tab
       And I click "Show" on the "Person Details" section
-      And I set the "Percentage Effort" to "5"
+      And I set "Percentage Effort" for "Linda L Garland" as "5"
       And I click "Hide" on the "Linda L Garland" tab
       And I click "Show" on the "Amanda F Baker" tab
       And I click "Show" on the "Person Details" section
-      And I set the "Percentage Effort" to "20"
+      And I set "Percentage Effort" for "Amanda F Baker" as "20"
       And I click "Hide" on the "Amanda F Baker" tab
       And I fill out the Combined Credit Split for "Linda L Garland" with the following:
         | Credit for Award | 25 |
         | F&A Revenue      | 25 |
-      And I fill out the Combined Credit Split for "0721 - Cancer Center Division" under "Linda L Garland" with the following:
+      And I fill out the Combined Credit Split line item for "0721 - Cancer Center Division" under "Linda L Garland" with the following:
         | Credit for Award | 100 |
         | F&A Revenue      | 100 |
       And I fill out the Combined Credit Split for "Amanda F Baker" with the following:
         | Credit for Award | 75 |
         | F&A Revenue      | 75 |
-      And I fill out the Combined Credit Split for "0721 - Cancer Center Division" under "Amanda F Baker" with the following:
+      And I fill out the Combined Credit Split line item for "0721 - Cancer Center Division" under "Amanda F Baker" with the following:
         | Credit for Award | 100 |
         | F&A Revenue      | 100 |
       And I click the "Save" button
   Then I should see the message "Document was successfully saved."
   When I am on the "Special Review" document tab
-    And I set the field "Type" to "Human Subjects"
-    And I set the field "Approval Status" to "Approved"
-    And I click the "Add" button
+    And I set the "Type" to "Human Subjects"
+    And I set the "Approval Status" to "Approved"
+    And I click the "Add" button on the "Special Review" tab
     And I click the "Save" button
   Then I should see the message "Document was successfully saved."
   When I am on the "Custom Data" document tab
     And I click "Show" on the "Project Information" tab
-    And I set Prj Location to "0211-0124-"
-    And I set F&A Rate to "51.500"
+    And I set "Prj Location" to "0211-0124-"
+    And I set "F&A Rate" to "51.500"
     And I click the "Save" button 
   When I am on the "Questions" document tab
     And I click "Show" on the "Does the Proposed Work Include any of the Following?" tab
@@ -133,45 +133,45 @@ Feature: proposal creation and submission
     And I click the "Save" button
   Then I should see the message "Document was successfully saved."
   When I am on the "Budget Versions" document tab
-      And I enter "Final Budget" under "Name"
-      And I click "Add"
+      And I set the "Name" to "Final Budget"
+      And I click the "Add" button on the "Budget Versions" tab
       And I click "Open" on "Final Budget"
-#      And I fill out line "1" of the "Budget Periods" table with:
-#        | Direct Cost | 66000 |
-#        | F&A Cost    | 34000 |
-#      And I fill out line "2" of the "Budget Periods" table with:
-#        | Direct Cost | 66000 |
-#        | F&A Cost    | 34000 |
-#      And I fill out line "3" of the "Budget Periods" table with:
-#        | Direct Cost | 66000 |
-#        | F&A Cost    | 34000 |
-#      And I fill out line "4" of the "Budget Periods" table with:
-#        | Direct Cost | 66000 |
-#        | F&A Cost    | 34000 |
-#      And I fill out line "5" of the "Budget Periods" table with:
-#        | Direct Cost | 66000 |
-#        | F&A Cost    | 34000 |
-#      And I click "Recalculate"
-#    Then I should see line "1" of the "Budget Periods" table filled out with:
-#      | Total Sponsor Cost | 100,000.00 |
-#      | Direct Cost        | 66,000.00  |
-#      | F&A Cost           | 34,000.00  |
-#      And I should see line "2" of the Budget Periods table filled out with:
-#        | Total Sponsor Cost | 100,000.00 |
-#        | Direct Cost        | 66,000.00  |
-#        | F&A Cost           | 34,000.00  |
-#      And I should see line "3" of the Budget Periods table filled out with:
-#        | Total Sponsor Cost | 100,000.00 |
-#        | Direct Cost        | 66,000.00  |
-#        | F&A Cost           | 34,000.00  |
-#      And I should see line "4" of the Budget Periods table filled out with:
-#        | Total Sponsor Cost | 100,000.00 |
-#        | Direct Cost        | 66,000.00  |
-#        | F&A Cost           | 34,000.00  |
-#      And I should see line "5" of the Budget Periods table filled out with:
-#        | Total Sponsor Cost | 100,000.00 |
-#        | Direct Cost        | 66,000.00  |
-#        | F&A Cost           | 34,000.00  |
+      And I fill out line "1" of the "Budget Periods" table with:
+        | Direct Cost | 66000 |
+        | F&A Cost    | 34000 |
+      And I fill out line "2" of the "Budget Periods" table with:
+        | Direct Cost | 66000 |
+        | F&A Cost    | 34000 |
+      And I fill out line "3" of the "Budget Periods" table with:
+        | Direct Cost | 66000 |
+        | F&A Cost    | 34000 |
+      And I fill out line "4" of the "Budget Periods" table with:
+        | Direct Cost | 66000 |
+        | F&A Cost    | 34000 |
+      And I fill out line "5" of the "Budget Periods" table with:
+        | Direct Cost | 66000 |
+        | F&A Cost    | 34000 |
+      And I click the "Recalculate" button on the "Budget Versions" tab
+    Then I should see line "1" of the "Budget Periods" table filled out with:
+      | Total Sponsor Cost | 100,000.00 |
+      | Direct Cost        | 66,000.00  |
+      | F&A Cost           | 34,000.00  |
+      And I should see line "2" of the Budget Periods table filled out with:
+        | Total Sponsor Cost | 100,000.00 |
+        | Direct Cost        | 66,000.00  |
+        | F&A Cost           | 34,000.00  |
+      And I should see line "3" of the Budget Periods table filled out with:
+        | Total Sponsor Cost | 100,000.00 |
+        | Direct Cost        | 66,000.00  |
+        | F&A Cost           | 34,000.00  |
+      And I should see line "4" of the Budget Periods table filled out with:
+        | Total Sponsor Cost | 100,000.00 |
+        | Direct Cost        | 66,000.00  |
+        | F&A Cost           | 34,000.00  |
+      And I should see line "5" of the Budget Periods table filled out with:
+        | Total Sponsor Cost | 100,000.00 |
+        | Direct Cost        | 66,000.00  |
+        | F&A Cost           | 34,000.00  |
 #      And I should see Budget Totals calculated as:
 #        | Period Start Date  | 02/01/2014 |
 #        | Period End Date    | 01/31/2019 |

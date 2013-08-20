@@ -1,6 +1,8 @@
 # Description: This RSpec function will create a filename and path that should 
 #              be safe to use.
+#
 # Original Date: August 20, 2011
+
 require File.join(File.dirname(File.expand_path(__FILE__)), '..', 'lib', 'string')
 
 # Public: Testing my String monkeypatch(es)

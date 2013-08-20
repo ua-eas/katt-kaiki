@@ -5,28 +5,30 @@
 #
 
 
-# Public: Evaluates the kaikifs log result
+# Public: Evaluates the kaiki log result
 #
 # Parameters:
-#	  ruby: programming language specs
+#   ruby - programming language specs
 #
 # Returns nothing
+#
 Then /^I print "([^"]*)"$/ do |ruby|
   result = eval(ruby)
   pp result
-  kaikifs.log.debug result.inspect
+  kaiki.log.debug result.inspect
 end
 
-# Public: Prints the kaikifs log result
+# Public: Prints the kaiki log result
 #
-# Parameters
-#	  ruby: programming language specs
+# Parameters:
+#   ruby - programming language specs
 #
 # Returns nothing
+#
 Then /^I print (?:all|each) "([^"]*)"$/ do |ruby|
   result = eval(ruby)
   result.each do |e|
     pp e
   end
-  kaikifs.log.debug result.inspect
+  kaiki.log.debug result.inspect
 end
