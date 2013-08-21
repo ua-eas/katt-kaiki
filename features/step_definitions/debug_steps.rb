@@ -1,9 +1,6 @@
-#
 # Description: Debug logger file.
 #
 # Original Date: August 20, 2011
-#
-
 
 # Public: Evaluates the kaiki log result
 #

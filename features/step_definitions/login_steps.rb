@@ -1,10 +1,8 @@
-#
 # Description:  This login_steps.rb file is the framework for the 
 #               connection between the Cucumber file and the Ruby 
 #               methods for user login information.
 # 
 # Original Date: August 20, 2011
-#
 
 # Public: Logs in as a user set in the Cucumber file as well set to 
 #         either backdoored or backdoor depending on the tyranny operation. 

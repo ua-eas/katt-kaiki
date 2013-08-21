@@ -78,7 +78,7 @@ class Kaiki::CapybaraDriver::Base
     end
 
     # Sets variables for each instance of CapybaraDriver
-    @pause_time           = options[:pause_time] || 6
+    @pause_time           = options[:pause_time] || 0.5
     @is_headless          = options[:is_headless]
     @firefox_profile_name = options[:firefox_profile] # nil means make a new one
     @firefox_path         = options[:firefox_path]
@@ -174,104 +174,6 @@ class Kaiki::CapybaraDriver::Base
   def base_path
     uri = URI.parse url
     uri.path
-  end
-
-  # Public: Check the field that is expressed with `selectors`
-  #         (the first one that is found). `selectors` is typically
-  #         an Array returned by `ApproximationsFactory`, but it 
-  #         could be hand-generated.
-  #
-  # Parameters:
-  #   selectors - the identifier of the fields you're looking at
-  #
-  # Returns: nothing
-  def check_approximate_field(selectors)
-    timeout = DEFAULT_TIMEOUT
-    selectors.each do |selector|
-      begin
-        return check_by_xpath(selector)
-      rescue Selenium::WebDriver::Error::NoSuchElementError,              \
-             Selenium::WebDriver::Error::TimeOutError, Capybara::ElementNotFound
-        timeout = 0.5
-        # Try the next selector
-      end
-    end
-
-    @log.error "Failed to check approximate field. Selectors are:\n "     \
-               "#{selectors.join("\n") }"
-    raise Selenium::WebDriver::Error::NoSuchElementError
-  end
-
-  # Public: Uncheck the field that is expressed with `selectors`
-  #         (the first one that is found). 'selectors` is typically
-  #         an Array returned by `ApproximationsFactory`, but it
-  #         could be hand-generated.
-  #
-  # Parameters:
-  #   selectors - the identifier of the fields you're looking at
-  #
-  # Returns: nothing
-  def uncheck_approximate_field(selectors)
-    selectors.each do |selector|
-      begin
-        return uncheck_by_xpath(selector)
-      rescue Selenium::WebDriver::Error::NoSuchElementError,              \
-             Selenium::WebDriver::Error::TimeOutError, Capybara::ElementNotFound
-        # Try the next selector
-      end
-    end
-
-    @log.error "Failed to uncheck approximate field. Selectors are:\n "   \
-               "#{selectors.join("\n") }"
-    raise Selenium::WebDriver::Error::NoSuchElementError
-  end
-
-  # Public: Check a field, selecting by xpath
-  #
-  # Parameters:
-  #  xpath - xpath of the item you're looking for
-  #
-  # Returns: nothing
-  def check_by_xpath(xpath)
-    find(:xpath, xpath).set(true)
-  end
-
-  # Public: Uncheck a field, selecting by xpath
-  #
-  # Parameters:
-  #   xpath - spath of the item you're looking for
-  #
-  # Returns: nothing
-  def uncheck_by_xpath(xpath)
-    find(:xpath, xpath).set(false)
-  end
-
-  # Public: Hide a visual vertical tab inside a document's layout.
-  #         Accepts the "name" of the tab. Find the name of the tab
-  #         by looking up the `title` of the `input` that is the close
-  #         button. The title is everything after the word "close."
-  #
-  # Parameters:
-  #   name - name of the tab to toggle
-  #
-  # Returns: nothing
-  def hide_tab(name)
-    find(:xpath, "//input[@title='close #{name}']").click
-    pause
-  end
-
-  # Public: Show a visual vertical tab inside a document's layout. 
-  #         Accepts the "name" of the tab. Find the name of the tab
-  #         by looking up the `title` of the `input` that is the open
-  #         button. The title is everything after the word "open."
-  #
-  # Parameters:
-  #   name - name of the tab to toggle
-  #
-  # Returns: nothing
-  def show_tab(name)
-    find(:xpath, "//input[@title='open #{name}']").click
-    pause
   end
 
   # Public - 'host' attribute of {#url}
@@ -495,7 +397,148 @@ class Kaiki::CapybaraDriver::Base
     end
     nil
   end
-  
+
+  # Public: Show a visual vertical tab inside a document's layout. 
+  #         Accepts the "name" of the tab. Find the name of the tab
+  #         by looking up the `title` of the `input` that is the open
+  #         button. The title is everything after the word "open."
+  #
+  # Parameters:
+  #   name - name of the tab to toggle
+  #
+  # Returns: nothing
+  def show_tab(name)
+    find(:xpath, "//input[@title='open #{name}']").click
+    pause
+  end 
+
+  # Public: Hide a visual vertical tab inside a document's layout.
+  #         Accepts the "name" of the tab. Find the name of the tab
+  #         by looking up the `title` of the `input` that is the close
+  #         button. The title is everything after the word "close."
+  #
+  # Parameters:
+  #   name - name of the tab to toggle
+  #
+  # Returns: nothing
+  def hide_tab(name)
+    find(:xpath, "//input[@title='close #{name}']").click
+    pause
+  end
+
+  # Public: Deselect all `<option>s` within a `<select>`, suppressing any
+  #         `UnsupportedOperationError` that Selenium may throw
+  #
+  # Parameters:
+  #   el - name of the select block
+  #
+  # Returns: nothing
+  def safe_deselect_all(el)
+    el.deselect_all
+  rescue Selenium::WebDriver::Error::UnsupportedOperationError
+  end
+
+  # Public: Check the field that is expressed with `selectors`
+  #         (the first one that is found). `selectors` is typically
+  #         an Array returned by `ApproximationsFactory`, but it 
+  #         could be hand-generated.
+  #
+  # Parameters:
+  #   selectors - the identifier of the fields you're looking at
+  #
+  # Returns: nothing
+  def check_approximate_field(selectors)
+    timeout = DEFAULT_TIMEOUT
+    selectors.each do |selector|
+      begin
+        return check_by_xpath(selector)
+      rescue Selenium::WebDriver::Error::NoSuchElementError,              \
+             Selenium::WebDriver::Error::TimeOutError,                    \
+             Capybara::ElementNotFound
+        timeout = 0.5
+        # Try the next selector
+      end
+    end
+
+    @log.error "Failed to check approximate field. Selectors are:\n "     \
+               "#{selectors.join("\n") }"
+    raise Selenium::WebDriver::Error::NoSuchElementError
+  end
+
+  # Public: Uncheck the field that is expressed with `selectors`
+  #         (the first one that is found). 'selectors` is typically
+  #         an Array returned by `ApproximationsFactory`, but it
+  #         could be hand-generated.
+  #
+  # Parameters:
+  #   selectors - the identifier of the fields you're looking at
+  #
+  # Returns: nothing
+  def uncheck_approximate_field(selectors)
+    selectors.each do |selector|
+      begin
+        return uncheck_by_xpath(selector)
+      rescue Selenium::WebDriver::Error::NoSuchElementError,              \
+             Selenium::WebDriver::Error::TimeOutError,                    \
+             Capybara::ElementNotFound
+        # Try the next selector
+      end
+    end
+
+    @log.error "Failed to uncheck approximate field. Selectors are:\n "   \
+               "#{selectors.join("\n") }"
+    raise Selenium::WebDriver::Error::NoSuchElementError
+  end
+
+  # Public: Check a field, selecting by xpath
+  #
+  # Parameters:
+  #  xpath - xpath of the item you're looking for
+  #
+  # Returns: nothing
+  def check_by_xpath(xpath)
+    @log.debug "  Start check_by_xpath(#{xpath})"
+    find(:xpath, xpath).set(true)
+  end
+
+  # Public: Uncheck a field, selecting by xpath
+  #
+  # Parameters:
+  #   xpath - spath of the item you're looking for
+  #
+  # Returns: nothing
+  def uncheck_by_xpath(xpath)
+    find(:xpath, xpath).set(false)
+  end 
+
+  # Public: Utilizes the Approximation Factory to find the selector type of the
+  #         adjacent field to the item you wish to validate.
+  #
+  # selectors - input, text area, select, etc.
+  # value - text to be filled in or chosen from a drop down
+  #
+  # Returns: nothing
+  def click_approximate_field(selectors, option = nil)
+    timeout = 2
+    #print "#{selectors}, #{value}"
+    selectors.each do |selector|
+      begin
+        click_by_xpath(selector, option)
+        return
+      rescue Selenium::WebDriver::Error::NoSuchElementError,              \
+             Selenium::WebDriver::Error::TimeOutError,                    \
+             Selenium::WebDriver::Error::InvalidSelectorError
+        sleep timeout
+        timeout = 0.2
+        # Try the next selector
+      end
+    end
+
+    @log.error "Failed to click approximate field. Selectors are:"
+    selectors.each { |s| @log.error "  #{s}" }
+    raise Selenium::WebDriver::Error::NoSuchElementError
+  end
+
   # Public: Clicks on the link or button with the given name
   #
   # Parameters:
@@ -514,23 +557,36 @@ class Kaiki::CapybaraDriver::Base
   #
   # Returns: nothing
   def click_by_xpath(xpath, option)
-  if option == "button"
-    find(:xpath, xpath).click
-    @log.debug "  Start click_by_xpath(#{xpath})"
-  elsif option == "radio"
-    find(:xpath, xpath).set(true)
+    if option == "button"
+      find(:xpath, xpath).click
+      @log.debug "  Start click_by_xpath(#{xpath})"
+    elsif option == "radio"
+      find(:xpath, xpath).set(true)
+    end
   end
-end
-  
-  # Public: Click a radio button, selecting by xpath
+    
+  # Public: Same as get_field, but if there are multiple fields
+  #         using the same name
   #
-  # Parameters:
-  #   xpath - xpath of the item you're looking for
+  # selectors - input, text area, select, etc.
   #
   # Returns: nothing
-  def click_radio_xpath(xpath)
-    find(:xpath, xpath).set(true)
-  end
+  def get_approximate_field(selectors)
+    timeout = DEFAULT_TIMEOUT
+    selectors.each do |selector|
+      begin
+        return get_field(selector, {:timeout => timeout})
+      rescue Selenium::WebDriver::Error::NoSuchElementError,              \
+             Selenium::WebDriver::Error::TimeOutError
+        timeout = 0.2
+        # Try the next selector
+      end
+    end
+
+    puts "Failed to get approximate field."                               \
+         "Selectors are:\n#{selectors.join("\n") }"
+    raise Selenium::WebDriver::Error::NoSuchElementError
+  end  
   
   # Public: Finds the field you are looking for
   #
@@ -550,18 +606,6 @@ end
                             document, null,                               \
                             XPathResult.FIRST_ORDERED_NODE_TYPE,          \
                             null).singleNodeValue.value;", nil)
-  end
-  
-  # Public: Deselect all `<option>s` within a `<select>`, suppressing any
-  #         `UnsupportedOperationError` that Selenium may throw
-  #
-  # Parameters:
-  #   el - name of the select block
-  #
-  # Returns: nothing
-  def safe_deselect_all(el)
-    el.deselect_all
-  rescue Selenium::WebDriver::Error::UnsupportedOperationError
   end
   
   # Public: Utilizes the Approximation Factory to find the selector type of the
@@ -704,43 +748,4 @@ end
                # "NS_ERROR_ILLEGAL_VALUE"
     find(method, locator)
   end
-  
- # Public: This fills in a text field, given its xpath
- #
- # Parameters:
- #  selector - xpath of the field
- #  value - data to fill in with
- #
- # Return: nothing
-  def fill_under(selector, value)
-    if selector == "Name"
-      fill_in("newBudgetVersionName", :with => value)
-    else
-      @driver.find_element(:xpath, selector).clear
-      @driver.find_element(:xpath, selector).send_keys(value)
-    end
-  end
-  
-# Public: Same as get_field, but if there are multiple fields
-#         using the same name
-#
-# selectors - input, text area, select, etc.
-#
-# Returns: nothing
-def get_approximate_field(selectors)
-  timeout = DEFAULT_TIMEOUT
-  selectors.each do |selector|
-    begin
-      return get_field(selector, {:timeout => timeout})
-    rescue Selenium::WebDriver::Error::NoSuchElementError,              \
-                                     Selenium::WebDriver::Error::TimeOutError
-      timeout = 0.2
-      # Try the next selector
-    end
-  end
-
-  puts "Failed to get approximate field."                               \
-       "Selectors are:\n#{selectors.join("\n") }"
-  raise Selenium::WebDriver::Error::NoSuchElementError
-  end  
 end

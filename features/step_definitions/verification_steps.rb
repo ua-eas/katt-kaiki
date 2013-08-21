@@ -79,3 +79,67 @@ Then /^I should see line "([^"]*)" of the "([^"]*)" table filled out with:$/ \
     end
   end
 end
+
+# Public: Verifies the given values from the table are present on the web page
+#         in the correct place
+# 
+# table_name - name of the table to be filled in
+# table - table of data being read in from the feature file 
+# 
+# Returns: nothing
+Then /^I should see Budget Totals calculated as:$/ do |table|
+  kaiki.pause
+  kaiki.switch_default_content
+  kaiki.select_frame "iframeportlet"
+  
+  table.rows_hash.each do |key, value|
+    kaiki.should have_content(value)
+  end
+end
+
+#Public: Varifies that there are no errors present on the Validation Errors, 
+#        Warnings and Grants.Gov Errors sections
+#	       * will error out if there are validation errors
+#
+#Parameters:
+#	text: value being displayed in a section
+#
+#Example:
+#	No Validation Errors present
+#
+#Returns Nothing
+Then /^I should see "(.*?)"$/ do |text|
+  kaiki.pause
+  kaiki.switch_default_content
+  kaiki.select_frame "iframeportlet"
+
+  kaiki.should have_content text
+end
+
+#Puplic: Waits for the page to finish loading
+#
+#Parameters:
+#	value- frame being loaded i e, iframeportlet
+#
+#Returns Nothing
+When /^I wait for the document to finish being processed$/ do
+  kaiki.pause(20)
+  kaiki.switch_default_content
+  kaiki.wait_for(:xpath, "//*[@id='iframeportlet']")
+end
+
+#Public: Verifies that the Institutional Proposal has been generated
+#
+#Parameters: 
+#	text1- first value being checked for i e, "Institutional Proposal"
+#	text2- second value being checked for ie, "has been generated"
+#
+#Returns Nothing
+Then /^I should see a message starting with "(.*?)" and ending with "(.*?)"$/ do |text1,text2|
+  kaiki.pause
+  kaiki.switch_default_content
+  kaiki.select_frame "iframeportlet"
+  kaiki.wait_for(:xpath, "//div[@class='left-errmsg']")
+  kaiki.should have_content text1
+  kaiki.should have_content text2
+end

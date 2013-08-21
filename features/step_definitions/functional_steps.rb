@@ -1,9 +1,7 @@
-#
 # Description: Functional step methods for feature files, the idea is 
 #              that when things are recorded they are tracked
 #
 # Original Date: August 20, 2011
-#
 
 # Public: Records the doc number via xpath
 #

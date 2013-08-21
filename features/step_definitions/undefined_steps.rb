@@ -1,3 +1,8 @@
+# Description: These step defs are currently specific to page 2 of text scenario
+#              create_and_submit_basic_proposal
+# 
+# Original Date: August 16, 2013
+
 # Public: Clicks on "Show/Hide" on the specific tab
 #
 # Parameters: 

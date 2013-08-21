@@ -64,52 +64,45 @@ end
 #
 When /^I click the "([^"]*)" button$/ do |item|
   kaiki.pause
-  # kaiki.switch_default_content
-  # kaiki.select_frame "iframeportlet"
   item = item.downcase
   if item == 'create_new'
     kaiki.click item
   elsif ['approve', 'cancel', 'disapprove', 'search', 'submit', 'close', 'save', 'reload'].include? item
      kaiki.click item
-  elsif ['calculate', 'continue', 'print'].include? item  # titleize or capitalize... this remains to be seen
+  elsif ['calculate', 'continue', 'print', 'blanket approve'].include? item  # titleize or capitalize... this remains to be seen
      kaiki.click item
   elsif ['get document'].include? item
-    button = kaiki.find(:name, "methodToCall.#{link.gsub(/ /, '_').camelize(:lower)}")
-    button.click
+    kaiki.find(:name, "methodToCall.#{link.gsub(/ /, '_').camelize(:lower)}").click
   elsif item == 'yes'
-    button = kaiki.find(:name, 'methodToCall.processAnswer.button0')
-    button.click
+    kaiki.find(:name, 'methodToCall.processAnswer.button0').click
   elsif item == 'no'
-    button = kaiki.find(:name, 'methodToCall.processAnswer.button1')
-    button.click
+    kaiki.find(:name, 'methodToCall.processAnswer.button1').click
   elsif item == 'add person'
-    button = kaiki.find(:name, 'methodToCall.insertProposalPerson')
-    button.click
+    kaiki.find(:name, 'methodToCall.insertProposalPerson').click
   elsif item == 'employee search lookup'
-    button = kaiki.find(
+    kaiki.find(
       :name,
       "methodToCall.performLookup.(!!org.kuali.kra.bo.KcPerson!!).(((personI" \
       "d:newPersonId))).((``)).((<>)).(([])).((**)).((^^)).((&&)).((//)).((~" \
-      "~)).(::::;;::::).anchor")
-    button.click
+      "~)).(::::;;::::).anchor").click
   elsif item == 'non-employee search lookup'
-    button = kaiki.find(
+    kaiki.find(
       :name,
       "methodToCall.performLookup.(!!org.kuali.kra.bo.NonOrganizationalRolo" \
       "dex!!).(((rolodexId:newRolodexId))).((``)).((<>)).(([])).((**)).((^^" \
-      ")).((&&)).((//)).((~~)).(::::;;::::).anchor")
-    button.click
+      ")).((&&)).((//)).((~~)).(::::;;::::).anchor").click
   elsif item == 'turn on validation'
-    button = kaiki.find(:name, 'methodToCall.activate')
-    button.click
+    kaiki.find(:name, 'methodToCall.activate').click
+  elsif item == 'submit to sponsor'
+    kaiki.find(:name, 'methodToCall.submitToSponsor').click
   elsif item == 'document search'
-    button = kaiki.find(:xpath,'/html/body/div[5]/div/div/a[3]')
-    button.click
+    kaiki.find(:xpath,'/html/body/div[5]/div/div/a[3]').click
   elsif item == 'document link'
-    button = kaiki.find(
+    kaiki.find(
       :xpath,
-      '/html/body/form/table/tbody/tr/td[2]/table/tbody/tr/td/a')
-    button.click
+      '/html/body/form/table/tbody/tr/td[2]/table/tbody/tr/td/a').click
+  elsif item == "return to proposal"
+    kaiki.click(item)
   else
     raise NotImplementedError
   end

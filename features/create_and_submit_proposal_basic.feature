@@ -37,39 +37,39 @@ Feature: proposal creation and submission
 
 
   When I am on the "Key Personnel" document tab
-      And I click the "Employee Search Lookup" button
-      And I set "Last Name" to "Garland"
-      And I click the "Search" button
-      And I return the record with "KcPerson Id" of "112707439853" 
-      And I set the "Proposal Role" to "PI/Contact"
-      And I click the "Add Person" button
-      And I click the "Employee Search Lookup" button
-      And I set "Last Name" to "Baker"
-      And I click the "Search" button
-      And I return the record with "KcPerson Id" of "108464956880"
-      And I set "Proposal Role" to "Co-Investigator"
-      And I click the "Add Person" button
-      And I click "Show" on the "Linda L Garland" tab
-      And I click "Show" on the "Person Details" section
-      And I set "Percentage Effort" for "Linda L Garland" as "5"
-      And I click "Hide" on the "Linda L Garland" tab
-      And I click "Show" on the "Amanda F Baker" tab
-      And I click "Show" on the "Person Details" section
-      And I set "Percentage Effort" for "Amanda F Baker" as "20"
-      And I click "Hide" on the "Amanda F Baker" tab
-      And I fill out the Combined Credit Split for "Linda L Garland" with the following:
-        | Credit for Award | 25 |
-        | F&A Revenue      | 25 |
-      And I fill out the Combined Credit Split line item for "0721 - Cancer Center Division" under "Linda L Garland" with the following:
-        | Credit for Award | 100 |
-        | F&A Revenue      | 100 |
-      And I fill out the Combined Credit Split for "Amanda F Baker" with the following:
-        | Credit for Award | 75 |
-        | F&A Revenue      | 75 |
-      And I fill out the Combined Credit Split line item for "0721 - Cancer Center Division" under "Amanda F Baker" with the following:
-        | Credit for Award | 100 |
-        | F&A Revenue      | 100 |
-      And I click the "Save" button
+    And I click the "Employee Search Lookup" button
+    And I set "Last Name" to "Garland"
+    And I click the "Search" button
+    And I return the record with "KcPerson Id" of "112707439853" 
+    And I set the "Proposal Role" to "PI/Contact"
+    And I click the "Add Person" button
+    And I click the "Employee Search Lookup" button
+    And I set "Last Name" to "Baker"
+    And I click the "Search" button
+    And I return the record with "KcPerson Id" of "108464956880"
+    And I set "Proposal Role" to "Co-Investigator"
+    And I click the "Add Person" button
+    And I click "Show" on the "Linda L Garland" tab
+    And I click "Show" on the "Person Details" section
+    And I set "Percentage Effort" for "Linda L Garland" as "5"
+    And I click "Hide" on the "Linda L Garland" tab
+    And I click "Show" on the "Amanda F Baker" tab
+    And I click "Show" on the "Person Details" section
+    And I set "Percentage Effort" for "Amanda F Baker" as "20"
+    And I click "Hide" on the "Amanda F Baker" tab
+    And I fill out the Combined Credit Split for "Linda L Garland" with the following:
+      | Credit for Award | 25 |
+      | F&A Revenue      | 25 |
+    And I fill out the Combined Credit Split line item for "0721 - Cancer Center Division" under "Linda L Garland" with the following:
+      | Credit for Award | 100 |
+      | F&A Revenue      | 100 |
+    And I fill out the Combined Credit Split for "Amanda F Baker" with the following:
+      | Credit for Award | 75 |
+      | F&A Revenue      | 75 |
+    And I fill out the Combined Credit Split line item for "0721 - Cancer Center Division" under "Amanda F Baker" with the following:
+      | Credit for Award | 100 |
+      | F&A Revenue      | 100 |
+    And I click the "Save" button
   Then I should see the message "Document was successfully saved."
 
 
@@ -91,7 +91,7 @@ Feature: proposal creation and submission
   When I am on the "Questions" document tab
     And I click "Show" on the "Does the Proposed Work Include any of the Following?" tab
     And I answer the questions under "Does the Proposed Work Include any of the Following?" with:
-          | #      | Answer |
+          # | #      | Answer |
           |  1     |  No    |
           |  2     |  No    |
           |  3     | Yes    |
@@ -113,31 +113,31 @@ Feature: proposal creation and submission
     And I click "Hide" on the "Does the Proposed Work Include any of the Following?" tab
     And I click "Show" on the "F&A (Indirect Cost) Questions" tab
     And I answer the questions under "F&A (Indirect Cost) Questions" with:
-          | #  | Answer |
+          # | #  | Answer |
           |  1 | No |
           |  2 | No |
           |  3 | No |
     And I click "Hide" on the "F&A (Indirect Cost) Questions" tab
-    And I click "Show" on the "Grants.gov Questions" tab
-    And I answer the questions under "Grants.gov Questions" with:
-          | # | Answer |
-          |  1 |  No | 
-          |  2 |  No | 
-          |  3 |  No | 
-          |  4 |  No | 
-          |  5 |  No | 
-          |  6 | N/A | 
-          |  7 |  No | 
-          |  8 |  No | 
-          |  9 |  No | 
-          | 10 |  No | 
-          | 11 | N/A | 
-          | 12 |  No | 
-          | 13 |  No | 
-    And I click "Hide" on the "Grants.gov Questions" tab
+    # And I click "Show" on the "Grants.gov Questions" tab
+    # And I answer the questions under "Grants.gov Questions" with:
+          # | # | Answer |
+          # |  1 |  No | 
+          # |  2 |  No | 
+          # |  3 |  No | 
+          # |  4 |  No | 
+          # |  5 |  No | 
+          # |  6 | N/A | 
+          # |  7 |  No | 
+          # |  8 |  No | 
+          # |  9 |  No | 
+          # | 10 |  No | 
+          # | 11 | N/A | 
+          # | 12 |  No | 
+          # | 13 |  No | 
+    # And I click "Hide" on the "Grants.gov Questions" tab
     And I click "Show" on the "PRS Questions" tab
     And I answer the questions under "PRS Questions" with:
-          | # | Answer |
+          # | # | Answer |
           |  1 |  No | 
           |  2 |  No | 
           |  3 |  No | 
@@ -147,75 +147,74 @@ Feature: proposal creation and submission
 
 
   When I am on the "Budget Versions" document tab
-      And I set the "Name" to "Final Budget"
-      And I click the "Add" button on the "Budget Versions" tab
-      And I click "Open" on "Final Budget"
+    And I set the "Name" to "Final Budget"
+    And I click the "Add" button on the "Budget Versions" tab
+    And I click "Open" on "Final Budget"
       
       
-      And I fill out line "1" of the "Budget Periods" table with:
-        | Direct Cost | 66000 |
-        | F&A Cost    | 34000 |
-      And I fill out line "2" of the "Budget Periods" table with:
-        | Direct Cost | 66000 |
-        | F&A Cost    | 34000 |
-      And I fill out line "3" of the "Budget Periods" table with:
-        | Direct Cost | 66000 |
-        | F&A Cost    | 34000 |
-      And I fill out line "4" of the "Budget Periods" table with:
-        | Direct Cost | 66000 |
-        | F&A Cost    | 34000 |
-      And I fill out line "5" of the "Budget Periods" table with:
-        | Direct Cost | 66000 |
-        | F&A Cost    | 34000 |
-      And I click the "Recalculate" button on the "Budget Versions" tab
-    Then I should see line "1" of the "Budget Periods" table filled out with:
+    And I fill out line "1" of the "Budget Periods" table with:
+      | Direct Cost | 66000 |
+      | F&A Cost    | 34000 |
+    And I fill out line "2" of the "Budget Periods" table with:
+      | Direct Cost | 66000 |
+      | F&A Cost    | 34000 |
+    And I fill out line "3" of the "Budget Periods" table with:
+      | Direct Cost | 66000 |
+      | F&A Cost    | 34000 |
+    And I fill out line "4" of the "Budget Periods" table with:
+      | Direct Cost | 66000 |
+      | F&A Cost    | 34000 |
+    And I fill out line "5" of the "Budget Periods" table with:
+      | Direct Cost | 66000 |
+      | F&A Cost    | 34000 |
+    And I click the "Recalculate" button on the "Budget Versions" tab
+  Then I should see line "1" of the "Budget Periods" table filled out with:
+    | Total Sponsor Cost | 100,000.00 |
+    | Direct Cost        | 66,000.00  |
+    | F&A Cost           | 34,000.00  |
+    And I should see line "2" of the "Budget Periods" table filled out with:
       | Total Sponsor Cost | 100,000.00 |
       | Direct Cost        | 66,000.00  |
       | F&A Cost           | 34,000.00  |
-      And I should see line "2" of the Budget Periods table filled out with:
-        | Total Sponsor Cost | 100,000.00 |
-        | Direct Cost        | 66,000.00  |
-        | F&A Cost           | 34,000.00  |
-      And I should see line "3" of the Budget Periods table filled out with:
-        | Total Sponsor Cost | 100,000.00 |
-        | Direct Cost        | 66,000.00  |
-        | F&A Cost           | 34,000.00  |
-      And I should see line "4" of the Budget Periods table filled out with:
-        | Total Sponsor Cost | 100,000.00 |
-        | Direct Cost        | 66,000.00  |
-        | F&A Cost           | 34,000.00  |
-      And I should see line "5" of the Budget Periods table filled out with:
-        | Total Sponsor Cost | 100,000.00 |
-        | Direct Cost        | 66,000.00  |
-        | F&A Cost           | 34,000.00  |
-#      And I should see Budget Totals calculated as:
-#        | Period Start Date  | 02/01/2014 |
-#        | Period End Date    | 01/31/2019 |
-#        | Total Sponsor Cost | 500,000.00 |
-#        | Direct Cost        | 330,000.00 |
-#        | F&A Cost           | 170,000.00 |
-#        | Unrecovered F&A    |       0.00 |
-#        | Cost Sharing       |       0.00 |
-#      And I check the "Final?" checkbox
-#      And I set "Budget Status" to "Complete"
-#      And I click the "Save" button
-#    Then I should see the message "Document was successfully saved."
-
-
-#  When I click "Return to Proposal"
-#     And I select the "Proposal Actions" tab at the top of the document
-#      And I show the "Data Validation" tab
-#      And I click the "turn on validation" button
-#  Then I should see "No Validation Errors present."
-#      And I should see "No Warnings present."
-#      And I should see "No Grants.Gov Errors present."
-#  And I click the "Submit" button
-#      And I click "no"
-#      And I wait for the document to finish being processed
-#  Then I should see "Status" set to "Approval Pending" in the document header
-#  When I click the "Blanket Approval" button
-#      And I wait for the document to finish being processed
-#  Then I should see "Status" set to "Approval Granted" in the document header
-#  When I click the "submit to sponsor" button
-#  Then I should see "Status" set to "Approved and Submitted" in the document header
-#      And I should see a message starting with "Institutional Proposal" and ending with "has been generated"
+    And I should see line "3" of the "Budget Periods" table filled out with:
+      | Total Sponsor Cost | 100,000.00 |
+      | Direct Cost        | 66,000.00  |
+      | F&A Cost           | 34,000.00  |
+    And I should see line "4" of the "Budget Periods" table filled out with:
+      | Total Sponsor Cost | 100,000.00 |
+      | Direct Cost        | 66,000.00  |
+      | F&A Cost           | 34,000.00  |
+    And I should see line "5" of the "Budget Periods" table filled out with:
+      | Total Sponsor Cost | 100,000.00 |
+      | Direct Cost        | 66,000.00  |
+      | F&A Cost           | 34,000.00  |
+    And I should see Budget Totals calculated as:
+      | Period Start Date  | 02/01/2014 |
+      | Period End Date    | 01/31/2019 |
+      | Total Sponsor Cost | 500,000.00 |
+      | Direct Cost        | 330,000.00 |
+      | F&A Cost           | 170,000.00 |
+      | Unrecovered F&A    |       0.00 |
+      | Cost Sharing       |       0.00 |
+    And I check the "Final?" checkbox
+    And I set "Budget Status" to "Complete"
+    And I click the "Save" button
+  Then I should see the message "Document was successfully saved."
+  When I click the "Return to Proposal" button
+   
+  When I am on the "Proposal Actions" document tab
+    And I click "Show" on the "Data Validation" tab
+    And I click the "turn on validation" button
+  Then I should see "No Validation Errors present."
+    And I should see "No Warnings present."
+    And I should see "No Grants.Gov Errors present."
+  When I click the "Submit" button
+    And I click the "No" button
+    And I wait for the document to finish being processed
+  Then I should see "Status" set to "Approval Pending" in the document header
+  When I click the "Blanket Approve" button
+    And I wait for the document to finish being processed
+  Then I should see "Status" set to "Approval Granted" in the document header
+  When I click the "Submit To Sponsor" button
+  Then I should see "Status" set to "Approved and Submitted" in the document header
+    And I should see a message starting with "Institutional Proposal" and ending with "has been generated"

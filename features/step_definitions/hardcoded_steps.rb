@@ -21,17 +21,17 @@ When /^I answer the questions under "([^"]*)" with:$/ do |table_name, table|
         td_num = 1
         xpath = "/html/body/form/table/tbody/tr/td[2]/div[2]/div[#{table_num}]"        \
             "/div[3]/table/tbody/tr[#{newkey}]/td[2]/div/span/label[#{td_num}]/input"
-        kaiki.click_radio_xpath xpath
+        kaiki.click_by_xpath(xpath, "radio")
       elsif value == "No"
         td_num = 2
         xpath = "/html/body/form/table/tbody/tr/td[2]/div[2]/div[#{table_num}]"        \
             "/div[3]/table/tbody/tr[#{newkey}]/td[2]/div/span/label[#{td_num}]/input"
-        kaiki.click_radio_xpath xpath    
+        kaiki.click_by_xpath(xpath, "radio")    
       elsif value == "N/A"
         td_num = 3
         xpath = "/html/body/form/table/tbody/tr/td[2]/div[2]/div[#{table_num}]"        \
             "/div[3]/table/tbody/tr[#{newkey}]/td[2]/div/span/label[#{td_num}]/input"
-        kaiki.click_radio_xpath xpath   
+        kaiki.click_by_xpath(xpath, "radio")   
       end
     end
   elsif table_name == "F&A (Indirect Cost) Questions"
@@ -42,17 +42,17 @@ When /^I answer the questions under "([^"]*)" with:$/ do |table_name, table|
         td_num = 1
         xpath = "/html/body/form/table/tbody/tr/td[2]/div[2]/div[#{table_num}]"        \
             "/div[3]/table/tbody/tr[#{newkey}]/td[2]/div/span/label[#{td_num}]/input"
-        kaiki.click_radio_xpath xpath
+        kaiki.click_by_xpath(xpath, "radio")
       elsif value == "No"
         td_num = 2
         xpath = "/html/body/form/table/tbody/tr/td[2]/div[2]/div[#{table_num}]"        \
             "/div[3]/table/tbody/tr[#{newkey}]/td[2]/div/span/label[#{td_num}]/input"
-        kaiki.click_radio_xpath xpath    
+        kaiki.click_by_xpath(xpath, "radio")    
       elsif value == "N/A"
         td_num = 3
         xpath = "/html/body/form/table/tbody/tr/td[2]/div[2]/div[#{table_num}]"        \
             "/div[3]/table/tbody/tr[#{newkey}]/td[2]/div/span/label[#{td_num}]/input"
-        kaiki.click_radio_xpath xpath   
+        kaiki.click_by_xpath(xpath, "radio")   
       end
     end
   elsif table_name == "Grants.gov Questions"
@@ -63,38 +63,39 @@ When /^I answer the questions under "([^"]*)" with:$/ do |table_name, table|
         td_num = 1
         xpath = "/html/body/form/table/tbody/tr/td[2]/div[2]/div[#{table_num}]"        \
             "/div[3]/table/tbody/tr[#{newkey}]/td[2]/div/span/label[#{td_num}]/input"
-        kaiki.click_radio_xpath xpath
+        kaiki.click_by_xpath(xpath, "radio")
       elsif value == "No"
         td_num = 2
         xpath = "/html/body/form/table/tbody/tr/td[2]/div[2]/div[#{table_num}]"        \
             "/div[3]/table/tbody/tr[#{newkey}]/td[2]/div/span/label[#{td_num}]/input"
-        kaiki.click_radio_xpath xpath    
+        kaiki.click_by_xpath(xpath, "radio")    
       elsif value == "N/A"
         td_num = 3
         xpath = "/html/body/form/table/tbody/tr/td[2]/div[2]/div[#{table_num}]"        \
             "/div[3]/table/tbody/tr[#{newkey}]/td[2]/div/span/label[#{td_num}]/input"
-        kaiki.click_radio_xpath xpath   
+        kaiki.click_by_xpath(xpath, "radio")   
       end
     end
   elsif table_name == "PRS Questions"
-    table_num = 4
+    table_num = 3                      # 3 for dev, 4 for cdf due to Grants.gov
+                                       # Questions not appearing on dev
     table.rows_hash.each do |key, value|    
     newkey = key.to_i + 1
       if value == "Yes"
         td_num = 1
         xpath = "/html/body/form/table/tbody/tr/td[2]/div[2]/div[#{table_num}]"        \
             "/div[3]/table/tbody/tr[#{newkey}]/td[2]/div/span/label[#{td_num}]/input"
-        kaiki.click_radio_xpath xpath
+        kaiki.click_by_xpath(xpath, "radio")
       elsif value == "No"
         td_num = 2
         xpath = "/html/body/form/table/tbody/tr/td[2]/div[2]/div[#{table_num}]"        \
             "/div[3]/table/tbody/tr[#{newkey}]/td[2]/div/span/label[#{td_num}]/input"
-        kaiki.click_radio_xpath xpath    
+        kaiki.click_by_xpath(xpath, "radio")    
       elsif value == "N/A"
         td_num = 3
         xpath = "/html/body/form/table/tbody/tr/td[2]/div[2]/div[#{table_num}]"        \
             "/div[3]/table/tbody/tr[#{newkey}]/td[2]/div/span/label[#{td_num}]/input"
-        kaiki.click_radio_xpath xpath   
+        kaiki.click_by_xpath(xpath, "radio")   
       end
     end
   end

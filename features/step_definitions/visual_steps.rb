@@ -1,4 +1,3 @@
-#
 # Description: This file houses the interpretation of visual steps used by 
 #              Cucumber features.
 #
