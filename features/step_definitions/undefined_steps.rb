@@ -23,6 +23,13 @@ end
 
 # Public: Returns the chosen result from a search query
 #
+# Known Issue: This function will click the 'return value' link on the first 
+#              row that contains the value anywhere on the data row. Capybara 
+#              version 2+ has a method to extract the xpath from a Capybara 
+#              element to do string manipulation and find the correct column to 
+#              look in. If there is a way to do this in Capybara v1.1.4 that is 
+#              currently in use, this is remains elusive.   
+#
 # Parameters:
 #   column - the column to look in
 #   value  - result to be returned
@@ -33,20 +40,10 @@ end
   kaiki.pause
   kaiki.switch_default_content
   kaiki.select_frame("iframeportlet")
-    
-  kaiki.set_approximate_field(
-    ApproximationsFactory.transpose_build(
-      "//%s[contains(text()%s, '#{column}')]/../following-sibling::td/%s",
-      ['th/label',    '',       'input'],
-      [nil,           '[1]',    nil],
-      [nil,           '[2]',    nil]),
-    value)
-  kaiki.click "search"
 
-  kaiki.pause
-  kaiki.switch_default_content
-  kaiki.select_frame("iframeportlet")
-  link = kaiki.find('a', :text => 'return value')
+  link = kaiki.find(:xpath, "//thead/tr/th/a[contains(text(),'#{column}')]/." \
+    "./../../following-sibling::tbody/tr/td/a[contains(text(),'#{value}')]/." \
+    "./../td/a[contains(text(),'return value')]")
   link.click
 end
 
