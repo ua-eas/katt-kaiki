@@ -34,6 +34,8 @@ Feature: proposal creation and submission
     And I click the "Save" button  
 	Then I should see the message "Document was successfully saved."
     And I should see "Sponsor Name" set to "National Institute on Aging" in the document header 
+
+
   When I am on the "Key Personnel" document tab
       And I click the "Employee Search Lookup" button
       And I set "Last Name" to "Garland"
@@ -69,23 +71,30 @@ Feature: proposal creation and submission
         | F&A Revenue      | 100 |
       And I click the "Save" button
   Then I should see the message "Document was successfully saved."
+
+
   When I am on the "Special Review" document tab
     And I set the "Type" to "Human Subjects"
     And I set the "Approval Status" to "Approved"
     And I click the "Add" button on the "Special Review" tab
     And I click the "Save" button
   Then I should see the message "Document was successfully saved."
+
+
   When I am on the "Custom Data" document tab
     And I click "Show" on the "Project Information" tab
     And I set "Prj Location" to "0211-0124-"
     And I set "F&A Rate" to "51.500"
     And I click the "Save" button 
+
+
   When I am on the "Questions" document tab
     And I click "Show" on the "Does the Proposed Work Include any of the Following?" tab
     And I answer the questions under "Does the Proposed Work Include any of the Following?" with:
+          | #      | Answer |
           |  1     |  No    |
-          |  2     | Yes    |
-          |  3     |  No    |
+          |  2     |  No    |
+          |  3     | Yes    |
           |  4     |  No    |
           |  5     |  No    |
           |  6     |  No    |
@@ -93,8 +102,8 @@ Feature: proposal creation and submission
           |  8     |  No    |
           |  9     |  No    |
           | 10     |  No    |
-          | 11     | Yes    |
-          | 12     |  No    |
+          | 11     |  No    |
+          | 12     | Yes    |
           | 13     |  No    |
           | 14     |  No    |
           | 15     |  No    |
@@ -104,12 +113,14 @@ Feature: proposal creation and submission
     And I click "Hide" on the "Does the Proposed Work Include any of the Following?" tab
     And I click "Show" on the "F&A (Indirect Cost) Questions" tab
     And I answer the questions under "F&A (Indirect Cost) Questions" with:
+          | #  | Answer |
           |  1 | No |
           |  2 | No |
           |  3 | No |
     And I click "Hide" on the "F&A (Indirect Cost) Questions" tab
     And I click "Show" on the "Grants.gov Questions" tab
     And I answer the questions under "Grants.gov Questions" with:
+          | # | Answer |
           |  1 |  No | 
           |  2 |  No | 
           |  3 |  No | 
@@ -126,16 +137,21 @@ Feature: proposal creation and submission
     And I click "Hide" on the "Grants.gov Questions" tab
     And I click "Show" on the "PRS Questions" tab
     And I answer the questions under "PRS Questions" with:
+          | # | Answer |
           |  1 |  No | 
           |  2 |  No | 
           |  3 |  No | 
     And I click "Hide" on the "PRS Questions" tab
     And I click the "Save" button
   Then I should see the message "Document was successfully saved."
+
+
   When I am on the "Budget Versions" document tab
       And I set the "Name" to "Final Budget"
       And I click the "Add" button on the "Budget Versions" tab
       And I click "Open" on "Final Budget"
+      
+      
       And I fill out line "1" of the "Budget Periods" table with:
         | Direct Cost | 66000 |
         | F&A Cost    | 34000 |
@@ -184,6 +200,8 @@ Feature: proposal creation and submission
 #      And I set "Budget Status" to "Complete"
 #      And I click the "Save" button
 #    Then I should see the message "Document was successfully saved."
+
+
 #  When I click "Return to Proposal"
 #     And I select the "Proposal Actions" tab at the top of the document
 #      And I show the "Data Validation" tab
