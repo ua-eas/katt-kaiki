@@ -46,14 +46,14 @@ When /^I (?:set the|set) "([^"]*)" to "([^"]*)"$/ do |field, value|
     ) +
     ApproximationsFactory.transpose_build(
       "//th/div[contains(text()%s, '#{field}')]/../following-sibling::td/span"\
-        "/%s[contains(@title, '#{field}')]",
+      "/%s[contains(@title, '#{field}')]",
       ['',       'input'],
       ['[1]',    nil],
       ['[2]',    nil]
     ) +      
     ApproximationsFactory.transpose_build(
       "//th[contains(text()%s, '#{field}')]/../following-sibling::tr/td/div/" \
-        "%s[contains(@title, '#{field}')]",
+      "%s[contains(@title, '#{field}')]",
       ['',       'select'],
       ['[1]',    'input'],
       ['[2]',    nil]),
@@ -72,7 +72,7 @@ end
 #
 # Returns nothing  
 #
-When /^I (?:set the|set) the "([^"]*)" to something like "([^"]*)"$/ do |field, value|
+When /^I (?:set the|set) "([^"]*)" to something like "([^"]*)"$/ do |field, value|
   kaiki.pause
   kaiki.switch_default_content
   kaiki.select_frame "iframeportlet"
@@ -89,12 +89,11 @@ When /^I (?:set the|set) the "([^"]*)" to something like "([^"]*)"$/ do |field, 
   )
 end
 
-# Public: Sets the dropdown to the given value in the found in the 
-#         cucumber file
+# Public: Sets a field for a given person/section to the given value 
 #
 # Parameters:
-#   field - name of the dropdown
-#   name  - name of the person 
+#   field - name of the field
+#   name  - name of the person/section 
 #   value - data to be used
 #
 # Returns: nothing    
@@ -103,11 +102,10 @@ When /^I (?:set the|set) "(.*?)" for "(.*?)" as "(.*?)"$/ do |field, name, value
   kaiki.pause
   kaiki.switch_default_content
   kaiki.select_frame "iframeportlet"
-  if field == "Percentage Effort" && name == "Linda L Garland"
-    kaiki.set_field('//*[@id="document.developmentProposalList[0].proposalPersons[0].percentageEffort"]', value)
-  elsif field == "Percentage Effort" && name == "Amanda F Baker"
-    kaiki.set_field('//*[@id="document.developmentProposalList[0].proposalPersons[1].percentageEffort"]', value)
-  end
+  element = kaiki.find(:xpath,"//table/tbody/tr/td/h2[contains(text(),'" \
+    "#{name}')]/../../../../following-sibling::div/descendant::input[@title=" \
+    "'#{field}']")
+  element.set(value)
 end
 
 # Public: This method may need another ApproximationsFactory segment added

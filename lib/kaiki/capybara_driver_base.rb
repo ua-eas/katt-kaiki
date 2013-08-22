@@ -527,7 +527,8 @@ class Kaiki::CapybaraDriver::Base
         return
       rescue Selenium::WebDriver::Error::NoSuchElementError,              \
              Selenium::WebDriver::Error::TimeOutError,                    \
-             Selenium::WebDriver::Error::InvalidSelectorError
+             Selenium::WebDriver::Error::InvalidSelectorError,            \
+             Capybara::ElementNotFound
         sleep timeout
         timeout = 0.2
         # Try the next selector

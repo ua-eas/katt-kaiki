@@ -50,20 +50,22 @@ end
 #
 # Returns: nothing
 #
-When /^I click the "([^"]*)" portal link$/ do |link|
+When /^I (?:click|click the) "([^"]*)" portal link$/ do |link|
   kaiki.pause
   kaiki.click link
 end
 
 # Public: Takes the name of the button and clicks on the button with that name
 #
-# Parameters:
-#   item - name of the item to be clicked
+# item - name of the item to be clicked
+# field - name of the field a particular button/link associated with said field
+#         may have
 #
 # Returns: nothing
 #
-When /^I click the "([^"]*)" button$/ do |item|
+When /^I (?:click|click the) "([^"]*)" (?:button|on "([^"]*)")$/ do |item, field|
   kaiki.pause
+  
   item = item.downcase
   if item == 'create_new'
     kaiki.click item
@@ -91,6 +93,9 @@ When /^I click the "([^"]*)" button$/ do |item|
       "methodToCall.performLookup.(!!org.kuali.kra.bo.NonOrganizationalRolo" \
       "dex!!).(((rolodexId:newRolodexId))).((``)).((<>)).(([])).((**)).((^^" \
       ")).((&&)).((//)).((~~)).(::::;;::::).anchor").click
+  elsif item == 'recalculate'
+    kaiki.click_by_xpath("//input[@name = 'methodToCall."                   \
+                "recalculateBudgetPeriod.anchorBudgetPeriodsTotals']", "button")
   elsif item == 'turn on validation'
     kaiki.find(:name, 'methodToCall.activate').click
   elsif item == 'submit to sponsor'
@@ -102,7 +107,19 @@ When /^I click the "([^"]*)" button$/ do |item|
       :xpath,
       '/html/body/form/table/tbody/tr/td[2]/table/tbody/tr/td/a').click
   elsif item == "return to proposal"
-    kaiki.click(item)
+    kaiki.click item
+  elsif item == 'open'
+    kaiki.should have_content field
+    kaiki.click_approximate_field(
+      ApproximationsFactory.transpose_build(
+      "//%s[contains(text()%s, '#{field}')]/following-sibling::"              \
+      "td/div/%s[contains(@alt, 'open budget')]",
+      ['td',    '',       'select'],
+      ['th',    '[1]',    'input'],
+      [nil,     '[2]',    nil]
+      ),
+      "button"
+    )  
   else
     raise NotImplementedError
   end
@@ -115,7 +132,7 @@ end
 # tab - tab on the document page
 #
 # Returns: nothing
-When /^I click the "([^"]*)" button on the "([^"]*)" tab$/ do |item, tab|
+When /^I (?:click|click the) "([^"]*)" button on the "([^"]*)" tab$/ do |item, tab|
   kaiki.pause
   item = item.downcase
   if item == 'add'
@@ -127,21 +144,5 @@ When /^I click the "([^"]*)" button on the "([^"]*)" tab$/ do |item, tab|
       kaiki.click_by_xpath("//input[@name = 'methodToCall.addSpecialReview."\
                            "anchorSpecialReview']", "button")
     end
-  elsif item == 'recalculate'
-    kaiki.click_by_xpath("//input[@name = 'methodToCall."                   \
-                "recalculateBudgetPeriod.anchorBudgetPeriodsTotals']", "button")
   end
-end
-
-# Public: Clicks the appropriate button or link, given by name, id or title,
-#         which appears under a certain field
-#
-# name - name, id or title of button or link
-# field - field in which the button should be
-#
-# Return: nothing
-When /^I click "([^"]*)" on "([^"]*)"$/ do |name, field|
-  kaiki.pause
-  kaiki.should have_content field
-  kaiki.click "open budget"
 end

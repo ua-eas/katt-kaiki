@@ -4,48 +4,25 @@
 # Original Date: August 20, 2011
 
 
-# Public: The following Webdriver code tells kaikifs to check for the specified 
-#         message at the top of the page.
+# Public: Verifies the given text is present on the page
 #
-# Parameters:
-#   text - the user's specified text.
+# label - optional matcher for given text
+# text - text to be verified
+# extra - placeholder variable for second regex
+# stuff - placeholder varaible for last regex
 #
-# Returns nothing.
-Then /^I should see the message "([^"]*)"$/ do |text|
+# * the label variable is necessary for cases where the feature writer
+# * may write a statement such as:
+# * Then I should see "Status" set to "In Progress" in the document header
+#
+# Returns: nothing
+Then /^I should (?:see|see the message) "([^"]*)"(?:([^"]*)| set to "([^"]*)"([^"]*))$/\
+  do |label, extra, text, stuff|
   kaiki.pause
   kaiki.switch_default_content
   kaiki.select_frame "iframeportlet"
-  kaiki.wait_for(:xpath, "//div[@class='msg-excol']")
-  kaiki.should have_content text
-end
 
-# Public: Verifies given text is present in the document header
-#
-# where  -  loction of the text to be verified
-# text  -  text to be verified
-#
-# Returns: nothing 
-Then /^I should see "([^"]*)" set to "([^"]*)" in the document header$/\
-  do |where, text|
-  kaiki.pause
-  kaiki.switch_default_content
-  kaiki.select_frame "iframeportlet"
-  kaiki.wait_for(:xpath, "//div[@class='headerbox']")
-  kaiki.should have_content text
-end
-
-# Public: Verifies given text is present under the sponsor code
-#
-# Parameters:
-#   text  -  text to be verified
-#
-# Returns: nothing  
-Then /^I should see "([^"]*)" under the sponsor code$/ do |text|
-  kaiki.pause
-  kaiki.switch_default_content
-  kaiki.select_frame "iframeportlet"
-  kaiki.wait_for(:xpath, "//*[@id='sponsorName.div']")
-  kaiki.should have_content text
+  kaiki.should have_content text || label
 end
 
 # Public: Verifies the given values from the table are present on the web page
@@ -56,8 +33,8 @@ end
 # table - table of data being read in from the feature file 
 # 
 # Returns: nothing
-Then /^I should see line "([^"]*)" of the "([^"]*)" table filled out with:$/ \
-                                            do |line_number, table_name, table|
+Then /^I should see line "([^"]*)" of the "([^"]*)" table filled out with:$/   \
+  do |line_number, table_name, table|
   kaiki.pause
   kaiki.switch_default_content
   kaiki.select_frame "iframeportlet"
@@ -97,25 +74,6 @@ Then /^I should see Budget Totals calculated as:$/ do |table|
   end
 end
 
-#Public: Varifies that there are no errors present on the Validation Errors, 
-#        Warnings and Grants.Gov Errors sections
-#	       * will error out if there are validation errors
-#
-#Parameters:
-#	text: value being displayed in a section
-#
-#Example:
-#	No Validation Errors present
-#
-#Returns Nothing
-Then /^I should see "(.*?)"$/ do |text|
-  kaiki.pause
-  kaiki.switch_default_content
-  kaiki.select_frame "iframeportlet"
-
-  kaiki.should have_content text
-end
-
 #Puplic: Waits for the page to finish loading
 #
 #Parameters:
@@ -135,7 +93,8 @@ end
 #	text2- second value being checked for ie, "has been generated"
 #
 #Returns Nothing
-Then /^I should see a message starting with "(.*?)" and ending with "(.*?)"$/ do |text1,text2|
+Then /^I should see a message starting with "([^"]*)" and ending with "([^"]*)"$/\
+  do |text1, text2|
   kaiki.pause
   kaiki.switch_default_content
   kaiki.select_frame "iframeportlet"
