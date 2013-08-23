@@ -749,4 +749,39 @@ class Kaiki::CapybaraDriver::Base
                # "NS_ERROR_ILLEGAL_VALUE"
     find(method, locator)
   end
+  
+  # Public: Takes in an array of xpaths (such as that provided by the 
+#         ApproximationFactory class and returns the first element found that 
+#         matches in the given array.
+#
+# Parameters:
+#   selectors - the array of xpaths to be searched
+#
+# Returns: the first element that matches the selectors array.
+#
+  def find_approximate_element(selectors)
+    timeout = 2
+    #print "#{selectors}\n"
+    selectors.each do |selector|
+      begin
+        #print "Selector: #{selector}\n"
+        element = find(:xpath, selector)
+        return element
+      rescue Selenium::WebDriver::Error::NoSuchElementError, Selenium::WebDriver::Error::TimeOutError
+        #print "Selector #{selector} Not Found, trying next selector\n"
+        sleep timeout
+        timeout = 0.2
+        # Try the next selector
+      end
+    end
+
+    @log.error "Failed to find approximate element. Selectors are:"
+    selectors.each do |s|
+      begin 
+      @log.error "  #{s}"
+      end 
+    end
+    raise Selenium::WebDriver::Error::NoSuchElementError
+  end
+  
 end

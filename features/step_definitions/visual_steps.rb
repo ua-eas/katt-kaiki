@@ -11,12 +11,14 @@
 #   value - Which tab is being toggled
 #
 # Returns: nothing
-When /^I click "([^"]*)" on the "([^"]*)" tab$/ do |option, name|
+When /^I click "([^"]*)" on the "([^"]*)" (?:tab|section)$/ do |option, name|
   kaiki.pause
   if option == "Show"
-    kaiki.show_tab name 
+    kaiki.show_tab(name)
+  elsif option == "Hide"
+    kaiki.hide_tab(name)
   else
-    kaiki.hide_tab name
+    raise NotImplementedError
   end
 end
 

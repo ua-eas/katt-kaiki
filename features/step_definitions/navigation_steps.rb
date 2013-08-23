@@ -146,3 +146,22 @@ When /^I (?:click|click the) "([^"]*)" button on the "([^"]*)" tab$/ do |item, t
     end
   end
 end
+
+# Public: Returns the chosen result from a search query
+#
+# Parameters:
+#   column - the column to look in
+#   value  - result to be returned
+#
+# Returns: nothing
+#
+ When /^I return the record with "(.*?)" of "(.*?)"$/ do |column, value|
+  kaiki.pause
+  kaiki.switch_default_content
+  kaiki.select_frame("iframeportlet")
+
+  link = kaiki.find(:xpath, "//thead/tr/th/a[contains(text(),'#{column}')]/." \
+    "./../../following-sibling::tbody/tr/td/a[contains(text(),'#{value}')]/." \
+    "./../td/a[contains(text(),'return value')]")
+  link.click
+end
