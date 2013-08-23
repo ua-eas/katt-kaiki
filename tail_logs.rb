@@ -14,7 +14,7 @@ require 'highline/import'
 # Example:
 #     <present directory>\features\logs
 #
-# Returns nothing
+# Returns nothing.
 def log_files
   files = []
   Find.find(File.join(Dir.pwd, 'features', 'logs')) do |p|
@@ -26,7 +26,7 @@ end
 
 # Public: Sorts the log files by date/time.
 #
-# Returns nothing
+# Returns nothing.
 def last_log
   log_files.sort_by { |f| File.mtime(f) }.max
 end
@@ -34,7 +34,7 @@ end
 # Public: Opens the log file, reads the line and assigns a color to the 
 #         line based on the information in the line.
 #
-# Returns nothing
+# Returns nothing.
 def tail_last
   log_name = last_log
   File.open log_name do |f|
@@ -56,9 +56,9 @@ end
 #         *Error = Red and bold
 #
 # Parameters:
-#   s - line from the file
+#   s - Line from the file.
 #
-# Returns nothing
+# Returns nothing.
 def color_print(s)
   if s =~ /^(\s*[A-Z]+)\s+(.+)$/
     colors = {
