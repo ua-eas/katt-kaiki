@@ -16,10 +16,9 @@
 # Example:
 #	  Given I backdoored as "Sandovar"
 #
-# Returns Nothing
-#
-Given /^I (?:am backdoored|backdoor) as "([^"]*)"$/ do |user|
+# Returns nothing.
+Given(/^I (?:am backdoored|backdoor) as "([^"]*)"$/) do |user|
   kaiki.pause
   kaiki.switch_default_content
-  kaiki.backdoor_as user
+  kaiki.backdoor_as(user)
 end

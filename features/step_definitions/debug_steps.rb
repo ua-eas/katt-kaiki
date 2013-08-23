@@ -7,9 +7,8 @@
 # Parameters:
 #   ruby - programming language specs
 #
-# Returns nothing
-#
-Then /^I print "([^"]*)"$/ do |ruby|
+# Returns nothing.
+Then(/^I print "([^"]*)"$/) do |ruby|
   result = eval(ruby)
   pp result
   kaiki.log.debug result.inspect
@@ -20,9 +19,8 @@ end
 # Parameters:
 #   ruby - programming language specs
 #
-# Returns nothing
-#
-Then /^I print (?:all|each) "([^"]*)"$/ do |ruby|
+# Returns nothing.
+Then(/^I print (?:all|each) "([^"]*)"$/) do |ruby|
   result = eval(ruby)
   result.each do |e|
     pp e
