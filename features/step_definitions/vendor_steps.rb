@@ -46,11 +46,12 @@ TabsFields = {
 #   table - the tabular data to be used.
 #
 # Returns nothing.
-When /^I fill out a new (?:Vendor Address|vendorAddress) with the following:$/ do |table|
+When(/^I fill out a new (?:Vendor Address|vendorAddress) with the following:$/) \
+  do |table|
   fields = table.rows_hash
   prefix = "document.newMaintainableObject.add.vendorAddresses."
   fields.each do |key, value|
-    kaikifs.set_field(prefix+key, value)
+    kaiki.set_field(prefix+key, value)
   end
 end
 
@@ -61,7 +62,7 @@ end
 #   tab - the tab specified to fill with default data.
 #
 # Returns nothing.
-When /^I fill out a new Vendor (.*) with default values$/ do |tab|
+When(/^I fill out a new Vendor (.*) with default values$/) do |tab|
   # largely borrowed from When /^I set a new ([^']*)'s "([^"]*)" to "([^"]*)"$/ in form_steps.rb
   fields = TabsFields[tab]
   tab = case tab
@@ -87,14 +88,15 @@ end
 #   table - the tabular data to be used.
 #
 # Returns nothing.
-When /^I fill out a new Vendor (.*) with default values, and the following:$/ do |tab, table|
+When(/^I fill out a new Vendor (.*) with default values, and the following:$/) \
+  do |tab, table|
   # largely borrowed from When /^I set a new ([^']*)'s "([^"]*)" to "([^"]*)"$/ in form_steps.rb
   div = tab_id_for(tab)
 
   fields = TabsFields[tab].merge table.rows_hash
   put_table_title(fields, tab)
   fields.each do |field, value|
-    kaikifs.set_approximate_field(
+    kaiki.set_approximate_field(
       approximations_for_field_inside_div(field, div),
       value
     )
@@ -112,17 +114,16 @@ end
 # Returns nothing.
 def approximations_for_field_inside_div(field, div)
   ApproximationsFactory.transpose_build(
-    "//div[@id='#{div}']//%s[contains(text()%s, '#{field}')]/../following-sibling::td/%s",
-    ['th/label',    '',       'select[1]'],
-    ['th/div',      '[1]',    'input[1]'],
-    [nil,           '[2]',    'textarea[1]']
-  ) +
+    "//div[@id='#{div}']//%s[contains(text(), '#{field}')]" \
+    "/../following-sibling::td/%s",
+    ['th/label',    'select[1]'],
+    ['th/div',      'input[1]'],
+    [nil,           'textarea[1]']) +
   ApproximationsFactory.transpose_build(
-    "//div[@id='#{div}']//th[contains(text()%s, '#{field}')]/../following-sibling::tr/td/div/%s[contains(@title, '#{field}')]",
-    ['',       'select'],
-    ['[1]',    'input'],
-    ['[2]',    nil]
-  )
+    "//div[@id='#{div}']//th[contains(text(), '#{field}')]" \
+    "/../following-sibling::tr/td/div/%s[contains(@title, '#{field}')]",
+    ['select'],
+    ['input'])
 end
 
 # Public: The following Ruby code sets the max key size and value size used for 
