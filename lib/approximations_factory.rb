@@ -6,11 +6,13 @@
 # Original Date: August 20th 2011
 
 class ApproximationsFactory
-  # Build a list of "approximations" (an Array of Strings) based on the two 
-  # arguments, the `base`, and the `combinations`. Building the approximations
-  # uses `base` as a format string. Really it keys in on the presence of `%s`
-  # in `base`. It will format the base repeatedly using the different
-  # combinations. Let's just look at some examples:
+  # Public: Build a list of "approximations" (an Array of Strings) based on the
+  # two arguments, the `base`, and the `combinations`. Building the 
+  # approximations uses `base` as a format string. Really it keys in on the 
+  # presence of `%s` in `base`. It will format the base repeatedly using the
+  # different combinations. 
+  #
+  # Examples:
   #
   # So a single String in `combinations`, or a single 1-element Array in
   # `combinations` will result in one approximation:

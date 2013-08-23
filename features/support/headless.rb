@@ -1,13 +1,14 @@
 #
-# Description: This file sets up the browser to be headless and does iteration by build
-#
+# Description: This file sets up the browser to be headless
+#              and does iteration by build.
 # Original Date: August 20, 2011
 #
 
-# Public: Iteration will come from the Jenkins Build Number
+# Public: If the test is being run by Jenkins, this file will set up the
+#         headless environment for said test.
 #
 # Parameters:
-#	  display - sets what and how to displayed
+#	  display - which desktop environment to create the display on.
 #
 # Returns nothing
 if ! ENV['BUILD_NUMBER'].nil?

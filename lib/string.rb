@@ -1,4 +1,4 @@
-# Description: This class is used by the kaikifs operation as some patching
+# Description: This class is used by the kaiki operation as some patching
 #              to strings to make them safe to use as file names.
 #              Do the following in order to make this String safe to
 #              use as a filename:

@@ -1,15 +1,13 @@
 #
-# Description: A Module that defines english numbers
-#
+# Description: A Module that defines english numbers.
 # Original Date: August 20, 2011
 #
 
 module EnglishNumbers
 
-# Public:Converts the Following Cardinal Numbers to Numerals
-# 
-# Example:
-#	  ten => 10
+# Public: Converts the Following Cardinal Numbers to Numerals.
+#
+# Returns nothing
   CARDINAL_TO_NUMERAL = {
     'zero'  => 0,  'one'   =>  1,  'two'     =>  2,
     'three' => 3,  'four'  =>  4,  'five'    =>  5,
@@ -17,11 +15,9 @@ module EnglishNumbers
     'nine'  => 9,  'ten'   => 10,  'eleven'  => 11
   }
 
-
-# Public:Converts the Following Ordinal Numbers to Numerals
-# 
-# Example:
-#	  tenth => 10
+# Public: Converts the Following Ordinal Numbers to Numerals.
+#
+# Returns nothing
   ORDINAL_TO_NUMERAL = {
     'zeroth' => 0,  'first'   =>  1,  'second'   =>  2,
     'third'  => 3,  'fourth'  =>  4,  'fifth'    =>  5,

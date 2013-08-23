@@ -1,4 +1,4 @@
-# Description: Self-explanatory
+# Description: This file contains exception classes that idicate on failures
 #
 # Original Date: August 20th 2011
 
