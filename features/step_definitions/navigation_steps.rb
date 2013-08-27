@@ -48,7 +48,9 @@ end
 # Returns nothing.
 When(/^I (?:click|click the) "([^"]*)" portal link$/) do |link|
   kaiki.pause
-  kaiki.click(link)
+  element = kaiki.find(:xpath, "//td[contains(text(), '#{link}')]/"       \
+                               "following-sibling::td/a[1]")
+  element.click
 end
 
 # Public: Takes the name of the button and clicks on the button with that name
