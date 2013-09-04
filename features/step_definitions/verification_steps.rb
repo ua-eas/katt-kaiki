@@ -30,15 +30,14 @@ Then(/^I should (?:see|see the message) "([^"]*)"(?:([^"]*)| (?:as|(?:set|next) 
     rescue RSpec::Expectations::ExpectationNotMetError
     
     approximate_xpath = ApproximationsFactory.transpose_build(
-          "//%s[contains(.,'#{label}')]"    \
-       "%s/following-sibling::%s",
-       ['th', nil, 'td/input'],
-       ['div', '/../..', "tr/td/div/input[contains(@title, '#{label}')]"])
+      "//%s[contains(%s, '#{label}')]%s/following-sibling::%s", 
+      ['th',  'text()', '',       'td/input'],
+      ['div', '.',      '/../..', "tr/td/div/input[contains(@title, '#{label}')]"])
     
     element = kaiki.find_approximate_element(approximate_xpath)
     
     field_text = element[:value]  
-   
+    
     if field_text != text
         raise Capybara::ExpectationNotMet
     end
