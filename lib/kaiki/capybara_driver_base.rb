@@ -31,25 +31,25 @@ class Kaiki::CapybaraDriver::Base
 
   # The basename of the json file that contains all environment information.
   ENVS_FILE = "envs.json"
-  
+
   # The default timeout for Waits.
   DEFAULT_TIMEOUT = 8
-  
+
   # The default dimensions for the headless display.
   DEFAULT_DIMENSIONS = "1024x768x24"
 
   # The file that contains shared passwords for test users.
   SHARED_PASSWORDS_FILE = "shared_passwords.yaml"
 
-  # Public: Gets/Sets the driver used to power the browser. Gets/Sets whether 
+  # Public: Gets/Sets the driver used to power the browser. Gets/Sets whether
   #         the browser is headless. Gets/Sets the overridden puts method.
   attr_accessor :driver, :is_headless, :puts_method
 
   # Public: Initilize a CapybaraDriver instance, reads in necessary variables
   # from the envs file. Sets variables for each instance of CapybaraDriver, the
-  # use of nil means make a new one. Record is a hash containing notes that the 
-  # "user" needs to keep, like the document number just created. Writes to an 
-  # external log file with information about certain steps through the feature 
+  # use of nil means make a new one. Record is a hash containing notes that the
+  # "user" needs to keep, like the document number just created. Writes to an
+  # external log file with information about certain steps through the feature
   # files.
   #
   # Parameters:
@@ -81,7 +81,7 @@ class Kaiki::CapybaraDriver::Base
 
     @pause_time           = options[:pause_time] || 0.5
     @is_headless          = options[:is_headless]
-    @firefox_profile_name = options[:firefox_profile] 
+    @firefox_profile_name = options[:firefox_profile]
     @firefox_path         = options[:firefox_path]
 
     @record = {}
@@ -106,7 +106,7 @@ class Kaiki::CapybaraDriver::Base
   def switch_default_content
     driver.switch_to.default_content
   end
-  
+
   # Public: Changes focus to the given frame by frameid
   #
   # Returns nothing.
@@ -138,7 +138,7 @@ class Kaiki::CapybaraDriver::Base
     click_button 'login'
   end
 
-  # Public: Logs in to the Kuali system using the backdoor method 
+  # Public: Logs in to the Kuali system using the backdoor method
   #         for the given user. Or log out and log back in as user.
   #
   # Parameters:
@@ -180,7 +180,7 @@ class Kaiki::CapybaraDriver::Base
   end
 
   # Public: Login via Webauth with a specific username, and optional password.
-  #         If no password is given, it will be retrieved from the 
+  #         If no password is given, it will be retrieved from the
   #         shared_passwords.yml file. Also checks if we logged in correctly.
   #
   # Parameters:
@@ -277,7 +277,7 @@ class Kaiki::CapybaraDriver::Base
       @driver.manage.window.position= Selenium::WebDriver::Point.new(40,30)
       max_width, max_height = @driver.execute_script("return              \
                         [window.screen.availWidth, window.screen.availHeight];")
-      @driver.manage.window.resize_to(max_width-90, max_height-100)
+      @driver.manage.window.resize_to(max_width-900, max_height-100)
     end
     @driver.execute_script %[
       if (window.screen) {
@@ -314,8 +314,8 @@ class Kaiki::CapybaraDriver::Base
     puts "Screenshot saved to " + File.join(@screenshot_dir, "#{name}.png")
   end
 
-  # Public: Start a browser session by choosing a Firefox profile, 
-  #         setting the Capybara driver and settings, and visiting the 
+  # Public: Start a browser session by choosing a Firefox profile,
+  #         setting the Capybara driver and settings, and visiting the
   #         #base_path.
   #
   # Returns nothing.
@@ -347,7 +347,7 @@ class Kaiki::CapybaraDriver::Base
     Capybara.run_server = false
     Capybara.app_host = host
     Capybara.default_wait_time = DEFAULT_TIMEOUT
-    
+
     Capybara.register_driver :selenium do |app|
       Capybara::Selenium::Driver.new(app, :profile => @profile)
     end
@@ -377,7 +377,7 @@ class Kaiki::CapybaraDriver::Base
     nil
   end
 
-  # Public: Show a visual vertical tab inside a document's layout. 
+  # Public: Show a visual vertical tab inside a document's layout.
   #         Accepts the "name" of the tab. Find the name of the tab
   #         by looking up the `title` of the `input` that is the open
   #         button. The title is everything after the word "open."
@@ -387,9 +387,9 @@ class Kaiki::CapybaraDriver::Base
   #
   # Returns nothing.
   def show_tab(name)
-    find(:xpath, "//input[@title='open #{name}']").click
+    find(:xpath, "//input[contains(@title, 'open #{name}')]").click
     pause
-  end 
+  end
 
   # Public: Hide a visual vertical tab inside a document's layout.
   #         Accepts the "name" of the tab. Find the name of the tab
@@ -419,7 +419,7 @@ class Kaiki::CapybaraDriver::Base
 
   # Public: Check the field that is expressed with `selectors`
   #         (the first one that is found). `selectors` is typically
-  #         an Array returned by `ApproximationsFactory`, but it 
+  #         an Array returned by `ApproximationsFactory`, but it
   #         could be hand-generated.
   #
   # Parameters:
@@ -486,7 +486,7 @@ class Kaiki::CapybaraDriver::Base
   # Returns nothing.
   def uncheck_by_xpath(xpath)
     find(:xpath, xpath).set(false)
-  end 
+  end
 
   # Public: Utilizes the Approximation Factory to find the selector type of the
   #         adjacent field to the item you wish to validate.
@@ -525,7 +525,7 @@ class Kaiki::CapybaraDriver::Base
     click_on text
     @log.debug "    clicking #{text}"
   end
-  
+
   # Public: Click a link or button, selecting by xpath.
   #
   # Parameters:
@@ -540,7 +540,7 @@ class Kaiki::CapybaraDriver::Base
       find(:xpath, xpath).set(true)
     end
   end
-    
+
   # Public: Same as get_field, but if there are multiple fields
   #         using the same name.
   #
@@ -553,7 +553,8 @@ class Kaiki::CapybaraDriver::Base
       begin
         return get_field(selector, {:timeout => timeout})
       rescue Selenium::WebDriver::Error::NoSuchElementError,              \
-             Selenium::WebDriver::Error::TimeOutError
+             Selenium::WebDriver::Error::TimeOutError,                    \
+             Capybara::ElementNotFound
         timeout = 0.2
       end
     end
@@ -561,8 +562,8 @@ class Kaiki::CapybaraDriver::Base
     puts "Failed to get approximate field."                               \
          "Selectors are:\n#{selectors.join("\n") }"
     raise Selenium::WebDriver::Error::NoSuchElementError
-  end  
-  
+  end
+
   # Public: Finds the field you are looking for.
   #
   # Parameters:
@@ -571,18 +572,19 @@ class Kaiki::CapybaraDriver::Base
   #
   # Returns the text in the given field.
   def get_field(selector, options={})
-    timeout = options[:timeout] || DEFAULT_TIMEOUT
-    @log.debug "    get_field: Waiting up to #{timeout}                   \
-                               seconds to find_element(:xpath, #{selector})..."
-    wait = Selenium::WebDriver::Wait.new(:timeout => timeout)
-    wait.until { driver.find_element(:xpath, selector) }
-    element = @driver.find_element(:xpath, selector)
-    @driver.execute_script("return document.evaluate(\"#{selector}\",     \
-                            document, null,                               \
-                            XPathResult.FIRST_ORDERED_NODE_TYPE,          \
-                            null).singleNodeValue.value;", nil)
+    wait_for(:xpath, selector)
+    element = find(:xpath, selector)
+    begin
+      if element[:type] == "text"
+        return element[:value]
+      elsif element[:type] == "select-one"
+        return element.find(:xpath, "option[selected = 'selected']").text
+      else
+        return element.text.strip
+      end
+    end
   end
-  
+
   # Public: Utilizes the Approximation Factory to find the selector type of the
   #         adjacent field to the item you wish to fill in. It then calls
   #         set_field with the selector type and value to be filled in.
@@ -609,7 +611,7 @@ class Kaiki::CapybaraDriver::Base
     selectors.each { |s| @log.error "  #{s}" }
     raise Selenium::WebDriver::Error::NoSuchElementError
   end
-  
+
   # Public: Takes in the id of a selector, i.e. input, text area, select, etc.,
   #         and inputs the value to this field.
   #
@@ -648,7 +650,7 @@ class Kaiki::CapybaraDriver::Base
     when 'textarea'
       @log.debug "    set_field: node_name is #{node_name.inspect}"
       @log.debug "    set_field: locator is #{locator.inspect}"
-      if not locator['"']  
+      if not locator['"']
         unless get_field(locator).empty?
           @driver.execute_script("return document.evaluate(\"#{locator}\",\
                                   document, null,                         \
@@ -692,9 +694,9 @@ class Kaiki::CapybaraDriver::Base
       @driver.find_element(:xpath, locator).click
     else
       @driver.find_element(:xpath, locator).send_keys(value)
-    end    
+    end
   end
-  
+
   # Public: Create and execute a `Selenium::WebDriver::Wait` for finding
   #         an element by `method` and `selector`.
   #
@@ -705,13 +707,13 @@ class Kaiki::CapybaraDriver::Base
   # Returns nothing.
   def wait_for(method, locator)
     @log.debug "    wait_for: Waiting up to #{DEFAULT_TIMEOUT} "          \
-                   "seconds to find_element(#{method}, #{locator})..."
-    sleep 0.1  
+                   "seconds to find(#{method}, #{locator})..."
+    sleep 0.1
     find(method, locator)
   end
-  
-  # Public: Takes in an array of xpaths (such as that provided by the 
-  #           ApproximationFactory class and returns the first element found that 
+
+  # Public: Takes in an array of xpaths (such as that provided by the
+  #           ApproximationFactory class and returns the first element found that
   #           matches in the given array.
   #
   # Parameters:
@@ -726,7 +728,9 @@ class Kaiki::CapybaraDriver::Base
       begin
         element = find(:xpath, selector)
         return element
-      rescue Selenium::WebDriver::Error::NoSuchElementError, Selenium::WebDriver::Error::TimeOutError
+      rescue Selenium::WebDriver::Error::NoSuchElementError,
+             Selenium::WebDriver::Error::TimeOutError,
+             Capybara::ElementNotFound
         sleep timeout
         timeout = 0.2
       end
@@ -734,11 +738,11 @@ class Kaiki::CapybaraDriver::Base
 
     @log.error "Failed to find approximate element. Selectors are:"
     selectors.each do |s|
-      begin 
+      begin
       @log.error "  #{s}"
-      end 
+      end
     end
     raise Selenium::WebDriver::Error::NoSuchElementError
   end
-  
+
 end
