@@ -4,7 +4,8 @@
 # Original Date: August 20, 2011
 
 
-# Public: Verifies the given text is present on the page
+# Public: Verifies the given text is present on the page and verifies
+#         the value in the text field is correct.
 #
 # Parameters:
 #   label - optional matcher for given text
@@ -17,12 +18,41 @@
 #   * Then I should see "Status" set to "In Progress" in the document header
 #
 # Returns nothing.
-Then(/^I should (?:see|see the message) "([^"]*)"(?:([^"]*)| set to "([^"]*)"([^"]*))$/) \
+Then(/^I should (?:see|see the message) "([^"]*)"(?:([^"]*)| (?:as|(?:set|next) to) "([^"]*)"([^"]*))$/) \
   do |label, extra, text, stuff|
   kaiki.pause
   kaiki.switch_default_content
   kaiki.select_frame("iframeportlet")
-  kaiki.should(have_content(text || label))
+
+  begin
+    kaiki.should(have_content(text || label))
+    
+    rescue RSpec::Expectations::ExpectationNotMetError
+    
+    approximate_xpath = ApproximationsFactory.transpose_build(
+      "//%s[contains(%s, '#{label}')]%s/following-sibling::%s", 
+      ['th',  'text()', '',       'td/input'],
+      ['div', '.',      '/../..', "tr/td/div/input[contains(@title, '#{label}')]"])
+    
+    element = kaiki.find_approximate_element(approximate_xpath)
+    
+    field_text = element[:value]  
+    
+    if field_text != text
+        raise Capybara::ExpectationNotMet
+    end
+        
+      rescue  Selenium::WebDriver::Error::NoSuchElementError,              \
+              Selenium::WebDriver::Error::TimeOutError,                    \
+              Capybara::ElementNotFound
+                     
+        field_text = kaiki.find(:xpath, "//div[contains(.,'#{label}')]    "\
+          "/../../following-sibling::tr/td/div/select[contains(@title, '#{label}')]").find('option[selected]').text
+       
+        if field_text != text
+          raise Capybara::ExpectationNotMet
+        end
+  end
 end
 
 # Public: Verifies the given values from the table are present on the web page
