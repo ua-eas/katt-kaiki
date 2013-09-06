@@ -19,8 +19,36 @@ require 'cucumber/rake/task'
 # This sets environment variables.
 
 def set_env_defaults
-  ENV['KAIKI_NETID'] = "kfs-test-sec1" if ENV['KAIKI_NETID'].nil?
-  ENV['KAIKI_ENV']   = "dev"           if ENV['KAIKI_ENV'].nil?
+  ENV['KAIKI_IS_HEADLESS'] = "false" if ENV['KAIKI_IS_HEADLESS'].nil?
+  ENV['KAIKI_NETID'] = "" if ENV['KAIKI_NETID'].nil?
+  ENV['KAIKI_ENV']   = "cdf"           if ENV['KAIKI_ENV'].nil?
+end
+
+
+#Public: A rake task to run all features in order
+#
+# rake command: ordered_features 
+#
+# This will run feature files in order via a tag id
+# Each feature file that you want to run in order simply add a tag to line 1 of the feature file 
+# example: @test1
+# NOTE:each tag has to start with the id "test"
+# 
+# you can edit this line of code based on the number of features you want to run in order:
+# until i > 10
+# example: 
+# until i > 100
+#	
+task :ordered_features do |t|
+   i = 1
+   until i > 4
+   tags = "--tags @test#{i}"
+        puts tags
+          Cucumber::Rake::Task.new(:ordered_features, "Run scenario") do |t|
+	        t.cucumber_opts = tags
+	    end
+	    i += 1
+	 end
 end
 
 
