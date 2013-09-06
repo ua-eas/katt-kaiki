@@ -63,7 +63,7 @@ When(/^I set the "([^"]*)" to that one$/) do |field|
       ['label', 'input[1]'    ],
       [nil,     'select[1]'   ])
   factory2 = ["//th[contains(text(), '#{field}')]"]
-  factory3 = ["//th[contains(text(), '#{field}')]"                            \
+  factory3 = ["//th[contains(text(), '#{field}')]"                             \
                 "/../following-sibling::*//*[contains(@title, '#{field}')]"]
   approximate_xpath = factory1 + factory2 + factory3
   kaiki.set_approximate_field(approximate_xpath, value)
