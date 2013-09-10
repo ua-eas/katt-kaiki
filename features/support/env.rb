@@ -46,7 +46,7 @@ class KaikiWorld
   env      ||= [] << ask("Environment/URL:  ") { |q| q.echo = true;           \
                                                      q.default='cdf' }
 
-  is_headless = false
+  is_headless = true
   if ENV['KAIKI_IS_HEADLESS']
     is_headless = ENV['KAIKI_IS_HEADLESS'] =~ /1|true|yes/i
   end
