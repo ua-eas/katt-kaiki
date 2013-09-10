@@ -46,7 +46,7 @@ class KaikiWorld
   env      ||= [] << ask("Environment/URL:  ") { |q| q.echo = true;           \
                                                      q.default='cdf' }
 
-  is_headless = true
+  is_headless = false
   if ENV['KAIKI_IS_HEADLESS']
     is_headless = ENV['KAIKI_IS_HEADLESS'] =~ /1|true|yes/i
   end
@@ -108,10 +108,10 @@ end
 # Public: Creates a video of the headless browser, before each scenario.
 #
 # Returns nothing
-# Before do
-  # kaiki.headless.video.start_capture if kaiki.is_headless
-  # kaiki.puts_method = method(:puts)
-# end
+Before do
+  kaiki.headless.video.start_capture if kaiki.is_headless
+  kaiki.puts_method = method(:puts)
+end
 
 # Public: Stops video recording after each scenario.
 #
@@ -119,14 +119,14 @@ end
 #   scenario - current running test.
 #
 # Returns nothing
-# After do |scenario|
+After do |scenario|
 #  if scenario.failed?
-    # kaiki.headless.video.stop_and_save(video_path(scenario))                  \
-      # if kaiki.is_headless
+    kaiki.headless.video.stop_and_save(video_path(scenario))                  \
+      if kaiki.is_headless
 #  else
 #    headless.video.stop_and_discard
 #  end
-# end
+end
 # end
 
 # Public: Defines where the video is being saved.
