@@ -11,7 +11,7 @@
 Then(/^I print "([^"]*)"$/) do |ruby|
   result = eval(ruby)
   pp result
-  kaiki.log.debug result.inspect
+  kaiki.log.debug(result.inspect)
 end
 
 # Public: Prints the kaiki log result
@@ -25,5 +25,5 @@ Then(/^I print (?:all|each) "([^"]*)"$/) do |ruby|
   result.each do |e|
     pp e
   end
-  kaiki.log.debug result.inspect
+  kaiki.log.debug(result.inspect)
 end
