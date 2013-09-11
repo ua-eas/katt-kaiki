@@ -39,7 +39,7 @@ class Kaiki::CapybaraDriver::Base
   DEFAULT_DIMENSIONS = "1024x768x24"
 
   # The file that contains shared passwords for test users.
-  SHARED_PASSWORDS_FILE = "shared_passwords.yml"
+  SHARED_PASSWORDS_FILE = "shared_passwords.yaml"
 
   # Public: Gets/Sets the driver used to power the browser. Gets/Sets whether
   #         the browser is headless. Gets/Sets the overridden puts method.

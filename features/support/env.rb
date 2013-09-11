@@ -24,19 +24,19 @@ class KaikiWorld
   env        = ENV["KAIKI_ENV"]
   env.split(',') if env
 
-  SHARED_PASSWORDS_FILE = \
-    '/home/vagrant/code/katt-kaiki/features/support/shared_passwords.yml'
-#
-  if File.exist? SHARED_PASSWORDS_FILE
-   shared_passwords = YAML::load_file(File.join(File.dirname( \
-     File.expand_path(__FILE__)), 'shared_passwords.yml'))
-   # #print shared_passwords
-   if password.nil? and username and shared_passwords.keys.any? { |user|    \
-     username[user] }
-     user_group = shared_passwords.keys.select { |user| username[user] }[0]
-     password = shared_passwords[user_group]
-   end
-  end
+#   SHARED_PASSWORDS_FILE = \
+#     '/home/vagrant/code/katt-kaiki/features/support/shared_passwords.yml'
+# #
+#   if File.exist? SHARED_PASSWORDS_FILE
+#    shared_passwords = YAML::load_file(File.join(File.dirname( \
+#      File.expand_path(__FILE__)), 'shared_passwords.yml'))
+#    # #print shared_passwords
+#    if password.nil? and username and shared_passwords.keys.any? { |user|    \
+#      username[user] }
+#      user_group = shared_passwords.keys.select { |user| username[user] }[0]
+#      password = shared_passwords[user_group]
+#    end
+#   end
   if password.nil? && username
     password = Kaiki::CapybaraDriver::Base.shared_password_for username     \
       if password.nil? && username
