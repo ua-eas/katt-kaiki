@@ -368,11 +368,8 @@ class Kaiki::CapybaraDriver::Base
   #
   # Returns the shared password.
   def self.shared_password_for(username)
-    puts "searching for username:" + username
-    puts "about to check for exist of file: " + SHARED_PASSWORDS_FILE
-    return nil if not File.exist? SHARED_PASSWORDS_FILE
 
-    puts "Found it!"
+    return nil if not File.exist? SHARED_PASSWORDS_FILE
 
     shared_passwords = File.open(SHARED_PASSWORDS_FILE)                        \
                                 { |h| YAML::load_file(h) }
