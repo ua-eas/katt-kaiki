@@ -10,8 +10,8 @@
 # Parameters:
 #   label - optional matcher for given text
 #   text  - text to be verified
-#   extra - placeholder variable for second regex
-#   stuff - placeholder varaible for last regex
+#   extra - placeholder variable for second regex for extraneous text
+#   stuff - placeholder varaible for last regex for extraneous text
 #
 #   * the label variable is necessary for cases where the feature writer
 #   * may write a statement such as:
@@ -22,30 +22,87 @@ Then(/^I should (?:see|see the message) "([^"]*)"(?:([^"]*)| (?:as|(?:set|next) 
   do |label, extra, text, stuff|
   kaiki.pause
   kaiki.switch_default_content
-  kaiki.select_frame("iframeportlet")
+  begin
+    kaiki.select_frame("iframeportlet")
+  rescue Selenium::WebDriver::Error::NoSuchFrameError
+  end
+  success = verify_text(label, text)
+end
+
+# Public: Verifies the given text is present on the page and verifies
+#         the value in the text field is correct, using a fuzzy match.
+#
+# Parameters:
+#   label - optional matcher for given text
+#   text  - text to be verified
+#   extra - placeholder variable for last regex for extraneous text
+#
+#   * the label variable is necessary for cases where the feature writer
+#   * may write a statement such as:
+#   * Then I should see "Status" set to something like "Progress" in the document header
+#
+# Returns nothing.
+Then(/^I should see "([^"]*)" set to something like "([^"]*)"([^"]*)$/) \
+  do |label, text, extra|
+  kaiki.pause
+  kaiki.switch_default_content
+  begin
+    kaiki.select_frame("iframeportlet")
+  rescue Selenium::WebDriver::Error::NoSuchFrameError
+  end
+  success = verify_text(label, text, 'fuzzy')
+end
+
+# Public: recieves the parameters provided by step definitions to verify text 
+#         is on the page, using a fuzzy or exact match.
+#
+# Parameters:
+#   label - optional matcher for given text
+#   text  - text to be verified
+#   mode  - the valid modes are 'exact' (default) or 'fuzzy'
+#
+#   * the label variable is necessary for cases where the feature writer
+#   * may write a statement such as:
+#   * Then I should see "Status" set to "In Progress" in the document header
+#
+# Returns true if the text is on the page in the approprate spot, otherwise an 
+#   exception is raised.
+def verify_text(label, text, mode='exact')
   begin
     kaiki.should(have_content(text || label))
   rescue RSpec::Expectations::ExpectationNotMetError
-    approximate_xpath = ApproximationsFactory.transpose_build(
-      "//%s[contains(%s, '#{label}')]%s/following-sibling::%s", 
-      ['div', '.',      '/../..', "tr/td/div/input[contains(@title, '#{label}')]"],
-      ['th',  'text()', '',       'td/input'])
-    element = kaiki.find_approximate_element(approximate_xpath)
-    field_text = element[:value]  
-    if field_text != text
-        raise Capybara::ExpectationNotMet
-    end
-  rescue Selenium::WebDriver::Error::NoSuchElementError,            
-         Selenium::WebDriver::Error::TimeOutError,                 
-         Capybara::ElementNotFound
-    element = kaiki.find(
-      :xpath, 
-      "//div[contains(.,'#{label}')]/../../following-sibling::tr/td/div"       \
-        "/select[contains(@title, '#{label}')]")
+    begin
+      approximate_xpath = ApproximationsFactory.transpose_build(
+        "//%s[contains(%s, '#{label}')]%s/following-sibling::%s",
+        ['div', '.',      '/../..', "tr/td/div/input[contains(@title, '#{label}')]"],
+        ['th',  'text()', '',       'td/input'])
+      element = kaiki.find_approximate_element(approximate_xpath)
+      @field_text = element[:value]
+    rescue Selenium::WebDriver::Error::NoSuchElementError,
+           Selenium::WebDriver::Error::TimeOutError,
+           Capybara::ElementNotFound
+      approximate_xpath = ApproximationsFactory.transpose_build(
+        "//%s%s/following-sibling::%s",
+        ["div[text()[contains(., '#{label}')]]", "/../..", "tr/td/div"],
+        ["th[contains(text(), '#{label}']",      nil,      "td/select"])
+      element = kaiki.find_approximate_element(approximate_xpath)
       field_element = element.find('option[selected]')
-    field_text = field_element.text
-    if field_text != text
-      raise Capybara::ExpectationNotMet
+      @field_text = field_element.text
+    end
+    if mode == 'exact'
+      if @field_text == text
+        return true
+      else
+        raise Capybara::ExpectationNotMet
+      end
+    elsif mode == 'fuzzy'
+      if @field_text.include? text
+        return true
+      else
+        raise Capybara::ExpectationNotMet
+      end
+    else
+      raise Capybara::InvalidModeInVerifyText
     end
   end
 end
@@ -182,7 +239,7 @@ Then(/^I should see one or more items retrieved$/) do
   kaiki.pause
   kaiki.switch_default_content
   kaiki.select_frame("iframeportlet")
-  kaiki.should(have_content('return value'))
+  kaiki.should(have_content('retrieved'))
 end
 
 # Public: Verifies a row of data for the Combined Credit Split table contains

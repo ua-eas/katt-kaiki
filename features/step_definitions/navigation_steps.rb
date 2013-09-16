@@ -25,9 +25,6 @@ Given(/^I am on the "([^"]*)" tab$/) do |tab|
   kaiki.pause
   kaiki.switch_default_content
   kaiki.click(tab)
-#  element = kaiki.find(:text => tab)
-#  element.click 
-
 end
 
 # Public: Changes to the given child tab at the top of the document
@@ -39,10 +36,11 @@ end
 When(/^I am on the "([^"]*)" document tab$/) do |tab|
   kaiki.pause
   kaiki.switch_default_content
-  kaiki.select_frame("iframeportlet")
+  begin
+    kaiki.select_frame("iframeportlet")
+  rescue Selenium::WebDriver::Error::NoSuchFrameError
+  end
   kaiki.click(tab)
-#  element = kaiki.find(:text => tab)
-#  element.click 
 end
 
 # Public: Clicks the appropriate portal link on the page
@@ -97,7 +95,6 @@ When(/^I (?:click|click the) "([^"]*)" (?:button|(?:on|to) "([^"]*)")([^"]*)$/)\
     ]
   exact_match_buttons = 
     [
-      "Open Proposal",
       "Submit To Sponsor"
     ] 
   if downcase_title_buttons.include? item
@@ -122,8 +119,6 @@ When(/^I (?:click|click the) "([^"]*)" (?:button|(?:on|to) "([^"]*)")([^"]*)$/)\
       "//input[contains(@name, 'methodToCall.recalculate')]")              
   elsif item == 'turn on validation'
     element = kaiki.find(:name, 'methodToCall.activate')
-#  elsif item == 'submit to sponsor'
-#    element = kaiki.find(:name, 'methodToCall.submitToSponsor')
   elsif item == 'document search'
     element = kaiki.find(:xpath,'/html/body/div[5]/div/div/a[3]')
   elsif item == 'document link'
@@ -158,6 +153,11 @@ When(/^I (?:click|click the) "([^"]*)" (?:button|(?:on|to) "([^"]*)")([^"]*)$/)\
     element = kaiki.find(:name, 'methodToCall.timeAndMoney')
   elsif item == 'return to award'
     element = kaiki.find(:name, 'methodToCall.returnToAward')
+  elsif item == 'edit'
+    element = kaiki.find(:name, 'methodToCall.editOrVersion')
+  elsif item == 'open proposal'
+    xpath = "//img[@title = '#{button}']"
+    element = kaiki.find(:xpath, xpath)
   else
     raise NotImplementedError
   end
@@ -259,4 +259,36 @@ When(/^I "(.*?)" the first record$/) do |action|
   kaiki.select_frame("iframeportlet")
   element = kaiki.find(:xpath, "//a[contains(text(), '#{action}')]")
   element.click
+end
+
+# Public: Changes focus to the new browser window that is opened
+#
+# Returns nothing.
+Then(/^a new browser window appears$/) do
+	kaiki.pause
+	kaiki.last_window_focus
+end
+
+# Public: Takes the name of the button and clicks on the button with that name
+#
+# Parameters:
+#   link  - name of the item to be clicked
+#
+# Returns nothing.
+When(/^I click the "(.*?)" search link$/) do |link|
+  kaiki.pause
+  element = kaiki.find(:xpath, "//td[contains(text(), '#{link}')]"            \
+                               "/following-sibling::td/a[2]")
+  element.click
+end
+
+#Created for Testing
+#Public: Orders records in order of latest created
+#
+#Returns nothing.
+When (/^I click Award ID$/) do
+kaiki.pause
+kaiki.find(:xpath, "/html/body/form/table/tbody/tr/td[2]/table/thead/tr/th[2]/a").click
+kaiki.wait_for(:xpath, "/html/body/form/table/tbody/tr/td[2]/table/thead/tr/th[2]/a")
+kaiki.find(:xpath, "/html/body/form/table/tbody/tr/td[2]/table/thead/tr/th[2]/a").click
 end

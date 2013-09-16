@@ -19,9 +19,9 @@ require 'cucumber/rake/task'
 # This sets environment variables.
 
 def set_env_defaults
-  ENV['KAIKI_IS_HEADLESS'] = "true" if ENV['KAIKI_IS_HEADLESS'].nil?
-  ENV['KAIKI_NETID'] = ""           if ENV['KAIKI_NETID'].nil?
-  ENV['KAIKI_ENV']   = "cdf"        if ENV['KAIKI_ENV'].nil?
+  ENV['KAIKI_IS_HEADLESS'] = "false" if ENV['KAIKI_IS_HEADLESS'].nil?
+# ENV['KAIKI_NETID'] = "" if ENV['KAIKI_NETID'].nil?
+  ENV['KAIKI_ENV']   = "cdf"           if ENV['KAIKI_ENV'].nil?
 end
 
 
@@ -40,14 +40,14 @@ end
 # until i > 100
 #	
 task :ordered_features do |t|
-  i = 1
-  until i > 4
-  tags = "--tags @test#{i}"
-    Cucumber::Rake::Task.new(:ordered_features, "Run scenario") do |t|
-      t.cucumber_opts = tags
-    end
-    i += 1
-  end
+   i = 1
+   until i > 4
+   tags = "--tags @test#{i}"
+          Cucumber::Rake::Task.new(:ordered_features, "Run scenario") do |t|
+	        t.cucumber_opts = tags
+	    end
+	    i += 1
+	 end
 end
 
 
