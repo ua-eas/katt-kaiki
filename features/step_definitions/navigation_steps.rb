@@ -269,6 +269,23 @@ Then(/^a new browser window appears$/) do
 	kaiki.last_window_focus
 end
 
+# Public: The following Webdriver code tells kaikifs to set the pause time to 0.
+#
+# Returns nothing.
+When (/^I am fast$/) do
+  kaiki.log.debug "I am fast (pause_time = 0)"
+  kaiki.pause_time = 0.5
+end
+
+# Public: The following Webdriver code tells kaikifs to increase the pause time
+# by 2.
+#
+# Returns nothing.
+When (/^I slow down$/) do
+  kaiki.log.debug "I slow down (pause_time = #{kaiki.pause_time + 2})"
+  kaiki.pause_time += 2
+end
+
 # Public: Takes the name of the button and clicks on the button with that name
 #
 # Parameters:
