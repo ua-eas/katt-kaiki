@@ -6,7 +6,7 @@
 #
 # Original Date: August 20, 2011
 #
-
+require '/home/vagrant/code/katt-kaiki/features/support/ECE.rb'
 require 'rake/clean'
 require 'cucumber'
 require 'cucumber/rake/task'
@@ -19,9 +19,9 @@ require 'cucumber/rake/task'
 # This sets environment variables.
 
 def set_env_defaults
-  ENV['KAIKI_IS_HEADLESS'] = "false" if ENV['KAIKI_IS_HEADLESS'].nil?
-# ENV['KAIKI_NETID'] = "" if ENV['KAIKI_NETID'].nil?
-  ENV['KAIKI_ENV']   = "cdf"           if ENV['KAIKI_ENV'].nil?
+  ENV['KAIKI_IS_HEADLESS'] = "true" if ENV['KAIKI_IS_HEADLESS'].nil?
+  ENV['KAIKI_NETID'] = ""           if ENV['KAIKI_NETID'].nil?
+  ENV['KAIKI_ENV']   = "cdf"        if ENV['KAIKI_ENV'].nil?
 end
 
 
@@ -40,14 +40,65 @@ end
 # until i > 100
 #	
 task :ordered_features do |t|
-   i = 1
-   until i > 4
-   tags = "--tags @test#{i}"
-          Cucumber::Rake::Task.new(:ordered_features, "Run scenario") do |t|
-	        t.cucumber_opts = tags
-	    end
-	    i += 1
-	 end
+  i = 1
+  until i > 4
+  tags = "--tags @test#{i}"
+    Cucumber::Rake::Task.new(:ordered_features, "Run scenario") do |t|
+      t.cucumber_opts = tags
+    end
+    i += 1
+  end
+end
+
+#Public:Takes an Arry from a .rb file from a folder and runs test senerios in order
+#
+# Parameters: 
+#    rows: rows of the array
+#    kc: name of the tags for kuali coeus test senarios  that need to be run in order
+#
+#
+#Returns an array
+#
+task :ECE do
+  set_env_defaults
+  File.basename("/home/vagrant/code/katt-kaiki/features/support/ECE.rb") 
+  jirra.each do |rows|
+    rows.each do |kc|
+      tags = "--tags #{kc}"
+      puts tags
+      Cucumber::Rake::Task.new(:ECE, "Run all tests in required order.") do |t|
+        t.cucumber_opts = tags
+      end
+    end
+  end
+end
+
+#Public: General Tag for features that dont need to run in order
+#
+# Parameters
+#   @kctest- tag name for tests that dont need to be run in order
+#
+#Returns Nothing
+#
+Cucumber::Rake::Task.new(:dev) do |t|
+  set_env_defaults
+  t.cucumber_opts = "--tags @kctest"
+end
+
+#Public: Takes two rake tasks and invokes them in order
+#
+# Parameters 
+#   ECE - ECE rake Task
+#   dev - dev rake Task
+#
+# Returns Nothing
+#
+Cucumber::Rake::Task.new(:run, "Run scenario") do
+ set_env_defaults
+    Rake::Task[:ECE].invoke 1
+    Rake::Task[:ECE].reenable
+    Rake::Task[:dev].invoke 2
+    Rake::Task[:dev].reenable
 end
 
 
