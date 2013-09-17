@@ -4,7 +4,6 @@
 #
 # Original Date: August 20th 2011
 
-
 require 'base64'
 require 'capybara'
 require 'capybara/dsl'
@@ -18,14 +17,11 @@ require 'rspec'
 require 'selenium-webdriver'
 require 'uri'
 
-
 module Kaiki
 end
 
-
 module Kaiki::CapybaraDriver
 end
-
 
 # This file is currently incomplete, due to the migration from the
 # Selenium WebDriver to Capybara.
@@ -33,27 +29,21 @@ class Kaiki::CapybaraDriver::Base
   include Log4r
   include Capybara::DSL
 
-
   # The basename of the json file that contains all environment information.
   ENVS_FILE = "envs.json"
-
 
   # The default timeout for Waits.
   DEFAULT_TIMEOUT = 4
 
-
   # The default dimensions for the headless display.
-  DEFAULT_DIMENSIONS = "1024x768x24"
-
+  DEFAULT_DIMENSIONS = "1600x900x24"
 
   # The file that contains shared passwords for test users.
   SHARED_PASSWORDS_FILE = "shared_passwords.yaml"
 
-
   # Public: Gets/Sets the driver used to power the browser. Gets/Sets whether
   #         the browser is headless. Gets/Sets the overridden puts method.
   attr_accessor :driver, :is_headless, :puts_method, :headless, :pause_time, :log
-
 
   # Public: Initilize a CapybaraDriver instance, reads in necessary variables
   # from the envs file. Sets variables for each instance of CapybaraDriver, the
@@ -72,13 +62,11 @@ class Kaiki::CapybaraDriver::Base
     @username = username
     @password = password
 
-
     @standard_envs = JSON.parse(IO.readlines(ENVS_FILE).map{ |l|               \
                      l.gsub(/[\r\n]/, '') }.join(""))
     @envs = options[:envs] ?
       @standard_envs.select { |k,v| options[:envs].include? k } :
       @standard_envs
-
 
     if @envs.empty?
       @envs = {
@@ -87,20 +75,16 @@ class Kaiki::CapybaraDriver::Base
       }
     end
 
-
     if @envs.keys.size == 1
       @env = @envs.keys.first
     end
-
 
     @pause_time           = options[:pause_time] || 0.5
     @is_headless          = options[:is_headless]
     @firefox_profile_name = options[:firefox_profile]
     @firefox_path         = options[:firefox_path]
 
-
     @record = {}
-
 
     @log = Logger.new 'debug_log'
     file_outputter = FileOutputter.new 'file', :filename => File.join(Dir::pwd,\
@@ -109,14 +93,12 @@ class Kaiki::CapybaraDriver::Base
     @log.level = DEBUG
   end
 
-
   # Public: Desired url for the browser to navigate to.
   #
   # Returns nothing.
   def url
     @envs[@env]['url'] || "https://kr-#{@env}.mosaic.arizona.edu/kra-#{@env}"
   end
-
 
   # Public: Changes focus to the outermost page element
   #
@@ -125,14 +107,12 @@ class Kaiki::CapybaraDriver::Base
     driver.switch_to.default_content
   end
 
-
   # Public: Changes focus to the given frame by frameid
   #
   # Returns nothing.
   def select_frame(id)
     driver.switch_to.frame id
   end
-
 
   # Public: Switch to the default tab/window/frame, and backdoor login as `user`
   #
@@ -148,7 +128,6 @@ class Kaiki::CapybaraDriver::Base
                  "seconds to find(:name, 'backdoorId')..."
       fill_in('backdoorId', :with => "#{user}")
 
-
     rescue Selenium::WebDriver::Error::TimeOutError => error
       raise error if retries == 0
       @log.debug "   backdoor_as: Page is likely boned. Navigating back home..."
@@ -158,7 +137,6 @@ class Kaiki::CapybaraDriver::Base
     end
     click_button 'login'
   end
-
 
   # Public: Logs in to the Kuali system using the backdoor method
   #         for the given user. Or log out and log back in as user.
@@ -177,7 +155,6 @@ class Kaiki::CapybaraDriver::Base
     end
   end
 
-
   # Public: Logs out.
   #
   # Returns nothing.
@@ -185,7 +162,6 @@ class Kaiki::CapybaraDriver::Base
     switch_default_content
     click_button 'logout'
   end
-
 
   # Public: Defines the base path for url navigation.
   #
@@ -195,7 +171,6 @@ class Kaiki::CapybaraDriver::Base
     uri.path
   end
 
-
   # Public: Defines 'host' attribute of {#url}
   #
   # Returns nothing.
@@ -203,7 +178,6 @@ class Kaiki::CapybaraDriver::Base
     uri = URI.parse url
     "#{uri.scheme}://#{uri.host}"
   end
-
 
   # Public: Login via Webauth with a specific username, and optional password.
   #         If no password is given, it will be retrieved from the
@@ -222,7 +196,6 @@ class Kaiki::CapybaraDriver::Base
     click_button('LOGIN')
     sleep 1
 
-
     begin
       status = find(:id, 'status')
       if has_content? "You entered an invalid NetID or password"
@@ -236,7 +209,6 @@ class Kaiki::CapybaraDriver::Base
            Capybara::ElementNotFound
     end
 
-
     begin
       expiring_password_link = find(:link_text, "Go there now")
       if expiring_password_link
@@ -247,7 +219,6 @@ class Kaiki::CapybaraDriver::Base
       return
     end
   end
-
 
   # Public: Highlights the current elements being interacted with.
   #
@@ -267,7 +238,6 @@ class Kaiki::CapybaraDriver::Base
     parents = ""
     red = 255
 
-
     ancestors.times do
       parents << ".parentNode"
       red -= (12*8 / ancestors)
@@ -276,7 +246,6 @@ class Kaiki::CapybaraDriver::Base
                              "return hlt(arguments[0]);", element)
     end
   end
-
 
   # Public: "Maximize" the current window using Selenium's
   #         `manage.window.resize_to`. This script does not use the
@@ -320,7 +289,6 @@ class Kaiki::CapybaraDriver::Base
     ]
   end
 
-
   # Public: Set `@screenshot_dir`, and make the screenshot directory
   #         if it doesn't exist.
   #
@@ -331,7 +299,6 @@ class Kaiki::CapybaraDriver::Base
     Dir::mkdir(@screenshot_dir)
   end
 
-
   # Public: Pause for `@pause_time` by default, or for `time` seconds.
   #
   # Returns nothing.
@@ -339,7 +306,6 @@ class Kaiki::CapybaraDriver::Base
     @log.debug "  breathing..."
     sleep (time or @pause_time)
   end
-
 
   # Public: Take a screenshot, and save it to `@screenshot_dir` by the name
   #         `#{name}.png`
@@ -350,7 +316,6 @@ class Kaiki::CapybaraDriver::Base
     puts "Screenshot saved to " + File.join(@screenshot_dir, "#{name}.png")
   end
 
-
   # Public: Start a browser session by choosing a Firefox profile,
   #         setting the Capybara driver and settings, and visiting the
   #         #base_path.
@@ -360,7 +325,6 @@ class Kaiki::CapybaraDriver::Base
     @download_dir = File.join(Dir::pwd, 'features', 'downloads')
     Dir::mkdir(@download_dir) unless Dir::exists? @download_dir
     mk_screenshot_dir(File.join(Dir::pwd, 'features', 'screenshots'))
-
 
     if @firefox_profile_name
       @profile = Selenium::WebDriver::Firefox::Profile.from_name               \
@@ -373,35 +337,28 @@ class Kaiki::CapybaraDriver::Base
     @profile['browser.helperApps.neverAsk.saveToDisk'] = "application/pdf"
     @profile['browser.link.open_newwindow'] = 3
 
-
     if @firefox_path
       Selenium::WebDriver::Firefox.path = @firefox_path
     end
-
 
     if is_headless
       @headless = Headless.new(:dimensions => DEFAULT_DIMENSIONS)
       @headless.start
     end
 
-
     Capybara.run_server = false
     Capybara.app_host = host
     Capybara.default_wait_time = DEFAULT_TIMEOUT
-
 
     Capybara.register_driver :selenium do |app|
       Capybara::Selenium::Driver.new(app, :profile => @profile)
     end
     Capybara.default_driver = :selenium
 
-
     visit base_path
-
 
     @driver = page.driver.browser
   end
-
 
   # Public: Gathers the shared password for test users to use when logging in
   #         via WebAuth
@@ -411,10 +368,7 @@ class Kaiki::CapybaraDriver::Base
   #
   # Returns the shared password.
   def self.shared_password_for(username)
-
-
     return nil if not File.exist? SHARED_PASSWORDS_FILE
-
 
     shared_passwords = File.open(SHARED_PASSWORDS_FILE)                        \
                                 { |h| YAML::load_file(h) }
@@ -424,7 +378,6 @@ class Kaiki::CapybaraDriver::Base
     end
     nil
   end
-
 
   # Public: Show a visual vertical tab inside a document's layout.
   #         Accepts the "name" of the tab. Find the name of the tab
@@ -439,7 +392,6 @@ class Kaiki::CapybaraDriver::Base
     find(:xpath, "//input[contains(@title, 'open #{name}')]").click
   end
 
-
   # Public: Hide a visual vertical tab inside a document's layout.
   #         Accepts the "name" of the tab. Find the name of the tab
   #         by looking up the `title` of the `input` that is the close
@@ -453,7 +405,6 @@ class Kaiki::CapybaraDriver::Base
     find(:xpath, "//input[contains(@title, 'close #{name}')]").click
   end
 
-
   # Public: Deselect all `<option>s` within a `<select>`, suppressing any
   #         `UnsupportedOperationError` that Selenium may throw.
   #
@@ -465,7 +416,6 @@ class Kaiki::CapybaraDriver::Base
     el.deselect_all
     rescue Selenium::WebDriver::Error::UnsupportedOperationError
   end
-
 
   # Public: Check the field that is expressed with `selectors`
   #         (the first one that is found). `selectors` is typically
@@ -486,12 +436,10 @@ class Kaiki::CapybaraDriver::Base
       end
     end
 
-
     @log.error "Failed to check approximate field. Selectors are:\n "          \
                "#{selectors.join("\n") }"
     raise Capybara::ElementNotFound
   end
-
 
   # Public: Uncheck the field that is expressed with `selectors`
   #         (the first one that is found). 'selectors` is typically
@@ -512,12 +460,10 @@ class Kaiki::CapybaraDriver::Base
       end
     end
 
-
     @log.error "Failed to uncheck approximate field. Selectors are:\n "        \
                "#{selectors.join("\n") }"
     raise Capybara::ElementNotFound
   end
-
 
   # Public: Check a field, selecting by xpath.
   #
@@ -530,7 +476,6 @@ class Kaiki::CapybaraDriver::Base
     find(:xpath, xpath).set(true)
   end
 
-
   # Public: Uncheck a field, selecting by xpath.
   #
   # Parameters:
@@ -541,7 +486,6 @@ class Kaiki::CapybaraDriver::Base
     @log.debug "  Start uncheck_by_xpath(#{xpath})"
     find(:xpath, xpath).set(false)
   end
-
 
   # Public: Utilizes the Approximation Factory to find the selector type of the
   #         adjacent field to the item you wish to validate.
@@ -562,12 +506,10 @@ class Kaiki::CapybaraDriver::Base
       end
     end
 
-
     @log.error "Failed to click approximate field. Selectors are:\n "          \
                "#{selectors.join("\n") }"
     raise Capybara::ElementNotFound
   end
-
 
   # Public: Clicks on the link or button with the given name.
   #
@@ -579,7 +521,6 @@ class Kaiki::CapybaraDriver::Base
     click_on text
     @log.debug "    clicking #{text}"
   end
-
 
   # Public: Click a link or button, selecting by xpath.
   #
@@ -595,7 +536,6 @@ class Kaiki::CapybaraDriver::Base
       find(:xpath, xpath).set(true)
     end
   end
-
 
   # Public: Same as get_field, but if there are multiple fields
   #         using the same name.
@@ -613,12 +553,10 @@ class Kaiki::CapybaraDriver::Base
       end
     end
 
-
     @log.error "Failed to get approximate field. Selectors are:\n "            \
                "#{selectors.join("\n") }"
     raise Capybara::ElementNotFound
   end
-
 
 # Public: Finds the field you are looking for.
 #
@@ -641,7 +579,6 @@ def get_field(selector, options={})
   end
 end
 
-
   # Public: Utilizes the Approximation Factory to find the selector type of the
   #         adjacent field to the item you wish to fill in. It then calls
   #         set_field with the selector type and value to be filled in.
@@ -662,12 +599,10 @@ end
       end
     end
 
-
     @log.error "Failed to set approximate field. Selectors are:\n "            \
                "#{selectors.join("\n") }"
     raise Capybara::ElementNotFound
   end
-
 
   # Public: Takes in the id of a selector, i.e. input, text area, select, etc.,
   #         and inputs the value to this field.
@@ -702,7 +637,6 @@ end
       locator = "//*[@id='#{id}']"
     end
 
-
     case node_name
     when 'textarea'
       @log.debug "    set_field: node_name is #{node_name.inspect}"
@@ -719,7 +653,6 @@ end
                   "has a \" in it, so... I couldn't check if the input was " \
                   "empty. Good luck!"
       end
-
 
       @driver.find_element(:xpath, locator).send_keys(value, :tab)
     when 'input'
@@ -738,7 +671,6 @@ end
                   "empty. Good luck!"
       end
 
-
       @driver.find_element(:xpath, locator).send_keys(value, :tab)
     when 'select'
       @log.debug "    set_field: Waiting up to #{DEFAULT_TIMEOUT}"             \
@@ -755,7 +687,6 @@ end
     end
   end
 
-
   # Public: Create and execute a `Selenium::WebDriver::Wait` for finding
   #         an element by `method` and `selector`.
   #
@@ -771,7 +702,6 @@ end
     find(method, locator)
   end
 
-
   # Public: Takes in an array of xpaths (such as that provided by the
   #           ApproximationFactory class and returns the first element found that
   #           matches in the given array.
@@ -784,6 +714,7 @@ end
   def find_approximate_element(selectors)
     selectors.each do |selector|
       begin
+        @log.debug "Finding element at \"#{selector}\"..."
         element = find(:xpath, selector)
         return element
       rescue Selenium::WebDriver::Error::NoSuchElementError,
@@ -792,21 +723,18 @@ end
       end
     end
 
-
     @log.error "Failed to find approximate element. Selectors are:\n "         \
                "#{selectors.join("\n") }"
     raise Capybara::ElementNotFound
   end
-  
+
   # Public: This method changes focus to the last window that has been
   #         opened.
   #
   # Returns the first element that matches the selectors array.
 
-
   def last_window_focus
     @driver.switch_to.window(@driver.window_handles.last)
   end
-
 
 end

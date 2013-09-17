@@ -18,7 +18,7 @@
 #   * Then I should see "Status" set to "In Progress" in the document header
 #
 # Returns nothing.
-Then(/^I should (?:see|see the message) "([^"]*)"(?:([^"]*)| (?:as|(?:set|next) to) "([^"]*)"([^"]*))$/) \
+Then(/^I should (?:see|see the message) "([^"]*)"(?:([^"]*)| (?:as|(?:set|next) to)(?:| active URL) "([^"]*)"([^"]*))$/) \
   do |label, extra, text, stuff|
   kaiki.pause
   kaiki.switch_default_content
@@ -53,7 +53,7 @@ Then(/^I should see "([^"]*)" set to something like "([^"]*)"([^"]*)$/) \
   success = verify_text(label, text, 'fuzzy')
 end
 
-# Public: recieves the parameters provided by step definitions to verify text 
+# Public: recieves the parameters provided by step definitions to verify text
 #         is on the page, using a fuzzy or exact match.
 #
 # Parameters:
@@ -65,7 +65,7 @@ end
 #   * may write a statement such as:
 #   * Then I should see "Status" set to "In Progress" in the document header
 #
-# Returns true if the text is on the page in the approprate spot, otherwise an 
+# Returns true if the text is on the page in the appropriate spot, otherwise an
 #   exception is raised.
 def verify_text(label, text, mode='exact')
   begin
@@ -80,14 +80,28 @@ def verify_text(label, text, mode='exact')
       @field_text = element[:value]
     rescue Selenium::WebDriver::Error::NoSuchElementError,
            Selenium::WebDriver::Error::TimeOutError,
+           Selenium::WebDriver::Error::InvalidSelectorError,
            Capybara::ElementNotFound
-      approximate_xpath = ApproximationsFactory.transpose_build(
-        "//%s%s/following-sibling::%s",
-        ["div[text()[contains(., '#{label}')]]", "/../..", "tr/td/div"],
-        ["th[contains(text(), '#{label}']",      nil,      "td/select"])
-      element = kaiki.find_approximate_element(approximate_xpath)
-      field_element = element.find('option[selected]')
-      @field_text = field_element.text
+      begin
+        approximate_xpath = ApproximationsFactory.transpose_build(
+          "//%s%s/following-sibling::%s",
+          ["div[text()[contains(., '#{label}')]]", "/../..", "tr/td/div"],
+          ["th[contains(text(), '#{label}']",      nil,      "td/select"])
+        element = kaiki.find_approximate_element(approximate_xpath)
+        field_element = element.find('option[selected]')
+        @field_text = field_element.text
+      rescue Selenium::WebDriver::Error::NoSuchElementError,
+             Selenium::WebDriver::Error::TimeOutError,
+             Selenium::WebDriver::Error::InvalidSelectorError,
+             Capybara::ElementNotFound
+        appropriate_xpath = ApproximationsFactory.transpose_build(
+          "//%s[contains(., #{label}')]/../following-sibling::%s/"            \
+          "descendant::%s[contains(@title, '#{label}')]",
+          ["div",    "td", "textarea"],
+          ["th/div", nil,  nil])
+        element = kaiki.find_approximate_element(appropriate_xpath)
+        @field_text = element.text
+      end
     end
     if mode == 'exact'
       if @field_text == text
@@ -158,7 +172,7 @@ Then(/^I should see the "([^"]*)" table filled out with:$/)                    \
       option2 = "/select[contains(@title, '#{column_name}')]"
       option3 = "/textarea[contains(@title, '#{column_name}')]"
       option4 = "[text()[contains(.,'#{value}')]]"
-      factory1 = 
+      factory1 =
         ApproximationsFactory.transpose_build(
           "//h3/span[contains(text(), '#{table_name}')]"                       \
             "/../following-sibling::table" \
@@ -178,13 +192,13 @@ Then(/^I should see the "([^"]*)" table filled out with:$/)                    \
           [option1],
           [option2],
           [option3])
-      approximate_xpath = factory1 + factory2 
+      approximate_xpath = factory1 + factory2
       field_text = kaiki.get_approximate_field(approximate_xpath)
       if field_text != value
         raise Capybara::ExpectationNotMet
       end
     end
-  end  
+  end
 end
 
 # Public: Verifies the given values from the table are present on the web page
@@ -276,7 +290,7 @@ Then(/^I should see Combined Credit Split for "(.*?)"(?:| under "(.*?)") with th
     end
     if data_column != nil
       if division == name || name == nil
-          xpath = 
+          xpath =
             "//td/strong[contains(text(),'#{division}')]"                      \
               "/../following-sibling::td[#{data_column}]"                      \
               "/div/strong/input"
@@ -311,8 +325,25 @@ Then(/^I should see "(.*?)" for "(.*?)" as "(.*?)"$/) do |field, name, value|
     [option2])
   approximate_xpath = factory1
   returned_value = kaiki.get_approximate_field(approximate_xpath)
-  
+
   if value != returned_value
+    raise Capybara::ExpectationNotMet
+  end
+end
+
+# Public: Verifies that no messages appear at the top of the screen,
+#         because if one does appear, something has gone wrong.
+#
+# Returns nothing.
+Then(/^I should not see a message at the top of the screen$/) do
+  kaiki.pause
+  kaiki.switch_default_content
+  kaiki.select_frame("iframeportlet")
+  kaiki.wait_for(:xpath, "//div[@class='left-errmsg']")
+  element = kaiki.find(:xpath, "//div[@class='left-errmsg']")
+  field_text = element.text
+
+  if not field_text == ""
     raise Capybara::ExpectationNotMet
   end
 end
