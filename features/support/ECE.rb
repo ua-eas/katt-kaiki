@@ -15,7 +15,7 @@
 #
 def jirra 
 array = [
-         ['@kc1', '@kc2', '@kc3', '@kc4', '@kc5', '@kc6', '@kc7'],
+         ['@kc1', '@kc2', '@kc3', '@kc4', '@kc6', '@kc7'],
          ['@kc1', '@kc2', '@kc5']
         ]     
 end
