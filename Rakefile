@@ -6,7 +6,9 @@
 #
 # Original Date: August 20, 2011
 #
-require '/home/vagrant/code/katt-kaiki/features/support/ECE.rb'
+#require '/home/vagrant/code/katt-kaiki/features/support/ECE.rb'<-----vagrant dir
+#
+require 'katt-kaiki/features/support/ECE.rb'#<----- github dir
 require 'rake/clean'
 require 'cucumber'
 require 'cucumber/rake/task'
@@ -61,7 +63,7 @@ end
 #
 task :ECE do
   set_env_defaults
-  File.basename("/home/vagrant/code/katt-kaiki/features/support/ECE.rb") 
+  File.basename("katt-kaiki/features/support/ECE.rb") 
   jirra.each do |rows|
     rows.each do |kc|
       tags = "--tags #{kc}"
