@@ -5,10 +5,8 @@
 #              scenario inside a feature, or a certain feature multiple times. 
 #
 # Original Date: August 20, 2011
-#
-#require '/home/vagrant/code/katt-kaiki/features/support/ECE.rb'<-----vagrant dir
-#
-require 'katt-kaiki/features/support/ECE.rb'#<----- github dir
+
+require_relative 'features/support/ECE.rb'
 require 'rake/clean'
 require 'cucumber'
 require 'cucumber/rake/task'
