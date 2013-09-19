@@ -94,3 +94,36 @@ When(/^I click "([^"]*)" under (.*)$/) do |button, tab|
         "/../following-sibling::*//input[contains(@title, 'inactive')]")
   end
 end
+
+# Public: This function is to click on the show/hide button for a section
+#         within a tab.
+#
+# Parameters:
+#    option     - this is the action we want to perform 
+#    section - this is the section we want to show/hide
+#    table - this is the table to look into
+#    row - this is the row on where the action should occur
+#
+# Returns nothing.
+When(/^I click "(.*?)" on the "(.*?)" section under the "(.*?)" table for row "(.*?)"$/)                 \
+  do |option, section, table, row|
+  kaiki.pause
+  kaiki.switch_default_content
+  kaiki.select_frame("iframeportlet")
+  if option == "Show"
+    action = "'open #{section}'"
+  elsif option == "Hide"
+    action = "'close #{section}'"
+  else
+    raise NotImplementedError
+  end 
+  factory1 = 
+    ["//tbody/tr/td/h2[contains(text(), '#{table}')]/../../../.."              \
+    "/following-sibling::div/div/table/tbody/tr/th[contains(text(), '#{row}')]"\
+    "/../following-sibling::tr/td/div[text()[contains(., '#{section}')]]/input"\
+    "[contains(@title, #{action})]"]
+  
+  approximate_xpath = factory1
+  element = kaiki.find_approximate_element(approximate_xpath)
+  element.click
+end

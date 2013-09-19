@@ -1,9 +1,7 @@
-#
 # Description: A file that grabs login information and starts and stops
 #              video recording to a file path;
 #              also sets up a screenshot on fail.
 # Original Date: August 20, 2011
-#
 
 require File.join(File.dirname(__FILE__), '..', '..', 'lib', 'kaiki')
 #require File.join(File.dirname(__FILE__), 'english_numbers')
@@ -24,19 +22,19 @@ class KaikiWorld
   env        = ENV["KAIKI_ENV"]
   env.split(',') if env
 
-  # SHARED_PASSWORDS_FILE = \
-    # '/home/vagrant/code/katt-kaiki/features/support/shared_passwords.yaml'
+#   SHARED_PASSWORDS_FILE = \
+#     '/home/vagrant/code/katt-kaiki/features/support/shared_passwords.yml'
 # #
-  # if File.exist? SHARED_PASSWORDS_FILE
-   # shared_passwords = YAML::load_file(File.join(File.dirname( \
-     # File.expand_path(__FILE__)), 'shared_passwords.yml'))
-   #print shared_passwords
-   # if password.nil? and username and shared_passwords.keys.any? { |user|    \
-     # username[user] }
-     # user_group = shared_passwords.keys.select { |user| username[user] }[0]
-     # password = shared_passwords[user_group]
-   # end
-  # end
+#   if File.exist? SHARED_PASSWORDS_FILE
+#    shared_passwords = YAML::load_file(File.join(File.dirname( \
+#      File.expand_path(__FILE__)), 'shared_passwords.yml'))
+#    # #print shared_passwords
+#    if password.nil? and username and shared_passwords.keys.any? { |user|    \
+#      username[user] }
+#      user_group = shared_passwords.keys.select { |user| username[user] }[0]
+#      password = shared_passwords[user_group]
+#    end
+#   end
   if password.nil? && username
     password = Kaiki::CapybaraDriver::Base.shared_password_for username     \
       if password.nil? && username
@@ -45,6 +43,7 @@ class KaikiWorld
   password ||=       ask("Password:  ")        { |q| q.echo = "*" }
   env      ||= [] << ask("Environment/URL:  ") { |q| q.echo = true;           \
                                                      q.default='cdf' }
+
   is_headless = true
   if ENV['KAIKI_IS_HEADLESS']
     is_headless = ENV['KAIKI_IS_HEADLESS'] =~ /1|true|yes/i
@@ -61,6 +60,7 @@ class KaikiWorld
   @@kaiki.start_session
   @@kaiki.maximize_ish
   @@kaiki.login_via_webauth_with(username, password)
+
 
   @@kaiki.record[:document_number] = ENV['KAIKI_DOC_NUMBER']                  \
                                      if ENV['KAIKI_DOC_NUMBER']
