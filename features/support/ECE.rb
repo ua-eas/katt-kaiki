@@ -5,17 +5,30 @@
 
 
 #Public: Runs tests that need to be run in oder
+#
 #  Parameters
 #
-#   kc = --tag for Kauli Coeus test senearois that need to be run in order
+#   1	@Proposal_New
+#   2	@Award_New
+#   3	@Proposal_Continuation
+#   4	@Award_Allotment
+#   5	@Proposal_Revision
+#   6	@Award_Supplement_Continuation
+#   7	@Proposal_Renewal
+#   8	@Proposal_Resubmission
+#   9	@Award_Deobligation
+#   10	@Proposal_Admin_Change
+#   11	@Award_Admin_Amendment
+#   12	@Award_No_Cost_Extension
+#   
 #
 #   Example
-#      @kc1 = Kauli Coeus Test 1
+#      Test 1 = @Proposal_New
 #Returns Nothing 
-#
+
 def jirra 
 array = [
-         ['@kc1', '@kc2', '@kc3', '@kc4'],
-         ['@kc1', '@kc2', '@kc5']
+         ['@Proposal_New', '@Award_New', '@Proposal_Continuation', '@Award_Allotment', '@Award_Supplement_Continuation','@Proposal_Renewal'],
+         ['@Proposal_New', '@Award_New', '@Proposal_Revision']
         ]     
 end
