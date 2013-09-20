@@ -440,7 +440,7 @@ Then(/^I should see a description of "(.*?)"$/) do |description|
           And I set "KC Person" to "sesham"
           And I set "Unit Number" to "0721"
           And I click the "Submit" button
-        Then I should see the message "Document was successfully saved."
+        Then I should see the message "Document was successfully submitted."
       }  
     end
 end
