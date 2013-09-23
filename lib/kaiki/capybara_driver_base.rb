@@ -79,7 +79,7 @@ class Kaiki::CapybaraDriver::Base
       @env = @envs.keys.first
     end
 
-    @pause_time           = options[:pause_time] || 0.5
+    @pause_time           = options[:pause_time] || 0.75
     @is_headless          = options[:is_headless]
     @firefox_profile_name = options[:firefox_profile]
     @firefox_path         = options[:firefox_path]
@@ -368,6 +368,7 @@ class Kaiki::CapybaraDriver::Base
   #
   # Returns the shared password.
   def self.shared_password_for(username)
+
     return nil if not File.exist? SHARED_PASSWORDS_FILE
 
     shared_passwords = File.open(SHARED_PASSWORDS_FILE)                        \
@@ -714,7 +715,7 @@ end
   def find_approximate_element(selectors)
     selectors.each do |selector|
       begin
-        @log.debug "Finding element at \"#{selector}\"..."
+        @log.debug "Finding element at #{selector}..."
         element = find(:xpath, selector)
         return element
       rescue Selenium::WebDriver::Error::NoSuchElementError,
@@ -727,7 +728,7 @@ end
                "#{selectors.join("\n") }"
     raise Capybara::ElementNotFound
   end
-
+  
   # Public: This method changes focus to the last window that has been
   #         opened.
   #

@@ -172,7 +172,7 @@ Then(/^I should see the "([^"]*)" table filled out with:$/)                    \
       option2 = "/select[contains(@title, '#{column_name}')]"
       option3 = "/textarea[contains(@title, '#{column_name}')]"
       option4 = "[text()[contains(.,'#{value}')]]"
-      factory1 =
+      factory1 = 
         ApproximationsFactory.transpose_build(
           "//h3/span[contains(text(), '#{table_name}')]"                       \
             "/../following-sibling::table" \
@@ -192,10 +192,60 @@ Then(/^I should see the "([^"]*)" table filled out with:$/)                    \
           [option1],
           [option2],
           [option3])
-      approximate_xpath = factory1 + factory2
+      approximate_xpath = factory1 + factory2 
       field_text = kaiki.get_approximate_field(approximate_xpath)
       if field_text != value
         raise Capybara::ExpectationNotMet
+      end
+    end
+  end  
+end
+
+# Public: This method may need another ApproximationsFactory segment added
+#         but as is, it will fill in an input/select/textarea field in a table
+#         given the name of the table.
+#
+# Parameters:
+#   table_name - name of the table
+#   table      - data to be used
+#
+# Returns nothing.
+Then(/^I should see the "([^"]*)" table row "([^"]*)" filled with:$/)          \
+  do |table_name, row_number, table|
+  kaiki.pause
+  kaiki.switch_default_content
+  kaiki.select_frame("iframeportlet")
+  kaiki.should(have_content(table_name))
+  data_table = table.raw
+  rows = data_table.length-1
+  cols = data_table[0].length-1
+  (1..rows).each do |data_row_counter|
+    (0..cols).each do |data_column_counter|
+      column_name = data_table[0][data_column_counter]
+      value = data_table[data_row_counter][data_column_counter]
+      if value != ""           
+        option1 = ".[contains(text(), '#{value}')]"
+        option2 = "input[contains(@title, '#{column_name}')]"
+        option3 = "select[contains(@title, '#{column_name}')]"
+        option4 = "textarea[contains(@title, '#{column_name}')]"
+        approximate_xpath = 
+          ApproximationsFactory.transpose_build(
+            "//h3/span[contains(text(), '#{table_name}')]/../following-sibling"\
+              "::table/descendant::tr/th[contains(text(), '#{row_number}')]"   \
+              "/following-sibling::td/div/%s",
+            [option4],
+            [option1],
+            [option2],
+            [option3])              
+        element = kaiki.find_approximate_element(approximate_xpath)    
+        if element[:type] == "textarea"
+          field_text = element.text
+        else
+          field_text = kaiki.get_approximate_field(approximate_xpath)
+        end
+        if field_text != value
+          raise Capybara::ExpectationNotMet
+        end
       end
     end
   end
@@ -290,7 +340,7 @@ Then(/^I should see Combined Credit Split for "(.*?)"(?:| under "(.*?)") with th
     end
     if data_column != nil
       if division == name || name == nil
-          xpath =
+          xpath = 
             "//td/strong[contains(text(),'#{division}')]"                      \
               "/../following-sibling::td[#{data_column}]"                      \
               "/div/strong/input"
@@ -316,7 +366,7 @@ Then(/^I should see "(.*?)" for "(.*?)" as "(.*?)"$/) do |field, name, value|
   kaiki.switch_default_content
   kaiki.select_frame("iframeportlet")
   option1 = "th/div[text()[contains(., '#{field}')]]"                          \
-            "/../../following-sibling::tr/td/div[contains(., '#{value}')]"
+              "/../../following-sibling::tr/td/div[contains(., '#{value}')]"
   option2 = "input[contains(@title, '#{field}')]"
   factory1 = ApproximationsFactory.transpose_build(
     "//td/div[text()[contains(., '#{name}')]]"                                 \
@@ -325,7 +375,7 @@ Then(/^I should see "(.*?)" for "(.*?)" as "(.*?)"$/) do |field, name, value|
     [option2])
   approximate_xpath = factory1
   returned_value = kaiki.get_approximate_field(approximate_xpath)
-
+  
   if value != returned_value
     raise Capybara::ExpectationNotMet
   end
@@ -344,6 +394,82 @@ Then(/^I should not see a message at the top of the screen$/) do
   field_text = element.text
 
   if not field_text == ""
+    raise Capybara::ExpectationNotMet
+  end
+end
+
+# Public: Checks to see if a unit administrator has been set up for a 
+#         specific unit.
+#
+# Returns nothing.
+Given(/^unit administrator has been established \(see below\)$/) do
+  
+  # Here are the steps that need to occur to check that a unit administrator
+  # has been set up. (Check if it is there)
+  steps %{
+    Given I am backdoored as "sandovar"
+      And I am on the "Maintenance" tab
+    When I click the "Unit Administrator" link
+      And I set "Unit Number" to "0721"
+      And I click the "Search" button
+    Then I should see a description of "Grants.Gov Proposal Contact"
+  }
+end
+
+# Public: If no unit administrator has been set up, these are the steps
+#         used to set up the unit administrator.
+#
+# Parameters:
+#   description - holds the description of the unit administrator
+#
+# Returns nothing.
+Then(/^I should see a description of "(.*?)"$/) do |description|
+   begin
+   element = kaiki.find(:xpath, "//td/a[contains(text(), '#{description}')]")
+   
+   rescue Selenium::WebDriver::Error::NoSuchElementError,
+          Selenium::WebDriver::Error::TimeOutError,
+          Selenium::WebDriver::Error::InvalidSelectorError,
+          Capybara::ElementNotFound
+     # if no, Steps to create the unit administrator:
+      steps %{
+        When I do not see "Grants.gov Proposal Contact"
+          And I click the "Create New" button
+          And I set "Description" to "Grants.gov Proposal Contact - New"
+          And I set "Unit Administrator Type Code" to "6"
+          And I set "KC Person" to "sesham"
+          And I set "Unit Number" to "0721"
+          And I click the "Submit" button
+        Then I should see the message "Document was successfully submitted."
+      }  
+    end
+end
+
+# Public: Verifies that the description for the unit administrator is 
+#         NOT present on the screen.
+# 
+# Parameters:
+#   description - holds the description of the unit administrator
+#
+# Returns nothing.
+Then(/^I do not see "(.*?)"$/) do |description|
+  kaiki.should_not (have_content(description))
+end
+
+# Public: Verifies that the field is not blank.
+#
+# Parameters:
+#   label - the name of the field to check
+#
+# Returns nothing.
+Then(/^I should see (.*?) not null$/) do |label|
+  kaiki.pause
+  kaiki.switch_default_content
+  kaiki.select_frame("iframeportlet")
+  element = kaiki.find(:xpath, "//th/div[text()[contains(., '#{label}')]]/../following-sibling::td")
+  field_text = element.text
+
+  if field_text == ""
     raise Capybara::ExpectationNotMet
   end
 end
