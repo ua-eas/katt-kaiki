@@ -1,4 +1,3 @@
-
 #Discription: Takes and finds files with --tags and runs them in order
 # Original Date: September 17, 2013
 #
@@ -28,7 +27,7 @@
 
 def jirra 
 array = [
-         ['@Proposal_New', '@Award_New', '@Proposal_Continuation', '@Award_Allotment', '@Award_Supplement_Continuation','@Proposal_Renewal'],
+         ['@Proposal_New', '@Award_New', '@Proposal_Continuation', '@Award_Allotment', '@Award_Supplement_Continuation', '@Proposal_Renewal'],
          ['@Proposal_New', '@Award_New', '@Proposal_Revision']
         ]     
 end
