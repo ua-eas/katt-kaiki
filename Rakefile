@@ -50,26 +50,31 @@ task :ordered_features do |t|
   end
 end
 
+
 #Public:Takes an Arry from a .rb file from a folder and runs test senerios in order
 #
-# Parameters: 
-#    rows: rows of the array
-#    kc: name of the tags for kuali coeus test senarios  that need to be run in order
+# Parameters:
+# rows: rows of the array
+# kc: name of the tags for kuali coeus test senarios that need to be run in order
 #
 #
 #Returns an array
 #
 task :ECE do
   set_env_defaults
-  File.basename("katt-kaiki/features/support/ECE.rb") 
-  jirra.each do |rows|
+  File.basename("katt-kaiki/features/support/ECE.rb")
+  begin
+   jirra.each do |rows|
     rows.each do |kc|
       tags = "--tags #{kc}"
       puts tags
       Cucumber::Rake::Task.new(:ECE, "Run all tests in required order.") do |t|
         t.cucumber_opts = tags
       end
+     end
     end
+  rescue Exception => e
+   puts e.message
   end
 end
 
