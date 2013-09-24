@@ -107,6 +107,88 @@ Cucumber::Rake::Task.new(:run, "Run scenario") do
 end
 
 
+#Public: A rake task to run all features in order
+#
+# rake command: ordered_features
+#
+# This will run feature files in order via a tag id
+# Each feature file that you want to run in order simply add a tag to line 1 of the feature file
+# example: @test1
+# NOTE:each tag has to start with the id "test"
+#
+# you can edit this line of code based on the number of features you want to run in order:
+# until i > 10
+# example:
+# until i > 100
+#
+task :ordered_features do |t|
+  i = 1
+  until i > 3
+  tags = "--tags @test#{i}"
+    Cucumber::Rake::Task.new(:ordered_features, "Run scenario") do |t|
+      t.cucumber_opts = tags
+    end
+    i += 1
+  end
+end
+
+#Public:Takes an Arry from a .rb file from a folder and runs test senerios in order
+#
+# Parameters:
+# rows: rows of the array
+# kc: name of the tags for kuali coeus test senarios that need to be run in order
+#
+#
+#Returns an array
+#
+task :ECE do
+  set_env_defaults
+  File.basename("katt-kaiki/features/support/ECE.rb")
+  begin
+  jirra.each do |rows|
+  
+    rows.each do |kc|
+      tags = "--tags #{kc}"
+      puts tags
+      Cucumber::Rake::Task.new(:ECE, "Run all tests in required order.") do |t|
+        t.cucumber_opts = tags
+      end
+     end
+    end
+    rescue Exception => e
+      puts e.message
+  end
+end
+
+#Public: General Tag for features that dont need to run in order
+#
+# Parameters
+# @kctest- tag name for tests that dont need to be run in order
+#
+#Returns Nothing
+#
+Cucumber::Rake::Task.new(:dev) do |t|
+  set_env_defaults
+  t.cucumber_opts = "--tags @kctest"
+end
+
+#Public: Takes two rake tasks and invokes them in order
+#
+# Parameters
+# ECE - ECE rake Task
+# dev - dev rake Task
+#
+# Returns Nothing
+#
+Cucumber::Rake::Task.new(:run, "Run scenario") do
+ set_env_defaults
+    Rake::Task[:ECE].invoke 1
+    Rake::Task[:ECE].reenable
+    Rake::Task[:dev].invoke 2
+    Rake::Task[:dev].reenable
+end
+
+
 # Experimental... not sure we'll use this...
 # This creates a .mov video file when the rake starts.
 
@@ -122,13 +204,13 @@ task :merge_videos do
       new_videos << new_video
     end
     FFMpegFunctions.concatenate(prefix+".mpg", new_videos)
-    FFMpegFunctions.transcode(  prefix+".mpg", final_merged_file, '-qscale 2')
+    FFMpegFunctions.transcode( prefix+".mpg", final_merged_file, '-qscale 2')
   end
 end
 
 # This sets up the 'features' task. Use as:
 #
-#     rake features
+# rake features
 #
 # This will run all feature files in the features/ directory, according to the
 # tag rules: anything that is NOT a cucumber_example, and NOT incomplete, and
@@ -142,7 +224,7 @@ end
 
 # This sets up the 'ci_features' task. Use as:
 #
-#     rake ci_features
+# rake ci_features
 #
 # This will run all feature files in the features/ directory, according to the
 # tag rules: anything that is NOT a cucumber_example, and NOT incomplete, and
@@ -157,12 +239,12 @@ end
 
 # This sets up the 'feature' task. Use as:
 #
-#     rake feature[KFSI-1021]
+# rake feature[KFSI-1021]
 #
 # This will run a single feature that matches the substring supplied. To test
 # what features will match, you can run:
 #
-#     find features ! -path "*/example_syntax/*" ! -path "*/ceremonies/*" -name "*KFSI-1021*.feature"
+# find features ! -path "*/example_syntax/*" ! -path "*/ceremonies/*" -name "*KFSI-1021*.feature"
 
 task :feature, :name do |t, args|
   set_env_defaults
@@ -180,12 +262,12 @@ end
 
 # This sets up the 'scenario' task. Use as:
 #
-#     rake scenario[KFSI-1021,7]
+# rake scenario[KFSI-1021,7]
 #
 # This will run a single scenario that matches the substring and line number
 # supplied. To test what features will match, you can run:
 #
-#     find features ! -path "*/example_syntax/*" ! -path "*/ceremonies/*" -name "*KFSI-1021*.feature"
+# find features ! -path "*/example_syntax/*" ! -path "*/ceremonies/*" -name "*KFSI-1021*.feature"
 
 task :scenario, :name, :line do |t, args|
   set_env_defaults
@@ -218,12 +300,12 @@ end
 
 # This sets up the 'vet_feature' task. Use as:
 #
-#     rake vet_feature[KFSI-1021]
+# rake vet_feature[KFSI-1021]
 #
 # This will run a single feature that matches the substring supplied, ten
 # times. To test what features will match, you can run:
 #
-#     find features ! -path "*/example_syntax/*" ! -path "*/ceremonies/*" -name "*KFSI-1021*.feature"
+# find features ! -path "*/example_syntax/*" ! -path "*/ceremonies/*" -name "*KFSI-1021*.feature"
 
 task :vet_feature, :name do |t, args|
   set_env_defaults
@@ -244,12 +326,12 @@ end
 
 # This sets up the 'vet' task. Use as:
 #
-#     rake vet[KFSI-1021,7]
+# rake vet[KFSI-1021,7]
 #
 # This will run a single scenario that matches the substring and line number
 # supplied, ten times. To test what features will match, you can run:
 #
-#     find features ! -path "*/example_syntax/*" ! -path "*/ceremonies/*" -name "*KFSI-1021*.feature"
+# find features ! -path "*/example_syntax/*" ! -path "*/ceremonies/*" -name "*KFSI-1021*.feature"
 
 task :vet, :name, :line do |t, args|
   set_env_defaults
