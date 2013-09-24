@@ -11,8 +11,8 @@
 #   2	@Award_New
 #   3	@Proposal_Continuation
 #   4	@Award_Allotment
-#   5	@Proposal_Revision
-#   6	@Award_Supplement_Continuation
+#   5	@Award_Supplement_Continuation
+#   6	@Proposal_Revision
 #   7	@Proposal_Renewal
 #   8	@Proposal_Resubmission
 #   9	@Award_Deobligation
@@ -27,7 +27,7 @@
 
 def jirra 
 array = [
-         ['@Proposal_New', '@Award_New', '@Proposal_Continuation', '@Award_Allotment', '@Award_Supplement_Continuation', '@Proposal_Renewal'],
-         ['@Proposal_New', '@Award_New', '@Proposal_Revision'],
+         ['@Proposal_New', '@Award_New', '@Proposal_Continuation', '@Award_Allotment', '@Proposal_Revision', '@Proposal_Renewal'],
+         ['@Proposal_New', '@Award_New', '@Award_Supplement_Continuation']
         ]     
 end
