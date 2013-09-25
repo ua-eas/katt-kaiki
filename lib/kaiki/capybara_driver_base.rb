@@ -33,7 +33,7 @@ class Kaiki::CapybaraDriver::Base
   ENVS_FILE = "envs.json"
 
   # The default timeout for Waits.
-  DEFAULT_TIMEOUT = 6
+  DEFAULT_TIMEOUT = 4
 
   # The default dimensions for the headless display.
   DEFAULT_DIMENSIONS = "1600x900x24"
