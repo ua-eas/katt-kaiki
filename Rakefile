@@ -72,6 +72,7 @@ task :ECE do
               t.cucumber_opts = tags
               end
             end
+          sleep 30
           Rake::Task["ECE"].invoke 
        end
 end
