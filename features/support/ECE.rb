@@ -27,7 +27,7 @@
 
 def jirra 
 array = [
-         ['@Proposal_New', '@Award_New', '@Proposal_Continuation', '@Award_Allotment', '@Proposal_Revision', '@Proposal_Renewal'],
+         ['@Proposal_New', '@Award_New', '@Proposal_Continuation', '@Award_Allotment', '@Proposal_Revision', '@Proposal_Renewal'],  \
          ['@Proposal_New', '@Award_New', '@Award_Supplement_Continuation']
         ]     
 end
