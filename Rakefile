@@ -73,9 +73,7 @@ task :ECE do
       end
     end
   end
-  1.times do
     Rake::Task[:ECE].invoke
-    Rake::Task[:ECE].reenable
   end
 end
 
