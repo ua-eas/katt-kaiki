@@ -72,7 +72,6 @@ task :ECE do
         t.cucumber_opts = tags
       end
     end
-  end
     Rake::Task[:ECE].invoke
   end
 end
