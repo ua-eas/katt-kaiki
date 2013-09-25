@@ -51,37 +51,38 @@ task :ordered_features do |t|
 end
 
 
-#Public:Takes an Arry from a .rb file from a folder and runs test senerios in order
+# Public: Takes an array from the given ruby file and runs scenarios according to the tags
+#         contained within said array.
 #
 # Parameters:
 # rows: rows of the array
 # kc: name of the tags for kuali coeus test senarios that need to be run in order
 #
 #
-#Returns an array
-#
+# Returns nothing.
 task :ECE do
   set_env_defaults
   File.basename("katt-kaiki/features/support/ECE.rb")
-      jirra.each do |rows|
-        sleep 30
-        rows.each do |kc|
-           sleep 30
-          tags = "--tags #{kc}"
-            Cucumber::Rake::Task.new(:ECE, "Run all tests in required order.") do |t|
-              t.cucumber_opts = tags
-              end
-             Rake::Task["ECE"].invoke
-           end
-       end
+  jirra.each do |rows|
+    sleep 30
+    rows.each do |kc|
+      sleep 30
+      tags = "--tags #{kc}"
+      Cucumber::Rake::Task.new(:ECE, "Run all tests in required order.") do |t|
+        t.cucumber_opts = tags
+      end
+      Rake::Task["ECE"].invoke
+    end
+  end
 end
+
+
 #Public: General Tag for features that dont need to run in order
 #
 # Parameters
 #   @kctest- tag name for tests that dont need to be run in order
 #
-#Returns Nothing
-#
+# Returns nothing.
 Cucumber::Rake::Task.new(:dev) do |t|
   set_env_defaults
   t.cucumber_opts = "--tags @kctest"
@@ -93,8 +94,7 @@ end
 #   ECE - ECE rake Task
 #   dev - dev rake Task
 #
-# Returns Nothing
-#
+# Returns nothing.
 Cucumber::Rake::Task.new(:run, "Run scenario") do
  set_env_defaults
     Rake::Task[:ECE].invoke 1
