@@ -70,9 +70,12 @@ task :ECE do
       tags = "--tags #{kc}"
       Cucumber::Rake::Task.new(:ECE, "Run all tests in required order.") do |t|
         t.cucumber_opts = tags
+           end
+         end
       end
-      Rake::Task[:ECE].invoke
-    end
+     1.times do
+     Rake::Task[:ECE].invoke 
+     Rake::Task[:ECE].reenable
   end
 end
 
