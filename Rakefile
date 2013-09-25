@@ -63,19 +63,18 @@ end
 task :ECE do
   set_env_defaults
   File.basename("katt-kaiki/features/support/ECE.rb")
-      sleep 30
       jirra.each do |rows|
         sleep 30
         rows.each do |kc|
+           sleep 30
           tags = "--tags #{kc}"
-            puts tags
             Cucumber::Rake::Task.new(:ECE, "Run all tests in required order.") do |t|
               t.cucumber_opts = tags
               end
+             Rake::Task["ECE"].invoke
            end
        end
 end
-
 #Public: General Tag for features that dont need to run in order
 #
 # Parameters
