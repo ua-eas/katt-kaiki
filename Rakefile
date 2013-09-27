@@ -82,9 +82,11 @@ end
 #   @kctest- tag name for tests that dont need to be run in order
 #
 # Returns nothing.
-Cucumber::Rake::Task.new(:dev) do |t|
-  set_env_defaults
-  t.cucumber_opts = "--tags @kctest"
+task :dev do
+  Cucumber::Rake::Task.new(:dev) do |t|
+    set_env_defaults
+    t.cucumber_opts = "--tags @kctest"
+  end
 end
 
 #Public: Takes two rake tasks and invokes them in order
@@ -94,12 +96,14 @@ end
 #   dev - dev rake Task
 #
 # Returns nothing.
-Cucumber::Rake::Task.new(:run, "Run scenario") do
- set_env_defaults
-    Rake::Task[:ECE].invoke 1
-    Rake::Task[:ECE].reenable
-    Rake::Task[:dev].invoke 2
-    Rake::Task[:dev].reenable
+task :run do
+  Cucumber::Rake::Task.new(:run, "Run scenario") do
+   set_env_defaults
+      Rake::Task[:ECE].invoke 1
+      Rake::Task[:ECE].reenable
+      Rake::Task[:dev].invoke 2
+      Rake::Task[:dev].reenable
+  end
 end
 
 # Experimental... not sure we'll use this...
