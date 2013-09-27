@@ -28,15 +28,7 @@
 def jirra 
 sleep 5
 array = [
-         ['@Proposal_New'],
-         ['@Award_New'],
-         ['@Proposal_Continuation'],
-         ['@Award_Allotment'],
-         ['@Award_Supplement_Continuation'], 
-         ['@Proposal_Renewal'],
-         #run 2
-         ['@Proposal_New'],
-         ['@Award_New'],
-         ['@Proposal_Revision']
+         ['@Proposal_New', '@Award_New', '@Proposal_Continuation', '@Award_Allotment', '@Award_Supplement_Continuation', '@Proposal_Renewal'],
+         ['@Proposal_New', '@Award_New', '@Proposal_Revision']
         ]     
 end
