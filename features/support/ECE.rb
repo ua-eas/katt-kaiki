@@ -26,9 +26,7 @@
 #Returns Nothing 
 
 def jirra 
-sleep 5
-array = [
-         ['@Proposal_New', '@Award_New', '@Proposal_Continuation', '@Award_Allotment', '@Award_Supplement_Continuation', '@Proposal_Renewal'],
-         ['@Proposal_New', '@Award_New', '@Proposal_Revision']
-        ]     
+  array = [
+      ['@Proposal_New', '@Award_New', '@Proposal_Continuation', '@Award_Allotment', '@Award_Supplement_Continuation', '@Proposal_Revision', '@Proposal_Renewal']
+    ]     
 end
