@@ -1,30 +1,35 @@
-
 {
-  "cdf": {
-    "code":             "cdf"
-  },
   "cfg": {
     "code":             "cfg"
   },
   "cnv": {
     "code":             "cnv"
   },
-  "dev": {
-    "code":             "dev"
-  },
   "dmo": {
     "code":             "dmo"
   },
+  "kc-cdf": {
+    "code":             "kc-cdf",
+    "url": "https://kr-cdf.mosaic.arizona.edu/kra-cdf"
+  },
+  "kc-dev": {
+    "code":             "kc-dev",
+    "url": "https://kr-dev.mosaic.arizona.edu/kra-dev"
+  },
+  "kfs-dev": {
+    "code":             "kfs-dev",
+    "url": "https://kf-dev.mosaic.arizona.edu/kfs-dev"
+  },
   "prd": {
     "code":             "prd",
-    "url": "https://financials.uaccess.arizona.edu"
+    "url": "https://research.uaccess.arizona.edu/kra-prd"
   },
   "stg": {
     "code":             "stg"
   },
   "sup": {
     "code":             "sup",
-    "url": "https://financialsup.uaccess.arizona.edu"
+    "url": "https://researchsup.uaccess.arizona.edu/kra-sup"
   },
   "trn": {
     "code":             "trn"
