@@ -17,14 +17,14 @@
   },
   "prd": {
     "code":             "prd",
-    "url": "https://financials.uaccess.arizona.edu"
+    "url": "https://research.uaccess.arizona.edu/kra-prd"
   },
   "stg": {
     "code":             "stg"
   },
   "sup": {
     "code":             "sup",
-    "url": "https://financialsup.uaccess.arizona.edu"
+    "url": "https://researchsup.uaccess.arizona.edu/kra-sup"
   },
   "trn": {
     "code":             "trn"

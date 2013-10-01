@@ -98,8 +98,7 @@ When(/^I fill out a new Vendor (.*) with default values, and the following:$/) \
   fields.each do |field, value|
     kaiki.set_approximate_field(
       approximations_for_field_inside_div(field, div),
-      value
-    )
+      value)
     put_fv_as_row(fields, field) unless table.rows_hash.keys.include?(field)
   end
 end
@@ -114,14 +113,14 @@ end
 # Returns nothing.
 def approximations_for_field_inside_div(field, div)
   ApproximationsFactory.transpose_build(
-    "//div[@id='#{div}']//%s[contains(text(), '#{field}')]" \
-    "/../following-sibling::td/%s",
+    "//div[@id='#{div}']//%s[contains(text(), '#{field}')]"                    \
+      "/../following-sibling::td/%s",
     ['th/label',    'select[1]'],
     ['th/div',      'input[1]'],
     [nil,           'textarea[1]']) +
   ApproximationsFactory.transpose_build(
-    "//div[@id='#{div}']//th[contains(text(), '#{field}')]" \
-    "/../following-sibling::tr/td/div/%s[contains(@title, '#{field}')]",
+    "//div[@id='#{div}']//th[contains(text(), '#{field}')]"                    \
+      "/../following-sibling::tr/td/div/%s[contains(@title, '#{field}')]",
     ['select'],
     ['input'])
 end
