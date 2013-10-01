@@ -108,7 +108,7 @@ end
 #
 # Returns nothing
 Before do
-  kaiki.lod_debug "Starting video..."
+  kaiki.log_debug "Starting video..."
   kaiki.headless.video.start_capture if kaiki.is_headless
   kaiki.puts_method = method(:puts)
 end
@@ -121,7 +121,7 @@ end
 # Returns nothing
 After do |scenario|
 #  if scenario.failed?
-    kaiki.lod_debug "Stopping video..."
+    kaiki.log_debug "Stopping video..."
     kaiki.headless.video.stop_and_save(video_path(scenario))                  \
       if kaiki.is_headless
 #  else
