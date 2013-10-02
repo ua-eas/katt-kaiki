@@ -120,12 +120,12 @@ end
 #
 # Returns nothing
 After do |scenario|
-  if scenario.failed?
+  #if scenario.failed?
     kaiki.headless.video.stop_and_save(video_path(scenario))                  \
       if kaiki.is_headless
-    else
-    kaiki.headless.video.stop_and_discard
-  end
+    #else
+    #kaiki.headless.video.stop_and_discard
+  #end
  end
 
 # Public: Defines where the video is being saved.
