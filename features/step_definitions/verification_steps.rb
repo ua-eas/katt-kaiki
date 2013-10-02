@@ -72,21 +72,26 @@ def verify_text(label, text, mode='exact')
     kaiki.should(have_content(text || label))
   rescue RSpec::Expectations::ExpectationNotMetError
     begin
-      approximate_xpath = ApproximationsFactory.transpose_build(
-        "//%s[contains(%s, '#{label}')]%s/following-sibling::%s",
-        ['div', '.',      '/../..', "tr/td/div/input[contains(@title, '#{label}')]"],
-        ['th',  'text()', '',       'td/input'])
+      factory1 =
+        ApproximationsFactory.transpose_build(
+          "//%s[contains(%s, '#{label}')]%s/following-sibling::%s",
+          ['div', '.',      '/../..', "tr/td/div/input[contains(@title, '#{label}')]"],
+          ['th',  'text()', '',       'td/input'])
+      approximate_xpath = factory1
       element = kaiki.find_approximate_element(approximate_xpath)
       @field_text = element[:value]
     rescue Selenium::WebDriver::Error::NoSuchElementError,
            Selenium::WebDriver::Error::TimeOutError,
            Selenium::WebDriver::Error::InvalidSelectorError,
            Capybara::ElementNotFound
+           
       begin
-        approximate_xpath = ApproximationsFactory.transpose_build(
-          "//%s%s/following-sibling::%s",
-          ["div[text()[contains(., '#{label}')]]", "/../..", "tr/td/div"],
-          ["th[contains(text(), '#{label}']",      nil,      "td/select"])
+        factory1 =
+          ApproximationsFactory.transpose_build(
+            "//%s/../../following-sibling::%s",
+            ["div[text()[contains(., '#{label}')]]", "tr/td/div"],
+            ["th[contains(text(), '#{label}']",      "td/select"])
+        approximate_xpath = factory1
         element = kaiki.find_approximate_element(approximate_xpath)
         field_element = element.find('option[selected]')
         @field_text = field_element.text
@@ -94,12 +99,14 @@ def verify_text(label, text, mode='exact')
              Selenium::WebDriver::Error::TimeOutError,
              Selenium::WebDriver::Error::InvalidSelectorError,
              Capybara::ElementNotFound
-        appropriate_xpath = ApproximationsFactory.transpose_build(
-          "//%s[contains(., #{label}')]/../following-sibling::%s/"            \
-          "descendant::%s[contains(@title, '#{label}')]",
-          ["div",    "td", "textarea"],
-          ["th/div", nil,  nil])
-        element = kaiki.find_approximate_element(appropriate_xpath)
+        factory1 =
+          ApproximationsFactory.transpose_build(
+            "//%s[contains(., '#{label}')]/../following-sibling::td/"          \
+              "descendant::textarea[contains(@title, '#{label}')]",
+            ["div"],
+            ["th/div"])
+        approximate_xpath = factory1
+        element = kaiki.find_approximate_element(approximate_xpath)
         @field_text = element.text
       end
     end
@@ -136,12 +143,13 @@ Then(/^I will see "([^"]*)" under the "([^"]*)" header in the "([^"]*)" section$
   kaiki.pause
   kaiki.switch_default_content
   kaiki.select_frame("iframeportlet")
-  approximate_xpath =
+  factory1 =
     ApproximationsFactory.transpose_build(
-       "//table/tbody/tr/td/h2[contains(text(), '#{section}')]/../../../../"   \
-         "following-sibling::div/descendant::%s[contains(%s, '#{text}')]",
-       ['tr/td', '.'],
+       "//table/tbody/tr/td/h2[contains(text(), '#{section}')]/../../../.."    \
+         "/following-sibling::div/descendant::%s[contains(%s, '#{text}')]",
+       ['tr/td',     '.'     ],
        ['tr/td/div', 'text()'])
+  approximate_xpath = factory1
   element = kaiki.find_approximate_element(approximate_xpath)
 end
 
@@ -228,7 +236,7 @@ Then(/^I should see the "([^"]*)" table row "([^"]*)" filled with:$/)          \
         option2 = "input[contains(@title, '#{column_name}')]"
         option3 = "select[contains(@title, '#{column_name}')]"
         option4 = "textarea[contains(@title, '#{column_name}')]"
-        approximate_xpath = 
+        factory1 =
           ApproximationsFactory.transpose_build(
             "//h3/span[contains(text(), '#{table_name}')]/../following-sibling"\
               "::table/descendant::tr/th[contains(text(), '#{row_number}')]"   \
@@ -237,6 +245,7 @@ Then(/^I should see the "([^"]*)" table row "([^"]*)" filled with:$/)          \
             [option1],
             [option2],
             [option3])              
+        approximate_xpath = factory1
         element = kaiki.find_approximate_element(approximate_xpath)    
         if element[:type] == "textarea"
           field_text = element.text
@@ -361,7 +370,7 @@ end
 #   value - data to be used
 #
 # Returns nothing.
-Then(/^I should see "(.*?)" for "(.*?)" as "(.*?)"$/) do |field, name, value|     
+Then(/^I should see "(.*?)" for "(.*?)" as "(.*?)"$/) do |field, name, value|     #Updated for test 8
   kaiki.pause
   kaiki.switch_default_content
   kaiki.select_frame("iframeportlet")
@@ -379,18 +388,17 @@ Then(/^I should see "(.*?)" for "(.*?)" as "(.*?)"$/) do |field, name, value|
     [option1],
     [option2])
   factory2 = ApproximationsFactory.transpose_build(
-   "//td/h2[text()[contains(., '#{name}')]]/../../../../following-sibling::"   \
-    "div/descendant::tr/th/div[text()[contains(.,'#{field}')]]/../"            \
-    "following-sibling::td/span/input%s",
+    "//td/h2[text()[contains(., '#{name}')]]/../../../.."                      \
+      "/following-sibling::div"                                                \
+      "/descendant::tr/th/div[text()[contains(.,'#{field}')]]/.."              \
+      "/following-sibling::td/span/input%s",
     [option3],
     [option4],
     [option5],
     [option6],
     [option7])
-    
   approximate_xpath = factory1 + factory2
   returned_value = kaiki.get_approximate_field(approximate_xpath)
-  
   if value != returned_value
     raise Capybara::ExpectationNotMet
   end
@@ -407,7 +415,6 @@ Then(/^I should not see a message at the top of the screen$/) do
   kaiki.wait_for(:xpath, "//div[@class='left-errmsg']")
   element = kaiki.find(:xpath, "//div[@class='left-errmsg']")
   field_text = element.text
-
   if not field_text == ""
     raise Capybara::ExpectationNotMet
   end
@@ -455,7 +462,7 @@ Then(/^I should see a description of "(.*?)"$/) do |description|
           And I set "KC Person" to "sesham"
           And I set "Unit Number" to "0721"
           And I click the "Submit" button
-        Then I should see the message "Document was successfully submitted."
+        Then I should see the message "Document was successfully saved."
       }  
     end
 end
@@ -468,7 +475,7 @@ end
 #
 # Returns nothing.
 Then(/^I do not see "(.*?)"$/) do |description|
-  kaiki.should_not (have_content(description))
+  kaiki.should_not(have_content(description))
 end
 
 # Public: Verifies that the field is not blank.
@@ -483,7 +490,6 @@ Then(/^I should see (.*?) not null$/) do |label|
   kaiki.select_frame("iframeportlet")
   element = kaiki.find(:xpath, "//th/div[text()[contains(., '#{label}')]]/../following-sibling::td")
   field_text = element.text
-
   if field_text == ""
     raise Capybara::ExpectationNotMet
   end
@@ -496,7 +502,7 @@ end
 #   table      - data to be used
 #
 # Returns nothing.
-Then(/^I should see the questions under "([^"]*)" with:$/) do |table_name, table| 
+Then(/^I should see the questions under "([^"]*)" with:$/) do |table_name, table| #Created for test 8
   kaiki.pause
   kaiki.switch_default_content
   kaiki.select_frame("iframeportlet")
@@ -515,16 +521,17 @@ Then(/^I should see the questions under "([^"]*)" with:$/) do |table_name, table
         option2="select[@title='#{column_name}']"
         option3="textarea[@title='#{column_name}']"
         option4="input[@title='#{column_name} - #{value}']"
-        approximate_xpath =
+        factory1 =
           ApproximationsFactory.transpose_build(
             "//table/tbody/tr/td/h2[contains(text(), '#{table_name}')]"        \
-              "/../../../../following-sibling::div/div/table/tbody/tr/th"      \
-              "[contains(text(), '#{row_name}')]"                              \
+              "/../../../../following-sibling::div/div/table/tbody/tr"         \
+              "/th[contains(text(), '#{row_name}')]"                           \
               "/../descendant::%s",
             [option4],
             [option3],
             [option1],
             [option2])
+        approximate_xpath = factory1
         element = kaiki.find_approximate_element(approximate_xpath)
         # TODO: Leave the commented code here. This is to provide output for
         #   future development purposes
@@ -557,14 +564,15 @@ end
 #   value      - data to be used
 #
 # Returns nothing.
-Then(/^I should see the "(.*?)" checkbox is "(.*?)"$/) do |check_name, value|  
+Then(/^I should see the "(.*?)" checkbox is "(.*?)"$/) do |check_name, value|    #Added for Test 8
   kaiki.pause
   kaiki.switch_default_content
   kaiki.select_frame("iframeportlet")
-  approximate_xpath = 
-         ApproximationsFactory.transpose_build(
-            "//%s[@title='#{check_name}']",
-            ['tr/td/div/input'])
+  factory1 =
+    ApproximationsFactory.transpose_build(
+      "//%s[@title='#{check_name}']",
+      ['tr/td/div/input'])
+  approximate_xpath = factory1
   element = kaiki.find_approximate_element(approximate_xpath)
   if value.downcase == "checked"
     value = "true"

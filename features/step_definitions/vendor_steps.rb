@@ -63,19 +63,32 @@ end
 #
 # Returns nothing.
 When(/^I fill out a new Vendor (.*) with default values$/) do |tab|
-  # largely borrowed from When /^I set a new ([^']*)'s "([^"]*)" to "([^"]*)"$/ in form_steps.rb
-  fields = TabsFields[tab]
-  tab = case tab
-        when 'Address (Foreign)' then 'Address'
-        else                           tab
-        end
+ fields = TabsFields[tab]
+  case tab
+  when 'Address (Foreign)'
+    tab = 'Address'
+  else
+    tab = tab
+  end
   div = tab_id_for(tab)
   put_table_title(fields, tab)
   fields.each do |field, value|
-    kaikifs.set_approximate_field(
-      approximations_for_field_inside_div(field, div),
-      value
-    )
+    factory1 =
+      ApproximationsFactory.transpose_build(
+        "//div[@id='#{div}']//%s[contains(text(), '#{field}')]"                \
+          "/../following-sibling::td/%s",
+        ['th/label',    'select[1]'],
+        ['th/div',      'input[1]'],
+        [nil,           'textarea[1]'])
+    factory2 =
+      ApproximationsFactory.transpose_build(
+        "//div[@id='#{div}']//th[contains(text(), '#{field}')]"                    \
+          "/../following-sibling::tr/td/div/%s[contains(@title, '#{field}')]",
+        ['select'],
+        ['input'])
+    approximate_xpath = factory1 + factory2
+    element = kaiki.find_approximate_element(approximate_xpath)
+    element.set(value)
     put_fv_as_row(fields, field)
   end
 end
@@ -90,39 +103,28 @@ end
 # Returns nothing.
 When(/^I fill out a new Vendor (.*) with default values, and the following:$/) \
   do |tab, table|
-  # largely borrowed from When /^I set a new ([^']*)'s "([^"]*)" to "([^"]*)"$/ in form_steps.rb
   div = tab_id_for(tab)
-
   fields = TabsFields[tab].merge table.rows_hash
   put_table_title(fields, tab)
   fields.each do |field, value|
-    kaiki.set_approximate_field(
-      approximations_for_field_inside_div(field, div),
-      value)
+    factory1 =
+      ApproximationsFactory.transpose_build(
+        "//div[@id='#{div}']//%s[contains(text(), '#{field}')]"                \
+          "/../following-sibling::td/%s",
+        ['th/label',    'select[1]'],
+        ['th/div',      'input[1]'],
+        [nil,           'textarea[1]'])
+    factory2 =
+      ApproximationsFactory.transpose_build(
+        "//div[@id='#{div}']//th[contains(text(), '#{field}')]"                    \
+          "/../following-sibling::tr/td/div/%s[contains(@title, '#{field}')]",
+        ['select'],
+        ['input'])
+    approximate_xpath = factory1 + factory2
+    element = kaiki.find_approximate_element(approximate_xpath)
+    element.set(value)
     put_fv_as_row(fields, field) unless table.rows_hash.keys.include?(field)
   end
-end
-
-# Public: The following Ruby code utilizes the ApproximationsFactory methods to  
-#         access fields in a table.
-#
-# Parameters:
-#   field - the field to be accessed.
-#   div   - the table that the field is in.
-#
-# Returns nothing.
-def approximations_for_field_inside_div(field, div)
-  ApproximationsFactory.transpose_build(
-    "//div[@id='#{div}']//%s[contains(text(), '#{field}')]"                    \
-      "/../following-sibling::td/%s",
-    ['th/label',    'select[1]'],
-    ['th/div',      'input[1]'],
-    [nil,           'textarea[1]']) +
-  ApproximationsFactory.transpose_build(
-    "//div[@id='#{div}']//th[contains(text(), '#{field}')]"                    \
-      "/../following-sibling::tr/td/div/%s[contains(@title, '#{field}')]",
-    ['select'],
-    ['input'])
 end
 
 # Public: The following Ruby code sets the max key size and value size used for 

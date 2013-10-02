@@ -59,14 +59,15 @@ When(/^I set the "([^"]*)" to that one$/) do |field|
   value = kaiki.record[field]
   factory1 =     
     ApproximationsFactory.transpose_build(
-      "//th/%s[contains(text(), '#{field}:')]/../following-sibling::*/%s",
-      ['label', 'input[1]'    ],
-      [nil,     'select[1]'   ])
+      "//th/label[contains(text(), '#{field}:')]/../following-sibling::*/%s",
+      ['input[1]'    ],
+      ['select[1]'   ])
   factory2 = ["//th[contains(text(), '#{field}')]"]
   factory3 = ["//th[contains(text(), '#{field}')]"                             \
                 "/../following-sibling::*//*[contains(@title, '#{field}')]"]
   approximate_xpath = factory1 + factory2 + factory3
-  kaiki.set_approximate_field(approximate_xpath, value)
+  element = kaiki.find_approximate_element(approximate_xpath)
+  element.set(value)
 end
 
 # Public: Saves the screen shot to a file with a name and time
