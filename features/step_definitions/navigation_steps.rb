@@ -70,8 +70,8 @@ end
 When(/^I (?:click|click the) "([^"]*)" (?:button|(?:on|to) "([^"]*)")([^"]*)$/)\
   do |button, field, extra|
   kaiki.pause
-  #kaiki.switch_default_content
-  #kaiki.select_frame("iframeportlet")
+  kaiki.switch_default_content
+  kaiki.select_frame("iframeportlet")
   item = button.downcase
   downcase_title_buttons = 
     [
@@ -180,6 +180,8 @@ When(/^I (?:click|click the) "([^"]*)" (?:button|(?:on|to) "([^"]*)")([^"]*)$/)\
   elsif item == 'create new'  
     xpath = "//img[@alt = '#{item}']"
     @element = kaiki.find(:xpath, xpath)
+  elsif item == 'copy proposal'                                                   
+    @element = kaiki.find(:name, 'methodToCall.copyProposal.anchorCopytoNewDocument')
   else
     raise NotImplementedError
   end
@@ -267,6 +269,14 @@ When(/^I start a lookup for "(.*?)"$/) do |item|
   when 'grants.gov'
     element = kaiki.find(:xpath, "//div[contains(., '#{item}')]/input[contains(@title, 'Search')]")
     element.click
+  when 'original institutional proposal id'                                       
+    element = kaiki.find(
+    :name,
+    "methodToCall.performLookup.(!!org.kuali.kra.institutionalproposal.home."  \
+    "InstitutionalProposal!!).(((proposalNumber:document."                     \
+    "developmentProposalList[0].continuedFrom))).((``)).((<>)).(([])).((**))." \
+    "((^^)).((&&)).((//)).((~~)).(::::;;::::).anchorRequiredFieldsforSavingDocument")
+    element.click
   else
     raise NotImplementedError
   end
@@ -328,7 +338,7 @@ end
 #Public: Orders records in order of latest created
 #
 #Returns nothing.
-When (/^I click Award ID$/) do
+When (/^I sort by Award ID$/) do
 kaiki.pause
 kaiki.find(:xpath, "/html/body/form/table/tbody/tr/td[2]/table/thead/tr/th[2]/a").click
 kaiki.wait_for(:xpath, "/html/body/form/table/tbody/tr/td[2]/table/thead/tr/th[2]/a")

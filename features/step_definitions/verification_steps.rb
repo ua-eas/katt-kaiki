@@ -361,19 +361,34 @@ end
 #   value - data to be used
 #
 # Returns nothing.
-Then(/^I should see "(.*?)" for "(.*?)" as "(.*?)"$/) do |field, name, value|
+Then(/^I should see "(.*?)" for "(.*?)" as "(.*?)"$/) do |field, name, value|     
   kaiki.pause
   kaiki.switch_default_content
   kaiki.select_frame("iframeportlet")
   option1 = "th/div[text()[contains(., '#{field}')]]"                          \
               "/../../following-sibling::tr/td/div[contains(., '#{value}')]"
   option2 = "input[contains(@title, '#{field}')]"
+  option3 = "[@value = #{value}]"
+  option4 = "[contains(., '#{value}')]"
+  option5 = "[contains(text(), '#{value}')]"
+  option6 = "[text()[contains(., '#{value}')]]"
+  option7 = "[text()[contains(text(), '#{value}')]]"
   factory1 = ApproximationsFactory.transpose_build(
     "//td/div[text()[contains(., '#{name}')]]"                                 \
       "/../../following-sibling::tr/descendant::%s",
     [option1],
     [option2])
-  approximate_xpath = factory1
+  factory2 = ApproximationsFactory.transpose_build(
+   "//td/h2[text()[contains(., '#{name}')]]/../../../../following-sibling::"   \
+    "div/descendant::tr/th/div[text()[contains(.,'#{field}')]]/../"            \
+    "following-sibling::td/span/input%s",
+    [option3],
+    [option4],
+    [option5],
+    [option6],
+    [option7])
+    
+  approximate_xpath = factory1 + factory2
   returned_value = kaiki.get_approximate_field(approximate_xpath)
   
   if value != returned_value
@@ -470,6 +485,93 @@ Then(/^I should see (.*?) not null$/) do |label|
   field_text = element.text
 
   if field_text == ""
+    raise Capybara::ExpectationNotMet
+  end
+end
+
+# Public: Fills in a table on the page with a table of values.
+#
+# Parameters:
+#   table_name - name of the table
+#   table      - data to be used
+#
+# Returns nothing.
+Then(/^I should see the questions under "([^"]*)" with:$/) do |table_name, table| 
+  kaiki.pause
+  kaiki.switch_default_content
+  kaiki.select_frame("iframeportlet")
+  kaiki.should(have_content(table_name))
+  data_table = table.raw
+  header_row = data_table[0]
+  max_data_rows = data_table.size - 1
+  max_data_columns = header_row.size - 1
+  (1..max_data_rows).each do |data_row_counter|
+    (1..max_data_columns).each do |data_column_counter|
+      row_name = data_table[data_row_counter][0]
+      column_name = data_table[0][data_column_counter]
+      value = data_table[data_row_counter][data_column_counter]
+      if value != ""
+        option1="input[@title='#{column_name}']"
+        option2="select[@title='#{column_name}']"
+        option3="textarea[@title='#{column_name}']"
+        option4="input[@title='#{column_name} - #{value}']"
+        approximate_xpath =
+          ApproximationsFactory.transpose_build(
+            "//table/tbody/tr/td/h2[contains(text(), '#{table_name}')]"        \
+              "/../../../../following-sibling::div/div/table/tbody/tr/th"      \
+              "[contains(text(), '#{row_name}')]"                              \
+              "/../descendant::%s",
+            [option4],
+            [option3],
+            [option1],
+            [option2])
+        element = kaiki.find_approximate_element(approximate_xpath)
+        # TODO: Leave the commented code here. This is to provide output for
+        #   future development purposes
+        #  ------------------------------------------------------------------
+        # begin
+        #   print "Xpath Selectors: #{approximate_xpath}\n\n"
+        #   print "Element: #{element}\n"
+        #   print "Type of Element: #{element[:type]}"
+        # rescue Exception => e
+        #   print "Message: #{e.message}\n"
+        # end
+        if element[:type] == "radio"
+          if element[:checked] != "true"
+            raise Capybara::ExpectationNotMet
+          end
+        else
+          if element.text != value
+            raise Capybara::ExpectationNotMet
+          end
+        end
+      end
+    end
+  end
+end
+
+# Public: Check.
+#
+# Parameters:
+#   check_name - name of the checkbox
+#   value      - data to be used
+#
+# Returns nothing.
+Then(/^I should see the "(.*?)" checkbox is "(.*?)"$/) do |check_name, value|  
+  kaiki.pause
+  kaiki.switch_default_content
+  kaiki.select_frame("iframeportlet")
+  approximate_xpath = 
+         ApproximationsFactory.transpose_build(
+            "//%s[@title='#{check_name}']",
+            ['tr/td/div/input'])
+  element = kaiki.find_approximate_element(approximate_xpath)
+  if value.downcase == "checked"
+    value = "true"
+  elsif value.downcase == "unchecked"
+    value = nil
+  end
+  if element[:checked] != value
     raise Capybara::ExpectationNotMet
   end
 end
