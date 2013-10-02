@@ -120,15 +120,14 @@ end
 #
 # Returns nothing
 After do |scenario|
-#  if scenario.failed?
-    kaiki.log.debug "Stopping video..."
+  if scenario.failed?
     kaiki.headless.video.stop_and_save(video_path(scenario))                  \
       if kaiki.is_headless
-#  else
-#    headless.video.stop_and_discard
-#  end
+    else
+    headless.video.stop_and_discard
+  end
+ end
 end
-# end
 
 # Public: Defines where the video is being saved.
 #
@@ -137,13 +136,13 @@ end
 #
 # Returns file path of video
 def video_path(scenario)
-  #f=File.new('tmp.txt', 'w')
-  #f.puts scenario.instance_variables.sort
-  #f.puts scenario.methods.sort
-  #f.puts scenario.file_colon_line
-  #f.close
-  #"features/videos/#{scenario.file_colon_line.split(':')[0]}.mov"
-  #basename = File.basename(scenario.file_colon_line.split(':')[0])
+  f=File.new('tmp.txt', 'w')
+  f.puts scenario.instance_variables.sort
+  f.puts scenario.methods.sort
+  f.puts scenario.file_colon_line
+  f.close
+  "features/videos/#{scenario.file_colon_line.split(':')[0]}.mov"
+  basename = File.basename(scenario.file_colon_line.split(':')[0])
   basename = File.basename(scenario.file_colon_line)
   if basename =~ /^(.+):(\d+)$/
     basename = "#{$1}__%04d" % $2.to_i
