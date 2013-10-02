@@ -6,13 +6,16 @@
 # Original Date: August 20, 2011
 #
 
+group :cucumber, :test do
+  gem 'headless', '~> 0.2.1'
+end
 source 'http://rubygems.org'
 
 gem 'actionpack'
 gem 'capybara', '< 2.0'
 gem 'chunky_png'
 gem 'cucumber'
-gem 'headless'
+#gem 'headless'
 gem 'highline'
 gem 'json'
 gem 'log4r'
