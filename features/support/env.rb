@@ -122,8 +122,8 @@ end
 After do |scenario|
   #if scenario.failed?
     print "#{scenario}\n"
-    kaiki.headless.video.stop_and_save(video_path(scenario))                  \
-      if kaiki.is_headless
+    print "#{kaiki.is_headless}\n"
+    kaiki.headless.video.stop_and_save(video_path(scenario)) if kaiki.is_headless
     kaiki.log.debug "Stopping video..."
     #else
     #kaiki.headless.video.stop_and_discard
