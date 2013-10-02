@@ -124,7 +124,7 @@ After do |scenario|
     kaiki.headless.video.stop_and_save(video_path(scenario))                  \
       if kaiki.is_headless
     else
-    headless.video.stop_and_discard
+    kaiki.headless.video.stop_and_discard
   end
  end
 
