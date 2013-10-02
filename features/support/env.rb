@@ -121,8 +121,10 @@ end
 # Returns nothing
 After do |scenario|
   #if scenario.failed?
+    print "#{scenario}\n"
     kaiki.headless.video.stop_and_save(video_path(scenario))                  \
       if kaiki.is_headless
+    kaiki.log.debug "Stopping video..."
     #else
     #kaiki.headless.video.stop_and_discard
   #end
@@ -142,7 +144,9 @@ def video_path(scenario)
   #f.close
   #"features/videos/#{scenario.file_colon_line.split(':')[0]}.mov"
   #basename = File.basename(scenario.file_colon_line.split(':')[0])
+  print "#{scenario}\n"
   basename = File.basename(scenario.file_colon_line)
+  print "#{basename}\n"
   if basename =~ /^(.+):(\d+)$/
     basename = "#{$1}__%04d" % $2.to_i
   end
