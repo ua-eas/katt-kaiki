@@ -66,9 +66,13 @@ When(/^I (?:set the|set) "([^"]*)" to "([^"]*)"$/) do |field, value|
           "/../following-sibling::tr/td/div/%s[contains(@title, '#{field}')]",
         ['input[1]'               ],
         ['select[1]'              ])
-        
-    approximate_xpath = factory1 + factory2 + factory3 + factory4 + factory5   \
-      + factory6 + factory7
+    factory8 =
+      ApproximationsFactory.transpose_build(
+      "//%s[contains(text(), '#{field}')]" \
+      "/../../following-sibling::tbody/descendant::%s[contains(@title, '#{field}')]",
+      ['th', 'select'])        
+    approximate_xpath = factory1 + factory2 + factory3 + factory4 + factory5  \
+      + factory6 + factory7 + factory8
     kaiki.set_approximate_field(approximate_xpath, value)
 end
 
@@ -90,15 +94,13 @@ When(/^I (?:set the|set) "([^"]*)" text area to "([^"]*)"$/)                   \
   approximate_xpath =
     ApproximationsFactory.transpose_build(
       "//%s[contains(text(), '#{field}')]/../following-sibling::td/%s",
-      ['th/label',    'textarea[1]'  ],
-      ['th/div',      'input[1]'     ],
-      [nil,           'select[1]'    ]) +
+      ['th/label',    'textarea'  ],
+      ['th/div',      nil         ]) +
       ApproximationsFactory.transpose_build(
       "//%s[contains(text(), '#{field}')]"                                     \
         "/../../following-sibling::tr/td/div/%s",
-      ['th/div',      'textarea[1]'  ],
-      ['th/label',    'input[1]'     ],
-      [nil,           'select[1]'    ])
+      ['th/div',      'textarea'  ],
+      ['th/label',    nil         ])
   kaiki.set_approximate_field(approximate_xpath, value)
 end
 
@@ -144,8 +146,8 @@ When(/^I set "(.*?)" (?:under|for) "(.*?)" as "(.*?)"$/)                       \
   kaiki.select_frame("iframeportlet")
   approximate_xpath =
     ["//table/tbody/tr/td/h2[contains(text(),'#{name}')]/../../../.."          \
-    "/following-sibling::div/descendant::input[@title='#{field}']",              #Feature 1: Key Personnel/Person Details/Percentage Effort
-    "//th[contains(., '#{field}')]/../following-sibling::tr/td/div/input",       #Feature 4: Time & Money/Transactions/Obligation
+    "/following-sibling::div/descendant::input[@title='#{field}']",              
+    "//th[contains(., '#{field}')]/../following-sibling::tr/td/div/input",       
     nil]
     element = kaiki.find_approximate_element(approximate_xpath)
     element.set(value)  
@@ -268,7 +270,7 @@ end
 #   table      - data to be used
 #
 # Returns nothing.
-When(/^I fill out the "([^"]*)" table with:$/) do |table_name, table|
+When(/^I fill out the "([^"]*)" table with:$/) do |table_name, table|             
   kaiki.pause
   kaiki.switch_default_content
   kaiki.select_frame("iframeportlet")
@@ -287,7 +289,7 @@ When(/^I fill out the "([^"]*)" table with:$/) do |table_name, table|
           option1 = "input[contains(@title, '#{column_name}')]"
           option2 = "select[contains(@title, '#{column_name}')]"
           option3 = "textarea[contains(@title, '#{column_name}')]"
-          approximate_xpath = 
+          factory1 = 
             ApproximationsFactory.transpose_build(
               "//h3/span[contains(text(), '#{table_name}')]"                   \
                 "/../following-sibling::table"                                 \
@@ -296,6 +298,16 @@ When(/^I fill out the "([^"]*)" table with:$/) do |table_name, table|
               [option1],
               [option2],
               [option3])
+          factory2 =                                                             
+            ApproximationsFactory.transpose_build(
+              "//h3/span[contains(text(), '#{table_name}')]"                   \
+                "/../following-sibling::table"                                 \
+                "/descendant::tr/th[contains(text(), '#{row_name}')]"          \
+                "/following-sibling::td/div/%s",
+              [option1],
+              [option2],
+              [option3])
+          approximate_xpath = factory1 + factory2
           kaiki.set_approximate_field(approximate_xpath, value)
       end
     end
@@ -364,7 +376,6 @@ When(/^I check the "([^"]*)" checkbox$/) do |check_name|
         "/../following-sibling::td/%s[@title = '#{check_name}']",
       ['th/div',      'input[1]'     ],
       ['th/label',    'select[1]'    ])
-      
   factory2 =
     ApproximationsFactory.transpose_build(
       "//%s[contains(text(), '#{check_name}')]"                                \
@@ -372,14 +383,25 @@ When(/^I check the "([^"]*)" checkbox$/) do |check_name|
       ['html/body/form/table/tbody/tr/td[2]/div[2]/table[3]/tbody/tr/td/h2',   
                       'input'     ],                                           
       [nil,           'select'    ])
-      
   factory3 =
     ApproximationsFactory.transpose_build(
       "//%s[contains(text(), '#{check_name}')]"                                \
       "/../following-sibling::td/div/%s",
       ['tr/th/div',      'input'     ],
       [nil,              'select'    ])
-  approximate_xpath = factory1 + factory2 + factory3
+  factory4 =                                                                     
+    ApproximationsFactory.transpose_build(
+      "//%s[contains(text(), '#{check_name}')]"                                \
+      "/following-sibling::td/%s",
+      ['tr/th',          'input'     ],
+      [nil,              'select'    ])
+  factory5 =
+    ApproximationsFactory.transpose_build(
+      "//%s[contains(text(), '#{check_name}')]" \
+      "/../../following-sibling::tbody/descendant::%s[contains(@title,"        \
+      " '#{check_name}')]",
+      ['th', 'input'])
+  approximate_xpath = factory1 + factory2 + factory3 + factory4 + factory5
   kaiki.check_approximate_field(approximate_xpath)
 end
 
