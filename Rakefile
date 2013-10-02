@@ -1,8 +1,8 @@
 #
 # Description: This is the Rakefile that is used to run the features from Jenkins.
-# This sets environment variables and starts a video.
-# This can run all features, a certain feature, a certain
-# scenario inside a feature, or a certain feature multiple times.
+#			         This sets environment variables and starts a video.
+#              This can run all features, a certain feature, a certain 
+#              scenario inside a feature, or a certain feature multiple times. 
 #
 # Original Date: August 20, 2011
 
@@ -20,25 +20,25 @@ require 'cucumber/rake/task'
 
 def set_env_defaults
   ENV['KAIKI_IS_HEADLESS'] = "true" if ENV['KAIKI_IS_HEADLESS'].nil?
-  ENV['KAIKI_NETID'] = "" if ENV['KAIKI_NETID'].nil?
-  ENV['KAIKI_ENV'] = "cdf" if ENV['KAIKI_ENV'].nil?
+  ENV['KAIKI_NETID'] = ""           if ENV['KAIKI_NETID'].nil?
+  ENV['KAIKI_ENV']   = "cdf"        if ENV['KAIKI_ENV'].nil?
 end
 
 
 #Public: A rake task to run all features in order
 #
-# rake command: ordered_features
+# rake command: ordered_features 
 #
 # This will run feature files in order via a tag id
-# Each feature file that you want to run in order simply add a tag to line 1 of the feature file
+# Each feature file that you want to run in order simply add a tag to line 1 of the feature file 
 # example: @test1
 # NOTE:each tag has to start with the id "test"
-#
+# 
 # you can edit this line of code based on the number of features you want to run in order:
 # until i > 10
-# example:
+# example: 
 # until i > 100
-#
+#	
 task :ordered_features do |t|
   i = 1
   until i > 4
@@ -50,22 +50,24 @@ task :ordered_features do |t|
   end
 end
 
-#Public:Takes an Arry from a .rb file from a folder and runs test senerios in order
+
+# Public: Takes an array from the given ruby file and runs scenarios according to the tags
+#         contained within said array.
 #
 # Parameters:
 # rows: rows of the array
 # kc: name of the tags for kuali coeus test senarios that need to be run in order
 #
 #
-#Returns an array
-#
+# Returns nothing.
 task :ECE do
   set_env_defaults
   File.basename("katt-kaiki/features/support/ECE.rb")
-  jirra.each do |rows|
-    rows.each do |kc|
-      tags = "--tags #{kc}"
-      puts tags
+  jirra.each do |i|
+    sleep 30
+    i.each do |j|
+      sleep 30
+      tags = "--tags #{j}"
       Cucumber::Rake::Task.new(:ECE, "Run all tests in required order.") do |t|
         t.cucumber_opts = tags
       end
@@ -73,34 +75,36 @@ task :ECE do
   end
 end
 
+
 #Public: General Tag for features that dont need to run in order
 #
 # Parameters
-# @kctest- tag name for tests that dont need to be run in order
+#   @kctest- tag name for tests that dont need to be run in order
 #
-#Returns Nothing
-#
-Cucumber::Rake::Task.new(:dev) do |t|
-  set_env_defaults
-  t.cucumber_opts = "--tags @kctest"
+# Returns nothing.
+task :dev do
+  Cucumber::Rake::Task.new(:dev) do |t|
+    set_env_defaults
+    t.cucumber_opts = "--tags @kctest"
+  end
 end
 
 #Public: Takes two rake tasks and invokes them in order
 #
-# Parameters
-# ECE - ECE rake Task
-# dev - dev rake Task
+# Parameters 
+#   ECE - ECE rake Task
+#   dev - dev rake Task
 #
-# Returns Nothing
-#
-Cucumber::Rake::Task.new(:run, "Run scenario") do
- set_env_defaults
-    Rake::Task[:ECE].invoke 1
-    Rake::Task[:ECE].reenable
-    Rake::Task[:dev].invoke 2
-    Rake::Task[:dev].reenable
+# Returns nothing.
+task :run do
+  Cucumber::Rake::Task.new(:run, "Run scenario") do
+   set_env_defaults
+      Rake::Task[:ECE].invoke 1
+      Rake::Task[:ECE].reenable
+      Rake::Task[:dev].invoke 2
+      Rake::Task[:dev].reenable
+  end
 end
-
 
 # Experimental... not sure we'll use this...
 # This creates a .mov video file when the rake starts.
