@@ -44,7 +44,7 @@ class KaikiWorld
   env      ||= [] << ask("Environment/URL:  ") { |q| q.echo = true;           \
                                                      q.default='kc-cdf' }
 
-  is_headless = false
+  is_headless = true
   if ENV['KAIKI_IS_HEADLESS']
     is_headless = ENV['KAIKI_IS_HEADLESS'] =~ /1|true|yes/i
   end
@@ -121,8 +121,6 @@ end
 # Returns nothing
 After do |scenario|
   #if scenario.failed?
-    print "#{scenario}\n"
-    print "#{kaiki.is_headless}\n"
     kaiki.headless.video.stop_and_save(video_path(scenario)) if kaiki.is_headless
     kaiki.log.debug "Stopping video..."
     #else
@@ -144,13 +142,9 @@ def video_path(scenario)
   #f.close
   #"features/videos/#{scenario.file_colon_line.split(':')[0]}.mov"
   #basename = File.basename(scenario.file_colon_line.split(':')[0])
-  print "#{scenario}\n"
   basename = File.basename(scenario.file_colon_line)
-  print "#{basename}\n"
   if basename =~ /^(.+):(\d+)$/
     basename = "#{$1}__%04d" % $2.to_i
   end
-  print File.join(Dir::pwd, 'features', 'videos', basename+".mov")
-  print "\n"
   File.join(Dir::pwd, 'features', 'videos', basename+".mov")
 end
