@@ -47,7 +47,9 @@ unless ENV['BUILD_NUMBER'].nil?
     print "base_path in mk_video_dir: #{base_path}\n"
     video_dir = File.join(base_path, Time.now.strftime("%Y-%m-%d.%H"))
     print "video_dir in mk_video_dir: #{video_dir}\n"
+    print "video_dir exist?: #{Dir::exists? video_dir}\n"
     return if Dir::exists? video_dir
+    print "returned from mk_video_dir: #{Dir::mkdir(video_dir)}"
     Dir::mkdir(video_dir)
   end
 
