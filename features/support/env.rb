@@ -104,7 +104,7 @@ After do |scenario|
   end
 end
 
-if ENV['BUILD_NUMBER']
+if ENV['BUILD_NUMBER'].nil?
   # Public: Creates a video of the headless browser, before each scenario.
   #
   # Returns nothing
