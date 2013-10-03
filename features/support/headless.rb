@@ -39,6 +39,7 @@ unless ENV['BUILD_NUMBER'].nil?
 
   def video_path(scenario)
     print "#{scenario}\n"
+    print "#{scenario.name.split.join("_")}.mov\n"
     "#{scenario.name.split.join("_")}.mov"
   end
 end
