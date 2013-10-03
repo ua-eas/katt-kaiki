@@ -23,21 +23,28 @@ unless ENV['BUILD_NUMBER'].nil?
   end
 
   Before do
+    @base_path = File.join(Dir::pwd, 'features', 'videos')
+    @video_dir = mk_video_dir(@base_path)
     headless.video.start_capture
   end
 
   After do |scenario|
     #if scenario.failed?
-      path = video_path(scenario)
-      print "\n"
-      print "#{path}\n"
+      path = video_path(scenario, @video_dir)
       headless.video.stop_and_save(path)
+      print "Saved video to #{path}"
     #else
     #  headless.video.stop_and_discard
     #end
   end
 
-  def video_path(scenario)
+  def mk_video_dir(base_path)
+    @video_dir = File.join(base_path, Time.now.strftime("%Y-%m-%d.%H"))
+    return if Dir::exists? @video_dir
+    Dir::mkdir(@video_dir)
+  end
+
+  def video_path(scenario, video_dir)
     #print "#{scenario}\n"
     #print "#{scenario.name.split.join("_")}.mov\n"
     #"#{scenario.name.split.join("_")}.mov"
@@ -47,8 +54,6 @@ unless ENV['BUILD_NUMBER'].nil?
     if basename =~ /^(.+):(\d+)$/
       basename = "#{$1}__%04d" % $2.to_i
     end
-    print File.join(Dir::pwd, 'features', 'videos', basename+".mov")
-    print "\n"
-    File.join(Dir::pwd, 'features', 'videos', basename+".mov")
+    File.join(video_dir, basename+".mov")
   end
 end
