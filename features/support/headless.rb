@@ -11,7 +11,7 @@
 #	  display - which desktop environment to create the display on.
 #
 # Returns nothing
-if ENV['BUILD_NUMBER'].present?
+unless ENV['BUILD_NUMBER'].nil?
   require 'headless'
 
   #headless = Headless.new(:display => SERVER_PORT)
