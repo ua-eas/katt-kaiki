@@ -23,15 +23,15 @@ unless ENV['BUILD_NUMBER'].nil?
   end
 
   Before do
-    print "\n"
-    print "Starting video for Jenkins...\n"
     headless.video.start_capture
   end
 
   After do |scenario|
     #if scenario.failed?
-      headless.video.stop_and_save(video_path(scenario))
-      print "Stopping video for Jenkins...\n"
+      path = video_path(scenario)
+      print "\n"
+      print "#{path}\n"
+      headless.video.stop_and_save(path)
     #else
     #  headless.video.stop_and_discard
     #end
@@ -42,6 +42,7 @@ unless ENV['BUILD_NUMBER'].nil?
     #print "#{scenario.name.split.join("_")}.mov\n"
     #"#{scenario.name.split.join("_")}.mov"
     basename = File.basename(scenario.file_colon_line)
+    print "\n"
     print "#{basename}\n"
     if basename =~ /^(.+):(\d+)$/
       basename = "#{$1}__%04d" % $2.to_i
