@@ -33,7 +33,7 @@ unless ENV['BUILD_NUMBER'].nil?
 
   After do |scenario|
     #if scenario.failed?
-      print "video_dir: #{video_dir}\n"
+      print "video_dir: #{@video_dir}\n"
       path = video_path(scenario, @video_dir)
       print "#{path}\n"
       headless.video.stop_and_save(path)
