@@ -25,6 +25,7 @@ unless ENV['BUILD_NUMBER'].nil?
   Before do
     @base_path = File.join(Dir::pwd, 'features', 'videos')
     @video_dir = mk_video_dir(@base_path)
+    print "#{@video_dir}\n"
     headless.video.start_capture
   end
 
@@ -47,11 +48,9 @@ unless ENV['BUILD_NUMBER'].nil?
   def video_path(scenario, video_dir)
     #"#{scenario.name.split.join("_")}.mov"
     basename = File.basename(scenario.file_colon_line)
-    print "\n"
-    print "#{basename}\n"
     if basename =~ /^(.+):(\d+)$/
       basename = "#{$1}__%04d" % $2.to_i
     end
-    File.join(video_dir, "#{basename}.mov")
+    File.join("#{video_dir}", "#{basename}.mov")
   end
 end
