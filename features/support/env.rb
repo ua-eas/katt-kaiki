@@ -108,11 +108,8 @@ end
 #
 # Returns nothing
 Before do
-  print "\n"
-  print "Starting Video...\n"
-  print "#{kaiki.is_headless}\n"
   kaiki.log.debug "Starting video..."
-  kaiki.headless.video.start_capture
+  kaiki.headless.video.start_capture if kaiki.is_headless
   kaiki.puts_method = method(:puts)
 end
 
@@ -124,10 +121,8 @@ end
 # Returns nothing
 After do |scenario|
   #if scenario.failed?
-    kaiki.headless.video.stop_and_save(video_path(scenario))
+    kaiki.headless.video.stop_and_save(video_path(scenario))  if kaiki.is_headless
     kaiki.log.debug "Stopping video..."
-    print "Stopping Video...\n"
-    print "#{kaiki.is_headless}\n"
     #else
     #kaiki.headless.video.stop_and_discard
   #end
@@ -148,11 +143,8 @@ def video_path(scenario)
   #"features/videos/#{scenario.file_colon_line.split(':')[0]}.mov"
   #basename = File.basename(scenario.file_colon_line.split(':')[0])
   basename = File.basename(scenario.file_colon_line)
-  print "#{basename}\n"
   if basename =~ /^(.+):(\d+)$/
     basename = "#{$1}__%04d" % $2.to_i
   end
-  print File.join(Dir::pwd, 'features', 'videos', basename+".mov")
-  print "\n"
   File.join(Dir::pwd, 'features', 'videos', basename+".mov")
 end
