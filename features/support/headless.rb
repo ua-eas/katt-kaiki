@@ -45,8 +45,6 @@ unless ENV['BUILD_NUMBER'].nil?
   end
 
   def video_path(scenario, video_dir)
-    #print "#{scenario}\n"
-    #print "#{scenario.name.split.join("_")}.mov\n"
     #"#{scenario.name.split.join("_")}.mov"
     basename = File.basename(scenario.file_colon_line)
     print "\n"
@@ -54,6 +52,6 @@ unless ENV['BUILD_NUMBER'].nil?
     if basename =~ /^(.+):(\d+)$/
       basename = "#{$1}__%04d" % $2.to_i
     end
-    File.join(video_dir, basename+".mov")
+    File.join(video_dir, "#{basename}.mov")
   end
 end
