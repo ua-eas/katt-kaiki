@@ -122,7 +122,9 @@ if ENV['BUILD_NUMBER'].nil?
   # Returns nothing
   After do |scenario|
     #if scenario.failed?
-      kaiki.headless.video.stop_and_save(video_path(scenario))  if kaiki.is_headless
+      path = video_path(scenario)
+      kaiki.headless.video.stop_and_save(path) if kaiki.is_headless
+      print "Saved video file to #{path}\n"
       kaiki.log.debug "Stopping video..."
       #else
       #kaiki.headless.video.stop_and_discard
