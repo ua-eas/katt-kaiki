@@ -11,7 +11,7 @@
 #	  display - which desktop environment to create the display on.
 #
 # Returns nothing
-if ! ENV['BUILD_NUMBER'].nil?
+if ENV['BUILD_NUMBER'].present?
   require 'headless'
 
   #headless = Headless.new(:display => SERVER_PORT)
@@ -23,18 +23,22 @@ if ! ENV['BUILD_NUMBER'].nil?
   end
 
   Before do
+    print "\n"
+    print "Starting Video...\n"
     headless.video.start_capture
   end
 
   After do |scenario|
-    if scenario.failed?
+    #if scenario.failed?
       headless.video.stop_and_save(video_path(scenario))
-    else
-      headless.video.stop_and_discard
-    end
+      print "Stopping video...\n"
+    #else
+    #  headless.video.stop_and_discard
+    #end
   end
 
   def video_path(scenario)
+    print "#{scenario}\n"
     "#{scenario.name.split.join("_")}.mov"
   end
 end
