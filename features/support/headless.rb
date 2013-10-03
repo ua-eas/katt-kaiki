@@ -23,6 +23,7 @@ unless ENV['BUILD_NUMBER'].nil?
   end
 
   Before do
+    kaiki.log.debug "Starting video for Jenkins build..."
     headless.video.start_capture
   end
 
@@ -31,6 +32,7 @@ unless ENV['BUILD_NUMBER'].nil?
       path = video_path(scenario)
       headless.video.stop_and_save(path)
       print "Saved video file to #{path}\n"
+      kaiki.log.debug "Stopping video for Jenkins build..."
     #else
       #headless.video.stop_and_discard
     #end
