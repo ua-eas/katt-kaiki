@@ -17,7 +17,7 @@ unless ENV['BUILD_NUMBER'].nil?
   #headless = Headless.new(:display => SERVER_PORT)
   headless = Headless.new(:display => 98)
   headless.start
-  print "#Headless display port - {headless.display}\n"
+  print "#Headless display port - #{headless.display}\n"
 
   at_exit do
     headless.destroy
