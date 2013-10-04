@@ -15,23 +15,31 @@ unless ENV['BUILD_NUMBER'].nil?
   require 'headless'
 
   #headless = Headless.new(:display => SERVER_PORT)
-  headless = Headless.new(:display => 98)
-  headless.start
-  print "#Headless display port - #{headless.display}\n"
+  headless_recorder = Headless::VideoRecorder.new('99', '1600x900x24')
+  #headless.start
 
-  at_exit do
-    headless.destroy
-  end
+  # at_exit do
+    # headless.destroy
+  # end
 
+  # Public: Creates a video of the headless browser, before each scenario.
+  #
+  # Returns nothing
   Before do
     kaiki.log.debug "Starting video for Jenkins build..."
-    headless.video.start_capture
+    headless_recorder.start_capture
   end
 
+  # Public: Stops video recording after each scenario.
+  #
+  # Parameters:
+  #   scenario - current running test.
+  #
+  # Returns nothing
   After do |scenario|
     #if scenario.failed?
       path = video_path(scenario)
-      headless.video.stop_and_save(path)
+      headless_recorder.stop_and_save(path)
       print "Saved video file to #{path}\n"
       kaiki.log.debug "Stopping video for Jenkins build..."
     #else
@@ -39,6 +47,12 @@ unless ENV['BUILD_NUMBER'].nil?
     #end
   end
 
+  # Public: Defines where the video is being saved.
+  #
+  # Parameters:
+  #   scenario - current running test.
+  #
+  # Returns file path of video
   def video_path(scenario)
     basename = File.basename(scenario.file_colon_line)
     if basename =~ /^(.+):(\d+)$/
