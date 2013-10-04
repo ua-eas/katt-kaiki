@@ -15,7 +15,7 @@ unless ENV['BUILD_NUMBER'].nil?
   require 'headless'
 
   #headless = Headless.new(:display => SERVER_PORT)
-  headless_recorder = Headless::VideoRecorder.new('99', '1600x900x24')
+  headless_recorder = Headless::VideoRecorder.new('98', '1600x900x24')
   #headless.start
 
   # at_exit do
