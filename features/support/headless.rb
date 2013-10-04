@@ -18,7 +18,7 @@ unless ENV['BUILD_NUMBER'].nil?
   headless_recorder = Headless::VideoRecorder.new('98', '1600x900x24', :tmp_file_path => path)
   #headless_recorder.start
 
-  print "temp video path - path\n"
+  print "temp video path - #{path}\n"
   
   # at_exit do
     # headless.destroy
