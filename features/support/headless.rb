@@ -15,8 +15,11 @@ unless ENV['BUILD_NUMBER'].nil?
   require 'headless'
 
   #headless = Headless.new(:display => SERVER_PORT)
-  headless = Headless.new(:display => 98)
+  headless = Headless.new()
   headless.start
+
+  print "headless display number - #{headless.display}\n"
+  print "headless dimensions - #{headless.dimensions}\n"
 
   # at_exit do
     # headless.destroy
