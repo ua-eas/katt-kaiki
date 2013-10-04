@@ -13,14 +13,13 @@
 # Returns nothing
 unless ENV['BUILD_NUMBER'].nil?
   require 'headless'
-
+  path = File.join(Dir::pwd, 'features', 'videos', 'headless_ffmpeg_#{@display}.mov')
   #headless = Headless.new(:display => SERVER_PORT)
-  headless = Headless.new()
-  headless.start
+  headless_recorder = Headless::VideoRecorder.new(98, 1600x900x24, :tmp_file_path => path)
+  headless_recorder.start
 
-  print "headless display number - #{headless.display}\n"
-  print "headless dimensions - #{headless.dimensions}\n"
-
+  print "temp video path - path\n"
+  
   # at_exit do
     # headless.destroy
   # end
@@ -30,7 +29,7 @@ unless ENV['BUILD_NUMBER'].nil?
   # Returns nothing
   Before do
     kaiki.log.debug "Starting video for Jenkins build..."
-    headless.video.start_capture
+    headless_recorder.start_capture
   end
 
   # Public: Stops video recording after each scenario.
@@ -42,7 +41,7 @@ unless ENV['BUILD_NUMBER'].nil?
   After do |scenario|
     #if scenario.failed?
       path = video_path(scenario)
-      headless.video.stop_and_save(path)
+      headless_recorder.stop_and_save(path)
       print "Saved video file to #{path}\n"
       kaiki.log.debug "Stopping video for Jenkins build..."
     #else
