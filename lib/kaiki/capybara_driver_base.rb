@@ -342,9 +342,11 @@ class Kaiki::CapybaraDriver::Base
       Selenium::WebDriver::Firefox.path = @firefox_path
     end
 
-    if is_headless
-      @headless = Headless.new(:dimensions => DEFAULT_DIMENSIONS)
-      @headless.start
+    if ENV['BUILD_NUMBER'].nil?
+      if is_headless
+        @headless = Headless.new(:dimensions => DEFAULT_DIMENSIONS)
+        @headless.start
+      end
     end
 
     Capybara.run_server = false
