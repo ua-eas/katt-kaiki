@@ -15,7 +15,8 @@ unless ENV['BUILD_NUMBER'].nil?
   require 'headless'
 
   #headless = Headless.new(:display => SERVER_PORT)
-  headless = Headless.new(:display => 98)
+  #headless = Headless.new(:display => 98)
+  headless = Headless.new
   headless.start
 
   at_exit do
@@ -26,8 +27,8 @@ unless ENV['BUILD_NUMBER'].nil?
   #
   # Returns nothing
   Before do
-    kaiki.log.debug "Starting video for Jenkins build..."
     headless.video.start_capture
+    kaiki.log.debug "Starting video for Jenkins build..."
   end
 
   # Public: Stops video recording after each scenario.
