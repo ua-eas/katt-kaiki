@@ -306,7 +306,7 @@ end
 # Returns nothing.
 When (/^I slow down$/) do
   kaiki.log.debug "I slow down (pause_time = #{kaiki.pause_time + 2})"
-  kaiki.pause_time += 2
+  kaiki.pause_time += 4
 end
 
 # Public: Performs an action on the first record in the table.
