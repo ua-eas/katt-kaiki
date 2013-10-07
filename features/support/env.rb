@@ -67,11 +67,11 @@ class KaikiWorld
   @@kaiki.record[:document_numbers] = ENV['KAIKI_DOC_NUMBERS'].split(',')     \
                                       if ENV['KAIKI_DOC_NUMBERS']
 
-  if ENV['BUILD_NUMBER'].nil?
+  #if ENV['BUILD_NUMBER'].nil?
     at_exit do
       @@kaiki.headless.destroy if is_headless
     end
-  end
+  #end
 
   def kaiki
     @@kaiki
@@ -106,7 +106,7 @@ After do |scenario|
   end
 end
 
-if ENV['BUILD_NUMBER'].nil?
+#if ENV['BUILD_NUMBER'].nil?
   # Public: Creates a video of the headless browser, before each scenario.
   #
   # Returns nothing
@@ -153,4 +153,4 @@ if ENV['BUILD_NUMBER'].nil?
     end
     File.join(Dir::pwd, 'features', 'videos', basename+".mov")
   end
-end
+#end
