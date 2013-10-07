@@ -42,7 +42,7 @@ class KaikiWorld
   username ||=       ask("NetID:  ")           { |q| q.echo = true }
   password ||=       ask("Password:  ")        { |q| q.echo = "*" }
   env      ||= [] << ask("Environment/URL:  ") { |q| q.echo = true;           \
-                                                     q.default='kc-cdf' }
+                                                     q.default='cdf' }
 
   is_headless = true
   if ENV['KAIKI_IS_HEADLESS']
