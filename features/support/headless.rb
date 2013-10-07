@@ -38,21 +38,14 @@ unless ENV['BUILD_NUMBER'].nil?
   # Returns nothing
   After do |scenario|
     #if scenario.failed?
-      headless.video.stop_and_save("/var/opt/toolkit/jenkins/jobs/Kaiki - KC All CI Scenarios - development/workspace/features/videos/#{scenario.name.split.join("_")}.mov")
+      path = video_path(scenario)
+      headless.video.stop_and_save(path)
+      print "Saved video file to #{path}\n"
+      kaiki.log.debug "Stopping video for Jenkins build..."
     #else
       #headless.video.stop_and_discard
     #end
   end
-  #After do |scenario|
-    #if scenario.failed?
-      #path = video_path(scenario)
-      #headless.video.stop_and_save(path)
-      #print "Saved video file to #{path}\n"
-      #kaiki.log.debug "Stopping video for Jenkins build..."
-    #else
-      #headless.video.stop_and_discard
-    #end
-  #end
 
   # Public: Defines where the video is being saved.
   #
