@@ -5,9 +5,6 @@
 #
 # Original Date: August 20, 2011
 #
-
-group :cucumber, :test do
-source 'http://rubygems.org'
  
 gem 'actionpack'
 gem 'capybara', '< 2.0'
