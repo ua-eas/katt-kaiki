@@ -17,5 +17,3 @@ gem 'log4r'
 gem 'nokogiri'
 gem 'rspec'
 gem 'selenium-webdriver'
-
-end
