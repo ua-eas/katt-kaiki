@@ -6,18 +6,16 @@
 # Original Date: August 20, 2011
 #
 
-
 source 'http://rubygems.org'
-group do
+
 gem 'actionpack'
-gem 'capybara', '1.1.4'
+gem 'capybara', '< 2.0'
 gem 'chunky_png'
 gem 'cucumber'
-gem 'headless', '1.0.1'
+gem 'headless'
 gem 'highline'
 gem 'json'
 gem 'log4r'
 gem 'nokogiri'
 gem 'rspec'
-gem 'selenium-webdriver', '2.35.0'
-end
+gem 'selenium-webdriver'
