@@ -70,4 +70,4 @@ DEPENDENCIES
   log4r
   nokogiri
   rspec
-  selenium-webdriver
+  selenium-webdriver (< 2.35.0)
