@@ -32,6 +32,6 @@ def jirra
       ['@Proposal_New', '@Award_New', '@Award_Deobilgation', '@Proposal_Admin_Change'],
       ['@Proposal_New', '@Award_New', '@Award_Admin_Amendment'],
       ['@Proposal_New', '@Award_New', '@Award_No_Cost_Extension'],
-      ['@Proposal_New', '@Award_New', '@Award_Unlink_IP', '@Award_Supp_Cont_II'],
+      ['@Proposal_New', '@Award_New', '@Award_Unlink_IP', '@Award_Supp_Cont_II']
     ]
 end
