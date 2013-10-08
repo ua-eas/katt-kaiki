@@ -19,5 +19,5 @@ gem 'json'
 gem 'log4r'
 gem 'nokogiri'
 gem 'rspec'
-gem 'selenium-webdriver', '2.35.0'
+gem 'selenium-webdriver'
 end
