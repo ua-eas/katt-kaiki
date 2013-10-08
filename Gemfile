@@ -8,15 +8,16 @@
 
 
 source 'http://rubygems.org'
-
+group do
 gem 'actionpack'
-gem 'capybara', '< 2.0'
+gem 'capybara', '1.1.4'
 gem 'chunky_png'
 gem 'cucumber'
-gem 'headless'
+gem 'headless', '1.0.1'
 gem 'highline'
 gem 'json'
 gem 'log4r'
 gem 'nokogiri'
 gem 'rspec'
 gem 'selenium-webdriver'
+end
