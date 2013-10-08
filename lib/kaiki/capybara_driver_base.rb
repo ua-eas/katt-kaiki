@@ -345,7 +345,7 @@ class Kaiki::CapybaraDriver::Base
       @headless = Headless.new(:dimensions => DEFAULT_DIMENSIONS)
       @headless.start
     end
-
+
     Capybara.run_server = false
     Capybara.app_host = host
     Capybara.default_wait_time = DEFAULT_TIMEOUT
