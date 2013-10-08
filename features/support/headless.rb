@@ -15,8 +15,7 @@ unless ENV['BUILD_NUMBER'].nil?
   require 'headless'
 
   #headless = Headless.new(:display => SERVER_PORT)
-  #headless = Headless.new(:display => 98)
-  headless = Headless.new
+  headless = Headless.new(:display => 97)
   headless.start
 
   at_exit do
