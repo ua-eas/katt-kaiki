@@ -26,6 +26,7 @@ unless ENV['BUILD_NUMBER'].nil?
   #
   # Returns nothing
   Before do
+    kaiki.log.debug "Starting video for Jenkins build..."
     headless.video.start_capture
     kaiki.log.debug "Starting video for Jenkins build..."
   end

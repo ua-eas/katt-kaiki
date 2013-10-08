@@ -7,6 +7,7 @@
 require 'base64'
 require 'capybara'
 require 'capybara/dsl'
+require 'headless'
 require 'json'
 require 'log4r'
 begin
@@ -79,7 +80,7 @@ class Kaiki::CapybaraDriver::Base
       @env = @envs.keys.first
     end
 
-    @pause_time           = options[:pause_time] || 2
+    @pause_time           = options[:pause_time] || 5
     @is_headless          = options[:is_headless]
     @firefox_profile_name = options[:firefox_profile]
     @firefox_path         = options[:firefox_path]
