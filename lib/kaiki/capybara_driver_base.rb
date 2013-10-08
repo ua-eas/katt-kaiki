@@ -7,7 +7,6 @@
 require 'base64'
 require 'capybara'
 require 'capybara/dsl'
-require 'headless'
 require 'json'
 require 'log4r'
 begin
@@ -80,7 +79,7 @@ class Kaiki::CapybaraDriver::Base
       @env = @envs.keys.first
     end
 
-    @pause_time           = options[:pause_time] || 5
+    @pause_time           = options[:pause_time] || 2
     @is_headless          = options[:is_headless]
     @firefox_profile_name = options[:firefox_profile]
     @firefox_path         = options[:firefox_path]
@@ -342,11 +341,9 @@ class Kaiki::CapybaraDriver::Base
       Selenium::WebDriver::Firefox.path = @firefox_path
     end
 
-    if ENV['BUILD_NUMBER'].nil?
-      if is_headless
-        @headless = Headless.new(:dimensions => DEFAULT_DIMENSIONS)
-        @headless.start
-      end
+    if is_headless
+      @headless = Headless.new(:dimensions => DEFAULT_DIMENSIONS)
+      @headless.start
     end
 
     Capybara.run_server = false
