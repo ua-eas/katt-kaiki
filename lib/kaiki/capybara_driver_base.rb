@@ -7,7 +7,6 @@
 require 'base64'
 require 'capybara'
 require 'capybara/dsl'
-require 'headless'
 require 'json'
 require 'log4r'
 begin
