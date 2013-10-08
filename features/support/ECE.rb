@@ -27,11 +27,11 @@
 
 def jirra
   array = [
-      ['@Proposal_New', '@Award_New', '@Proposal_Continuation', '@Award_Allotment', '@Award_Supplement_Continuation', '@Proposal_Revision', '@Proposal_Renewal'],
-      ['@Proposal_New', '@Proposal_Resubmission'],
-      ['@Proposal_New', '@Award_New', '@Award_Deobilgation', '@Proposal_Admin_Change'],
-      ['@Proposal_New', '@Award_New', '@Award_Admin_Amendment'],
-      ['@Proposal_New', '@Award_New', '@Award_No_Cost_Extension'],
-      ['@Proposal_New', '@Award_New', '@Award_Unlink_IP', '@Award_Supp_Cont_II']
+      #['@Proposal_New', '@Award_New', '@Proposal_Continuation', '@Award_Allotment', '@Award_Supplement_Continuation', '@Proposal_Revision', '@Proposal_Renewal'],
+      ['@Proposal_New', '@Proposal_Resubmission']
+      #['@Proposal_New', '@Award_New', '@Award_Deobilgation', '@Proposal_Admin_Change'],
+      #['@Proposal_New', '@Award_New', '@Award_Admin_Amendment'],
+     # ['@Proposal_New', '@Award_New', '@Award_No_Cost_Extension'],
+     #['@Proposal_New', '@Award_New', '@Award_Unlink_IP', '@Award_Supp_Cont_II']
     ]
 end
