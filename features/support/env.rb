@@ -67,8 +67,10 @@ class KaikiWorld
   @@kaiki.record[:document_numbers] = ENV['KAIKI_DOC_NUMBERS'].split(',')     \
                                       if ENV['KAIKI_DOC_NUMBERS']
 
-  at_exit do
-    @@kaiki.headless.destroy if is_headless
+  if ENV['BUILD_NUMBER'].nil?
+    at_exit do
+      @@kaiki.headless.destroy if is_headless
+    end
   end
 
   def kaiki
