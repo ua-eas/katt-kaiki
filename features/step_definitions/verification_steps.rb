@@ -571,7 +571,8 @@ Then(/^I should see the "(.*?)" checkbox is "(.*?)"$/) do |check_name, value|   
   factory1 =
     ApproximationsFactory.transpose_build(
       "//%s[@title='#{check_name}']",
-      ['tr/td/div/input'])
+      ['tr/td/div/input'],
+      ['tr/td/input'])
   approximate_xpath = factory1
   element = kaiki.find_approximate_element(approximate_xpath)
   if value.downcase == "checked"
