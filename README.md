@@ -1,53 +1,41 @@
-KaikiFS
+Kaiki
 =======
 
 Introduction
 ------------
 
-KaikiFS contains cucumber scenarios and steps that use the `KaikiFS::WebDriver` (a thick wrapper
-for `Selenium::WebDriver`) to test KFS with Selenium.
+Kaiki contains Cucumber scenarios and steps that use Capybara (a thick wrapper for the Selenium-WebDriver) to interract
+with a Firefox web browser so that test cases can be run against Kuali web sites.
 
-(In the capybara branch, we are moving towards using Capybara. Thus `KaikiFS::CapybaraDriver` is a wrapper around `Capybara`.)
 
 Compatibility
 -------------
 
-KaikiFS is tested on the following platforms:
+Kaiki is tested on the following platforms:
 
 * **ruby-1.9.3** on **Linux**
 
-That is all.
 
 Current Capabilities
 --------------------
 
-* Find a document via doc search (`When I open a doc search`)
-* Find a document via one's action list (`When I open my Action List`)
+These are a few of the current capabilities of the Kaiki framework.
+
 * Click a portal link (`When I click the "Vendor" portal link`)
 * Perform a lookup (`When I start a lookup for "Building"`)
 * Return a result (`When I return the first result`)
 * Fill out a field (`When I set the "Vendor Name" to "Micron"`)
 * Fill out a field with a fuzzy, timestamped value (`When I set the "Description" to something like "testing KFSI-1021"`)
 * Verify that a document was successfully submitted (`Then I should see "Document was successfully submitted"`)
-* Verify that the user has returned to a certain page (`Then I should see my Action List`)
 * Verify that some text is on the screen (`Then I should see "AdHoc Requests have been sent`)
-* Verify that some text is in the route log (`Then I should see "Actions Taken" in the route log`)
-* Bulk fill out blocks of fields (`When I fill out a new Vendor Address with default values`)
 * Record Video
 * Automatically screenshot a point of failure
 * Log every click and attempt to find an element
 * Find fields by their "label" (even if it is not a real HTML &lt;label&gt;)
-* Fill in fields by their position in a list ("first" Vendor Address or "second" Line Item)
-* "Remember" information during the scenario (`When I record this "Requisition #"` and `When I fill out the following for that "Requisition #"`)
-* Handle asynchronous activity (reloading an action list until a document appears)
-* Highlighting page elements during a scenario with javascript)
+* Highlighting page elements during a scenario with javascript
 * Speed up, slow down, pause scenarios
 * Integrate into your CI
 
-Roadmap
--------
-
-* Capybara
 
 Installation
 ------------
@@ -61,13 +49,16 @@ bundle install
 Next, you will need to have Ffmpeg to generate screen shots and Xvfb to run headless mode. They can be installed on Debian flavors of linux like this:
 
 ```gherkin
+sudo apt-get install ffmpeg
 sudo apt-get install xvfb
 ```
+
 
 Contributing
 ------------
 
-Please do! Contributing is easy in KaikiFS. Please read the CONTRIBUTING.md document for more info. ... When that file exists.
+Please do! Contributing is easy in Kaiki. Please read the CONTRIBUTING.md document for more info. ... When that file exists.
+
 
 Usage
 -----
@@ -121,10 +112,10 @@ When I backdoor as the UA FSO FM Team 451
 ### Other Requirements
 
 * `bundle install` should install all requirements.
-* I think it's pretty hardcoded that we use CAS.
+* This is hardcoded that we used CAS.
 * Look at `features/support/env.rb` for various environment variables that can be used.
-* `envs.json` is a way to store environment names and use them in tests. I think a lot of this is hardcoded Arizona stuff...
-* On linux (or mac?), the xvfb package allows the Headless gem to do its thing.
+* `envs.json` is a way to store environment names and use them in tests. A lot of this is hardcoded U of A stuff.
+* On Linux systems, the xvfb package allows the Headless gem to do its thing.
 * Look at `ff-13.0.1_env` for examples of how I set up my environment to be headless.
 
 
@@ -133,15 +124,14 @@ When I backdoor as the UA FSO FM Team 451
 * `rake (10.1.0, 0.9.2.2)` should be installed to run rake tasks.
 * `--tags` are used to call some rake tasks, `@kctest` is for tests that dont need to be run in order.
 * The tags need to be added to line one of each feature file.
-* An ECE.rb file with an array of tags is stored in the `katt-kaiki/features/support/`, this is used to run features files in order.
-* Then the rake task: `rake run` can be used to run everything in order.
+* An ECE.rb file with an array of tags is stored in the `katt-kaiki/features/support/`, this is used to run certain features files in order.
+* The rake task: `rake run` can be used to run everything in order.
 
-Big section. Lots more to write.
 
 Versioning
 ----------
 
-KaikiFS follows [Semantic Versioning](http://semver.org/) (at least approximately) version 2.0.0-rc1.
+Kaiki follows [Semantic Versioning](http://semver.org/) (at least approximately) version 2.0.0-rc1.
 
 License
 -------

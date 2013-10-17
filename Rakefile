@@ -64,9 +64,9 @@ task :ECE do
   set_env_defaults
   File.basename("katt-kaiki/features/support/ECE.rb")
   jirra.each do |i|
-    sleep 30
+    sleep 3
     i.each do |j|
-      sleep 30
+      sleep 3
       tags = "--tags #{j}"
       Cucumber::Rake::Task.new(:ECE, "Run all tests in required order.") do |t|
         t.cucumber_opts = tags

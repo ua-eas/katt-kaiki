@@ -104,49 +104,51 @@ After do |scenario|
   end
 end
 
-# Public: Creates a video of the headless browser, before each scenario.
-#
-# Returns nothing
-Before do
-  kaiki.log.debug "Starting video..."
-  kaiki.headless.video.start_capture if kaiki.is_headless
-  kaiki.puts_method = method(:puts)
-end
-
-# Public: Stops video recording after each scenario.
-#
-# Parameters:
-#   scenario - current running test.
-#
-# Returns nothing
-After do |scenario|
-#  if scenario.failed?
-    kaiki.log.debug "Stopping video..."
-    kaiki.headless.video.stop_and_save(video_path(scenario))                  \
-      if kaiki.is_headless
-#  else
-#    headless.video.stop_and_discard
-#  end
-end
-# end
-
-# Public: Defines where the video is being saved.
-#
-# Parameters:
-#   scenario - current running test.
-#
-# Returns file path of video
-def video_path(scenario)
-  #f=File.new('tmp.txt', 'w')
-  #f.puts scenario.instance_variables.sort
-  #f.puts scenario.methods.sort
-  #f.puts scenario.file_colon_line
-  #f.close
-  #"features/videos/#{scenario.file_colon_line.split(':')[0]}.mov"
-  #basename = File.basename(scenario.file_colon_line.split(':')[0])
-  basename = File.basename(scenario.file_colon_line)
-  if basename =~ /^(.+):(\d+)$/
-    basename = "#{$1}__%04d" % $2.to_i
+if ENV['BUILD_NUMBER'].nil?
+  # Public: Creates a video of the headless browser, before each scenario.
+  #
+  # Returns nothing
+  Before do
+    kaiki.log.debug "Starting video..."
+    kaiki.headless.video.start_capture if kaiki.is_headless
+    kaiki.puts_method = method(:puts)
   end
-  File.join(Dir::pwd, 'features', 'videos', basename+".mov")
+  
+  # Public: Stops video recording after each scenario.
+  #
+  # Parameters:
+  #   scenario - current running test.
+  #
+  # Returns nothing
+  After do |scenario|
+    #if scenario.failed?
+      path = video_path(scenario)
+      kaiki.headless.video.stop_and_save(path) if kaiki.is_headless
+      print "Saved video file to #{path}\n" if kaiki.is_headless
+      kaiki.log.debug "Stopping video..."
+      #else
+      #kaiki.headless.video.stop_and_discard
+    #end
+  end
+  
+  # Public: Defines where the video is being saved.
+  #
+  # Parameters:
+  #   scenario - current running test.
+  #
+  # Returns file path of video
+  def video_path(scenario)
+    #f=File.new('tmp.txt', 'w')
+    #f.puts scenario.instance_variables.sort
+    #f.puts scenario.methods.sort
+    #f.puts scenario.file_colon_line
+    #f.close
+    #"features/videos/#{scenario.file_colon_line.split(':')[0]}.mov"
+    #basename = File.basename(scenario.file_colon_line.split(':')[0])
+    basename = File.basename(scenario.file_colon_line)
+    if basename =~ /^(.+):(\d+)$/
+      basename = "#{$1}__%04d" % $2.to_i
+    end
+    File.join(Dir::pwd, 'features', 'videos', basename+".mov")
+  end
 end
