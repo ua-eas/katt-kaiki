@@ -283,7 +283,7 @@ end
 #
 # Returns nothing.
 When(/^I wait for the document to finish being processed$/) do
-  kaiki.pause(20)
+  kaiki.pause(30)
   kaiki.switch_default_content
   kaiki.wait_for(:xpath, "//*[@id='iframeportlet']")
 end
