@@ -292,15 +292,6 @@ When(/^I start a lookup for "(.*?)"$/) do |item|
   @element.click
 end
 
-# Public: The following Webdriver code tells kaikifs to increase the pause time
-# by 2.
-#
-# Returns nothing.
-When (/^I slow down$/) do
-  kaiki.log.debug "I slow down (pause_time = #{kaiki.pause_time + 2})"
-  kaiki.pause_time += 4
-end
-
 # Public: This step set the pause time back to 0.5 seconds.
 #
 # Returns nothing.
