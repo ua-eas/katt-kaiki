@@ -311,12 +311,12 @@ When (/^I slow down(?:| by (.*?))$/) do |how_much|
   if how_much == "a lot"
     kaiki.log.debug "I slow down (pause_time = #{kaiki.pause_time + 10})"
     kaiki.pause_time += 10
-  elsif not how_much == "a lot"
-    kaiki.log.debug "I slow down (pause_time = #{kaiki.pause_time + how_much})"
-    kaiki.pause_time += how_much.to_i
   elsif how_much == nil
     kaiki.log.debug "I slow down (pause_time = #{kaiki.pause_time + 4})"
     kaiki.pause_time += 4
+  else
+    kaiki.log.debug "I slow down (pause_time = #{kaiki.pause_time + how_much.to_f})"
+    kaiki.pause_time += how_much.to_f
   end
 end
 
