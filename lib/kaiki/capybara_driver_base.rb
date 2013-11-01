@@ -44,7 +44,7 @@ class Kaiki::CapybaraDriver::Base
   # Public: Gets/Sets the driver used to power the browser. Gets/Sets whether
   #         the browser is headless. Gets/Sets the overridden puts method.
   attr_accessor :driver, :is_headless, :puts_method, :headless, :default_pause_time,
-                :pause_time, :log,
+                :pause_time, :log
 
   # Public: Initilize a CapybaraDriver instance, reads in necessary variables
   # from the envs file. Sets variables for each instance of CapybaraDriver, the
