@@ -80,7 +80,7 @@ class Kaiki::CapybaraDriver::Base
       @env = @envs.keys.first
     end
     
-    @default_pause_time   = 0.5
+    @default_pause_time   = 2
     @pause_time           = options[:pause_time] || @default_pause_time
     @is_headless          = options[:is_headless]
     @firefox_profile_name = options[:firefox_profile]
