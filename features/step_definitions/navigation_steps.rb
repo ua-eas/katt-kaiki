@@ -292,14 +292,6 @@ When(/^I start a lookup for "(.*?)"$/) do |item|
   @element.click
 end
 
-# Public: The following Webdriver code tells kaikifs to set the pause time to 0.
-#
-# Returns nothing.
-When (/^I am fast$/) do
-  kaiki.log.debug "I am fast (pause_time = 0.5)"
-  kaiki.pause_time = 0.5
-end
-
 # Public: The following Webdriver code tells kaikifs to increase the pause time
 # by 2.
 #
@@ -307,6 +299,34 @@ end
 When (/^I slow down$/) do
   kaiki.log.debug "I slow down (pause_time = #{kaiki.pause_time + 2})"
   kaiki.pause_time += 4
+end
+
+# Public: This step set the pause time back to 0.5 seconds.
+#
+# Returns nothing.
+When (/^I am fast$/) do
+  kaiki.log.debug "I am fast (pause_time = #{kaiki.default_pause_time})"
+  kaiki.pause_time = kaiki.default_pause_time
+end
+
+# Public: This step increases the pause time by 4 seconds by default, but can
+#         also increase the pause tiem by a specified amount.
+#
+# Parameters:
+#   how_much - placeholder for conditional "a lot" text
+#
+# Returns nothing.
+When (/^I slow down(?:| by (.*?))$/) do |how_much|
+  if how_much == "a lot"
+    kaiki.log.debug "I slow down (pause_time = #{kaiki.pause_time + 10})"
+    kaiki.pause_time += 10
+  elsif not how_much == "a lot"
+    kaiki.log.debug "I slow down (pause_time = #{kaiki.pause_time + how_much})"
+    kaiki.pause_time += how_much.to_i
+  elsif how_much == nil
+    kaiki.log.debug "I slow down (pause_time = #{kaiki.pause_time + 4})"
+    kaiki.pause_time += 4
+  end
 end
 
 # Public: Performs an action on the first record in the table.
