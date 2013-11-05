@@ -289,8 +289,8 @@ When(/^I wait for the document to finish being processed$/) do
     @xpath = "//input[@name = '#{@element[:name]}'"
   end
 
+  i = 0
   if @xpath != nil
-    i = 0
     while kaiki.should(have_xpath(@xpath)) do
       kaiki.pause(1)
       i += 1
