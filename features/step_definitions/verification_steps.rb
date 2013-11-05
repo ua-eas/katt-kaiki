@@ -276,16 +276,39 @@ Then(/^I should see (?:Budget Totals|Total) calculated as:$/) do |table|
   end
 end
 
-#Public: Waits for the page to finish loading
+# Public: Waits for the page to finish loading
 #
-#Parameters:
-#	value - frame being loaded i e, iframeportlet
+# Parameters:
+#	  value - frame being loaded i e, iframeportlet
 #
 # Returns nothing.
 When(/^I wait for the document to finish being processed$/) do
-  kaiki.pause(40)
+  if @element[:title] == "submit" || @element[:title] == "Blanket Approve"
+    @xpath = "//input[@title = '#{@element[:title]}'"
+  elsif @element[:name] == "methodToCall.processAnswer.button1"
+    @xpath = "//input[@name = '#{@element[:name]}'"
+  end
+
+  if @xpath != nil
+    i = 0
+    while kaiki.should(have_xpath(@xpath)) do
+      kaiki.pause(1)
+      i += 1
+      break if i > 90
+    end
+  end
+
   kaiki.switch_default_content
-  kaiki.wait_for(:xpath, "//*[@id='iframeportlet']")
+  kaiki.select_frame("iframeportlet")
+  j = 0
+  content_check = kaiki.has_content?('The document is being processed.')
+  while content_check == true do
+    kaiki.pause(1)
+    content_check = kaiki.has_content?('The document is being processed.')
+    j += 1
+    break if j > 90
+  end
+  kaiki.log.debug "Document processing: waited #{j+i} seconds..."
 end
 
 #Public: Verifies that the Institutional Proposal has been generated
