@@ -346,13 +346,14 @@ class Kaiki::CapybaraDriver::Base
         Selenium::WebDriver::Firefox.path = @firefox_path
       end
 
-      if ENV['BUILD_NUMBER'].nil?
+#      if ENV['BUILD_NUMBER'].nil?
         if is_headless
-          @headless = Headless.new(:dimensions => DEFAULT_DIMENSIONS)
+          display = ENV['BUILD_NUMBER'] || 99
+          @headless = Headless.new(:display => display, :dimensions => DEFAULT_DIMENSIONS)
           @headless.start
           print "Created Headless Display-capybara_driver_base.rb\n"
         end
-      end
+#      end
     
       Capybara.run_server = false
       Capybara.app_host = host
