@@ -350,6 +350,7 @@ class Kaiki::CapybaraDriver::Base
         if is_headless
           @headless = Headless.new(:dimensions => DEFAULT_DIMENSIONS)
           @headless.start
+          print "Created Headless Display-capybara_driver_base.rb\n"
         end
       end
     
