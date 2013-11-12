@@ -328,34 +328,44 @@ class Kaiki::CapybaraDriver::Base
     Dir::mkdir(@download_dir) unless Dir::exists? @download_dir
     mk_screenshot_dir(File.join(Dir::pwd, 'features', 'screenshots'))
 
-    if @firefox_profile_name
-      @profile = Selenium::WebDriver::Firefox::Profile.from_name               \
-                   @firefox_profile_name
-    else
-      @profile = Selenium::WebDriver::Firefox::Profile.new
-    end
-    @profile['browser.download.dir'] = @download_dir
-    @profile['browser.download.folderList'] = 2
-    @profile['browser.helperApps.neverAsk.saveToDisk'] = "application/pdf"
-    @profile['browser.link.open_newwindow'] = 3
-
-    if @firefox_path
-      Selenium::WebDriver::Firefox.path = @firefox_path
-    end
-
-    if is_headless
-      @headless = Headless.new(:dimensions => DEFAULT_DIMENSIONS)
-      @headless.start
-    end
+    retries = 2
     
-    Capybara.run_server = false
-    Capybara.app_host = host
-    Capybara.default_wait_time = DEFAULT_TIMEOUT
+    begin
+      if @firefox_profile_name
+        @profile = Selenium::WebDriver::Firefox::Profile.from_name             \
+                     @firefox_profile_name
+      else
+        @profile = Selenium::WebDriver::Firefox::Profile.new
+      end
+      @profile['browser.download.dir'] = @download_dir
+      @profile['browser.download.folderList'] = 2
+      @profile['browser.helperApps.neverAsk.saveToDisk'] = "application/pdf"
+      @profile['browser.link.open_newwindow'] = 3
 
-    Capybara.register_driver :selenium do |app|
-      Capybara::Selenium::Driver.new(app, :profile => @profile)
+      if @firefox_path
+        Selenium::WebDriver::Firefox.path = @firefox_path
+      end
+
+      if is_headless
+        @headless = Headless.new(:dimensions => DEFAULT_DIMENSIONS)
+        @headless.start
+      end
+      
+      Capybara.run_server = false
+      Capybara.app_host = host
+      Capybara.default_wait_time = DEFAULT_TIMEOUT
+
+      Capybara.register_driver :selenium do |app|
+        Capybara::Selenium::Driver.new(app, :profile => @profile)
+      end
+      Capybara.default_driver = :selenium
+
+    rescue Selenium::WebDriver::Error::WebDriverError => error
+      raise error if retries == 0
+      @log.debug "   Retry connection to browser."
+      retries -= 1
+      retry
     end
-    Capybara.default_driver = :selenium
 
     visit base_path
 
