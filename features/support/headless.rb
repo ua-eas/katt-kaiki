@@ -18,6 +18,8 @@ unless ENV['BUILD_NUMBER'].nil?
   display = ENV['BUILD_NUMBER']
   headless = Headless.new(:display => display)
   headless.start
+  
+  print "Created Headless Display-headless.rb\n"
 
   at_exit do
     headless.destroy
