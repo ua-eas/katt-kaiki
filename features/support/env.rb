@@ -52,6 +52,8 @@ class KaikiWorld
   firefox_profile = ENV['KAIKI_FIREFOX_PROFILE']
   firefox_path    = ENV['KAIKI_FIREFOX_PATH']
 
+  print "BUILD_NUMBER: #{ENV['BUILD_NUMBER']}\n"
+
   @@kaiki = Kaiki::CapybaraDriver::Base.new(username, password, :envs => env, \
                                             :is_headless => is_headless,      \
                                             :firefox_profile => firefox_profile,\
