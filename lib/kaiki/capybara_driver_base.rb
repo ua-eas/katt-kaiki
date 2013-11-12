@@ -364,6 +364,7 @@ class Kaiki::CapybaraDriver::Base
 
     rescue Selenium::WebDriver::Error::WebDriverError => error
       raise error if retries == 0
+      print "Retry Connection\n"
       @log.debug "   Retry connection to browser."
       retries -= 1
       retry
