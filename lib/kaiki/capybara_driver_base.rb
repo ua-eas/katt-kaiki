@@ -80,12 +80,16 @@ class Kaiki::CapybaraDriver::Base
       @env = @envs.keys.first
     end
     
-    @default_pause_time   = 5
+    @default_pause_time = 0.5 || ( 5 if ENV['BUILD_NUMBER'] )
     @pause_time           = options[:pause_time] || @default_pause_time
     @is_headless          = options[:is_headless]
     @firefox_profile_name = options[:firefox_profile]
     @firefox_path         = options[:firefox_path]
 
+    print "default_pause_time: #{@default_pause_time}\n"
+    print "pause_time        : #{@pause_time}\n"
+    print "should both be 0.5 for local, 5 for jenkins\n"
+    
     @record = {}
 
     @log = Logger.new 'debug_log'
@@ -191,13 +195,21 @@ class Kaiki::CapybaraDriver::Base
   #
   # Returns nothing.
   def login_via_webauth_with(username, password=nil)
-    password ||= self.class.shared_password_for username
-    sleep 1
-    fill_in 'NetID', :with => username
-    fill_in 'Password', :with => password
-    click_button('LOGIN')
-    sleep 1
-
+    retries =2
+    begin
+      password ||= self.class.shared_password_for username
+      sleep 1
+      fill_in 'NetID', :with => username
+      fill_in 'Password', :with => password
+      click_button('LOGIN')
+      sleep 1
+    rescue Selenium::WebDriver::Error::WebDriverError => error
+      raise error if retries == 0
+      @log.debug "   Retry login to webauth."
+      retries -= 1
+      retry
+    end
+    
     begin
       status = find(:id, 'status')
       if has_content? "You entered an invalid NetID or password"
