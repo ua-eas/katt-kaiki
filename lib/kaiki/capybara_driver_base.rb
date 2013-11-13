@@ -86,9 +86,9 @@ class Kaiki::CapybaraDriver::Base
     @firefox_profile_name = options[:firefox_profile]
     @firefox_path         = options[:firefox_path]
 
-    print "default_pause_time: #{@default_pause_time}\n"
-    print "pause_time        : #{@pause_time}\n"
-    print "should both be 0.5 for local, 5 for jenkins\n"
+ #   print "default_pause_time: #{@default_pause_time}\n"
+ #   print "pause_time        : #{@pause_time}\n"
+ #   print "should both be 0.5 for local, 5 for jenkins\n"
     
     @record = {}
 
@@ -363,7 +363,7 @@ class Kaiki::CapybaraDriver::Base
           display = ENV['BUILD_NUMBER'] || 99
           @headless = Headless.new(:display => display, :dimensions => DEFAULT_DIMENSIONS)
           @headless.start
-          print "Created Headless Display-capybara_driver_base.rb\n"
+ #         print "Created Headless Display-capybara_driver_base.rb\n"
         end
 #      end
     
