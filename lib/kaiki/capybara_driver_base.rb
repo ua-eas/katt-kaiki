@@ -80,13 +80,18 @@ class Kaiki::CapybaraDriver::Base
       @env = @envs.keys.first
     end
     
-    @default_pause_time = 0.5 || ( 5 if ENV['BUILD_NUMBER'] )
+    if ENV['BUILD_NUMBER']
+      @default_pause_time = 2
+    else
+      @default_pause_time   = 0.5
+    end
+    
     @pause_time           = options[:pause_time] || @default_pause_time
     @is_headless          = options[:is_headless]
     @firefox_profile_name = options[:firefox_profile]
     @firefox_path         = options[:firefox_path]
 
- #   print "default_pause_time: #{@default_pause_time}\n"
+    print "default_pause_time: #{@default_pause_time}\n"
  #   print "pause_time        : #{@pause_time}\n"
  #   print "should both be 0.5 for local, 5 for jenkins\n"
     
