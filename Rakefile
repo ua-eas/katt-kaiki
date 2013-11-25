@@ -43,7 +43,7 @@ task :KC do
   kc_tags.each do |i|
     i.each do |j|
       Cucumber::Rake::Task.new(:KC, "Run all tests in required order.") do |t|
-        t.cucumber_opts = "--tags #{j} --format pretty --format html --out ./features/reports/#{tag_name}.html"
+        t.cucumber_opts = "--tags #{j} --format pretty --format html --out ./features/reports/#{j}.html"
       end
     end
   end
@@ -67,7 +67,7 @@ task :KFS do
   kfs_tags.each do |i|
     i.each do |j|
       Cucumber::Rake::Task.new(:KFS, "Run all tests in required order.") do |t|
-        t.cucumber_opts = "--tags #{j} --format pretty --format html --out ./features/reports/#{tag_name}.html"
+        t.cucumber_opts = "--tags #{j} --format pretty --format html --out ./features/reports/#{j}.html"
       end
     end
   end
