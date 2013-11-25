@@ -30,9 +30,8 @@ end
 #         to the tags contained within said array.
 #
 # Parameters:
-#   rows - rows of the array
-#   kc   - name of the tags for kuali coeus test senarios that need to be
-#          run in order
+#   kc_tags   - name of the array holding the tags for kuali coeus test senarios that need to be
+#               run in order
 #
 #
 # Returns nothing.
@@ -54,9 +53,8 @@ end
 #         to the tags contained within said array.
 #
 # Parameters:
-#   rows - rows of the array
-#   kc   - name of the tags for kuali financial system test senarios that need
-#          to be run in order
+#   kfs_tags   - name of the array holding the tags for kuali financial system test senarios that need
+#                to be run in order
 #
 #
 # Returns nothing.
