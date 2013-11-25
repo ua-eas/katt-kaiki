@@ -40,7 +40,7 @@ class Kaiki::CapybaraDriver::Base
   DEFAULT_DIMENSIONS = "1600x900x24"
 
   # The file that contains shared passwords for test users.
-  SHARED_PASSWORDS_FILE = "/home/vagrant/code/shared_passwords.yaml"
+  SHARED_PASSWORDS_FILE = "shared_passwords.yaml"
 
   # Public: Gets/Sets the driver used to power the browser. Gets/Sets whether
   #         the browser is headless. Gets/Sets the overridden puts method.
