@@ -1,8 +1,9 @@
-# Description: Debug logger file.
+# Description: This file contains everything pertaining to debugging
+#              feature files.
 #
 # Original Date: August 20, 2011
 
-# Public: Evaluates the kaiki log result
+# Description: Evaluates the kaiki log result
 #
 # Parameters:
 #   ruby - programming language specs
@@ -14,7 +15,7 @@ Then(/^I print "([^"]*)"$/) do |ruby|
   kaiki.log.debug(result.inspect)
 end
 
-# Public: Prints the kaiki log result
+# Description: Prints the kaiki log result
 #
 # Parameters:
 #   ruby - programming language specs

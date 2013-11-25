@@ -1,5 +1,5 @@
-# Description: This file houses the interpretation of steps used by Cucumber
-#              Vendor features.
+# Description: This file contains everything pertaining to creating and/or
+#              filling out vendor forms.
 #
 # Original Date: August 20, 2011
 
@@ -39,23 +39,23 @@ TabsFields = {
   }
 }
 
-# Public: The following Webdriver code tells kaikifs to fill in fields of the 
+# Public: The following Webdriver code tells kaikifs to fill in fields of the
 #         new address using the provided tabular data.
 #
 # Parameters:
 #   table - the tabular data to be used.
 #
 # Returns nothing.
-When(/^I fill out a new (?:Vendor Address|vendorAddress) with the following:$/) \
+When(/^I fill out a new (?:Vendor Address|vendorAddress) with the following:$/)\
   do |table|
   fields = table.rows_hash
   prefix = "document.newMaintainableObject.add.vendorAddresses."
   fields.each do |key, value|
-    kaiki.set_field(prefix+key, value)
+    kaiki.set_approximate_field(prefix+key, value)
   end
 end
 
-# Public: The following Webdriver code tells kaikifs to fill in fields of the 
+# Public: The following Webdriver code tells kaikifs to fill in fields of the
 #         specified tab using the default tabular data.
 #
 # Parameters:
@@ -127,7 +127,7 @@ When(/^I fill out a new Vendor (.*) with default values, and the following:$/) \
   end
 end
 
-# Public: The following Ruby code sets the max key size and value size used for 
+# Public: The following Ruby code sets the max key size and value size used for
 #         displaying the table of data in the console.
 #
 # Parameters:

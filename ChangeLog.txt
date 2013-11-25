@@ -1,102 +1,39 @@
-Changelog for Kaiki v1.2:
-----------------------------------------
-  File: features/step_definitions/form_steps.rb
-    Step Definition: "When I (set|set the) _____ to something like _____"
-      Changed to: "When I (set|set the) _____ text area to _____".
-      Reason: To better reflect what this form step does. This step is only used
-              for filling in the contents of a "text area" control.
+Changelog for Kaiki (Oct. 24th - Nov. 25th)
+------------------------
 
-    Step Definition: "When I (set the|set) _____ to _____"
-      Change: Modified the Approximation Factory xpaths to use match by "."
-              instead of "text()", allowing us to eliminate factory8 and make
-              the run of these slightly faster. 
-      Reason: We discovered that <div> tags will not necessarily be found with
-              "text()", but will always be found using ".".
+> Added location awareness to the xpaths that are used in each bit of code.
+  This is to keep the scope of work within specific tabs, sections or
+  subsections of the page when necessary.
 
-    Step Definition: (New) "When I (set|set the) _____ to something like _____"
-      Purpose: To allow setting a drop down box using a fuzzy match. Using
-               "When I (set|set the) _____ to _____" on a drop down box
-               requires an exact match.
+> Added xpaths and approximate xpath factories, where necessary, to run the new
+  tests for the Kuali Financial system, as deployed by the University of
+  Arizona.
+  Features 1 - 14 for the Kuali Coeus system and feature PA004, specifically
+  scenarios 1 - 5 for the Kuali Financial system can be run currently.
 
-    Step Definition: "When I set _____ for _____ as _____"
-      Changed to: "When I set _____ (under|for) _____ as _____"
-      Reason: Allow for English variation of feature file creation.
-      Change: Modified from using a single special case xpath to using an array
-              of special cases.
-      Reason: This method is for special cases that will cause conflicts when
-              using "When I (set|set the) _____ to _____".
+> Included comments to each approximate xpath factory, so that it can be seen
+  which web pages and tests the particular factories apply to. This is for the
+  future move to using page objects, so a more OOP approach can be taken,
+  hopefully decreasing test times and maintenance hassle.
 
-    Step Definition: (New) When "I click the _____ radio button"
-      Purpose: Due to how radio buttons operate, radio options conflict with
-               other type of buttons and cannot be simply "clicked" like other
-               buttons.
+> Included a new gem called 'net-ssh', which is required for the ssh commands
+  we run for processing batch.
 
+> Commented out the headless.rb file located in features/support/ because
+  it is currently unecessary.
 
-  File: features/step_definitions/navigation_steps.rb
-    Step Definition: "When I am on the _____ document tab"
-      Change: Modified to ignore a fail on switching to the "iframeportlet"
-              frame.
-      Reason: Some pages do not use the "iframeportlet" frame. 
+> Added in retry functionality to logging in via webauth because sometimes the
+  site doesn't always load propoerly the first time.
 
-    Step Definition: "When I (click|click the) _____ (button|(on|to) _____) _____"
-      Change: Modified to ignore a fail on switching to the "iframeportlet"
-              frame.
-      Reason: Some pages do not use the "iframeportlet" frame. 
-      Change: Implemented the "edit" and "open proposal" special case buttons.
+> Added 8 new methods to capybara_drive_base.rb, the functionality of these
+  methods includes:
+  * Switching focus to new windows and closing extra windows
+  * Opening a calendar element and selecting a date from it
+  * Executing javascript that may be needed
+  * Retrieving the system date for use in tests
+  * Method get_ready combines the three things (kaiki.pause,
+    kaiki.switch_default_content, kaiki.select_frame) nearly all step
+    definitions use into one easily accessible function.
 
-    Step Definition: (New) "Then a new browser window appears"
-      Purpose: Change the focus to the new browser popup window.
-  
-    Step Definition: (New) "When I click the _____ search link"
-      Purpose: To prevent conflicts between links on the Central Admin page
-               and portal links.
-  
-    Step Definition: (New) "When I click Award ID"
-      Purpose: This sorts the list of Awards by the Award ID, placing the newest
-               one on top.
-      Reason: This is to prevent conflicts with malformed Award documents from
-              prior failed test runs.
-  
-
-  File: features/step_definitions/verification_steps.rb
-    Method: (New) verify_text(label, text, mode)
-      Purpose: This method will recieve the label and text parameters, along
-               with an optional mode parameter and determine if the label and
-               the text match based on the mode. The default mode is to use an
-               exact match.
-      
-    Step Definition: "Then I should (see|see the message) _____(_____| (as|(set|next) to) _____ _____)"
-      Change: Modified to ignore a fail on switching to the "iframeportlet"
-              frame.
-      Reason: Some pages do not use the "iframeportlet" frame. 
-      Change: Moved most of the code into the verify_text method.
-      Reason: The verify_text method now allows for a fuzzy match option when 
-              comparing text.
-  
-    Step Definition: (New) "Then I should see _____ set to something like _____ _____"
-      Purpose: This step definition is for invoking verify_text using the fuzzy
-               match option.
-
-    Step Definition: "Then I should see one or more items retrieved"
-      Change: Changed the text searched for on the screen to "retrieved"
-      Reason: Some record lookups do not have the "return value" option 
-
-
-  File: features/support/env.rb
-    Block: SHARED_PASSWORDS_FILE
-      Change: Code moved to capybara_base_driver.rb
-      Reason: Moved by Josh.
-
-    Method: Before
-      Change: Reinstated code to start video capture if running headless.
-
-    Method: After
-      Change: Reinstated code to stop video capture if running headless.
-
-
-  File: lib/kaiki/capybara_driver_base.rb
-    Method: (New) last_window_focus
-      Purpose: Switches the focus to the most recently created window.
-    
-End Changelog Kaiki v1.2
-----------------------------------------
+------------------------
+End of Changelog

@@ -2,397 +2,273 @@
 #              to navigating the browser webpage; i.e. clicking buttons and
 #              links, moving to different parent tabs and toggling Show/Hide
 #              tabs.
-#              * Everything marked as '# WD' is from the old WebDriver Base
-#              * file, and is not currently in use
 #
 # Original Date: August 20th, 2011
 
+# KC & KFS all features
 
-# Public: Switches to the outermost content on the page
+# Description: Starts up the video if the test is being run headless and then
+#         switches focus to the outermost page content.
 #
 # Returns nothing.
 Given(/^I am up top$/) do
   kaiki.switch_default_content
 end
 
-# Public: Changes to the given parent tab at the top of the page
+# KC & KFS all features
+
+# Description: Changes to the given parent tab at the top of the page
 #
 # Parameters:
-#   tab - Name of tab to be switched to
+#   sys_tab - title of tab to be switched to
 #
 # Returns nothing.
-Given(/^I am on the "([^"]*)" tab$/) do |tab|
-  kaiki.pause
-  kaiki.switch_default_content
-  kaiki.click(tab)
+Given(/^I am on the "([^"]*)" system tab$/) do |sys_tab|
+  kaiki.get_ready
+  kaiki.find_approximate_element(["//a[@title='#{sys_tab}']"]).click
 end
 
-# Public: Changes to the given child tab at the top of the document
+# KC  all features
+
+# Description: Changes to the given child tab at the top of the document
 #
 # Parameters:
-#   tab - Name of tab to be switched to
+#   tab - title of tab to be switched to
 #
 # Returns nothing.
 When(/^I am on the "([^"]*)" document tab$/) do |tab|
-  kaiki.pause
-  kaiki.switch_default_content
-  begin
-    kaiki.select_frame("iframeportlet")
-  rescue Selenium::WebDriver::Error::NoSuchFrameError
-  end
-  kaiki.click(tab)
+  kaiki.get_ready
+  kaiki.find_approximate_element(["//input[@alt='#{tab}']"]).click
 end
 
-# Public: Clicks the appropriate portal link on the page
+# KC all features
+
+# Description: Clicks the appropriate portal link on the page
 #
 # Parameters:
 #   link - Portal link to be clicked
 #
 # Returns nothing.
 When(/^I (?:click|click the) "([^"]*)" portal link$/) do |link|
-  kaiki.pause
-  element = kaiki.find(
-              :xpath, 
-              "//td[contains(text(), '#{link}')]/following-sibling::td/a[1]")
+  kaiki.get_ready
+  element = kaiki.find_approximate_element(
+    ["//td[contains(text(), '#{link}')]/following-sibling::td/a[1]"])
   element.click
 end
 
-# Public: Takes the name of the button and clicks on the button with that name
+# Description: Takes the name of the button and clicks on the button with that name
 #
 # Parameters:
 #   item  - name of the item to be clicked
 #   field - name of the field a particular button/link associated with said
 #           field may have
-#   extra - placeholder variable for any unecessary text that may appear at the
-#           end of the sentence
+#   subsection - subsection of the page the radio should be in
 #
 # Returns nothing.
-When(/^I (?:click|click the) "([^"]*)" (?:button|(?:on|to) "([^"]*)")([^"]*)$/)\
-  do |button, field, extra|
-  kaiki.pause
-  kaiki.switch_default_content
-  kaiki.select_frame("iframeportlet")
-  item = button.downcase
-  downcase_title_buttons = 
-    [
-      "create_new",
-      "approve", 
-      "cancel", 
-      "disapprove", 
-      "search", 
-      "submit", 
-      "close", 
-      "reload", 
-      "calculate", 
-      "continue", 
-      "print", 
-      "blanket approve",
-      "save"
-    ]
-  downcase_alt_buttons = 
-    [
+# Modified the buttons to all use find_approximate_element so that highlighting works
+When(/^I (?:click|click the) "(.*?)" (?:button|(?:on|to) "(.*?)")(?:| (?:under|in) the "(.*?)" subsection)$/)\
+  do |button, field, subsection|
+
+  kaiki.get_ready
+
+  unless field == nil
+    field = field.gsub(/\s/,'') unless button.downcase == "open"
+    field = field.chop
+  end
+  item = button_title_match(button)
+  downcase_alt_buttons = [
       "return to proposal",
-      "refresh"
+      "refresh",
+      "refresh account summary"
     ]
-  exact_match_buttons = 
-    [
-      "Submit To Sponsor"
-    ] 
-  if downcase_title_buttons.include? item
-    @element = kaiki.find(:xpath, "//input[@title='#{item}']") 
-  elsif downcase_alt_buttons.include? item
-    #~ begin
-      #~ @element = kaiki.find(:xpath, "//input[@alt='#{item}']") 
-    #~ rescue Capybara::ElementNotFound
-      #~ @element = kaiki.find(:xpath, "//input[contains(@alt, '#{button}')]")
-    #~ end
-    option1 = "@alt='#{item}'"                                                  #modified to make use of the Approximation Factory
-    option2 = "contains(@alt, '#{button}')"
-    factory1 =
+  specific_buttons_hash = {
+    "get document"       => "//input[@name='methodToCall.#{button.downcase.gsub(/\s/, '_')}']",
+    "yes"                => "//input[@name='methodToCall.processAnswer.button0']",
+    "no"                 => "//input[@name='methodToCall.processAnswer.button1']",
+    "add person"         => "//input[contains(@name,'methodToCall.insertProposalPerson')]",
+    "recalculate"        => "//input[contains(@name,'methodToCall.recalculate')]",
+    "turn on validation" => "//input[@name='methodToCall.activate']",
+    "document search"    => "/html/body/div[5]/div/div/a[3]",
+    "document link"      => "/html/body/form/table/tbody/tr/td[2]/table/tbody/tr/td/a",
+    "time & money"       => "//input[@name='methodToCall.timeAndMoney']",
+    "return to award"    => "//input[@name='methodToCall.returnToAward']",
+    "edit"               => "//input[@name='methodToCall.editOrVersion']",
+    "delete selected"    => "//input[@name='methodToCall.deletePerson']",
+    "open proposal"      => "//img[@title = '#{button}']",
+    "create new"         => "//img[@alt = '#{button.downcase}']",
+    "copy proposal"      => "//input[@name='methodToCall.copyProposal.anchorCopytoNewDocument']",
+    "unlock selected"    => "//input[@name='methodToCall.unlockSelected.anchorFundedAwards']",
+    "collapse all"       => "//input[@name='methodToCall.hideAllTabs']",
+    "apply"              => "//input[contains(@name, 'methodToCall.apply#{field}')]",
+    "delete"             => "//th[contains(text(), '#{field}')]/following-sibling::td/div/input[contains(@name, 'methodToCall.delete')]"
+    }
+
+  if not item.eql?(nil)
+    @element = kaiki.find_approximate_element(["//input[@title='#{item}']"])
+  elsif downcase_alt_buttons.include?(button.downcase)
+    factory0 =
       ApproximationsFactory.transpose_build(
         "//input[%s]",
-        [option1   ],
-        [option2   ])
-    approximate_xpath = factory1
+        ["@alt='#{button.downcase}'"],
+        ["contains(@alt, '#{button}')"])
+    approximate_xpath = factory0
     @element = kaiki.find_approximate_element(approximate_xpath)
-  elsif exact_match_buttons.include? button
-    @element = kaiki.find(:xpath, "//input[@title='#{button}']") 
-  elsif item == 'get document'
-    @element = kaiki.find(
-      :name, 
-      "methodToCall.#{item.gsub(/ /, '_').camelize(:lower)}")
-  elsif item == 'yes'
-    @element = kaiki.find(:name, 'methodToCall.processAnswer.button0')
-  elsif item == 'no'
-    @element = kaiki.find(:name, 'methodToCall.processAnswer.button1')
-  elsif item == 'add person'
-    @element = kaiki.find(:name, 'methodToCall.insertProposalPerson')
-  elsif item == 'recalculate'
-    @element = kaiki.find(
-      :xpath,
-      "//input[contains(@name, 'methodToCall.recalculate')]")              
-  elsif item == 'turn on validation'
-    @element = kaiki.find(:name, 'methodToCall.activate')
-  elsif item == 'document search'
-    @element = kaiki.find(:xpath,'/html/body/div[5]/div/div/a[3]')
-  elsif item == 'document link'
-    @element = kaiki.find(
-      :xpath, 
-      '/html/body/form/table/tbody/tr/td[2]/table/tbody/tr/td/a')             
-  elsif item == 'open'
-    kaiki.should(have_content(field))
-    approximate_xpath =
-      ApproximationsFactory.transpose_build(
-        "//%s[contains(text(), '#{field}')]"                                   \
-          "/following-sibling::td/div/%s[contains(@alt, 'open budget')]",
-        ['td',    'select' ],
-        ['th',    'input'  ])
-    @element = kaiki.find_approximate_element(approximate_xpath)
-  elsif item == 'apply'
-    if field != nil
-      field = field.gsub(/\s/,'')
-    end
-    @element = kaiki.find(
-      :xpath,
-      "//input[contains(@name, 'methodToCall.apply#{field}')]")
-  elsif item == 'add'
-    if field != nil
-      field = field.gsub(/\s/,'')
-      field = field.chop
-    end
-    begin
-    @element = kaiki.find(
-      :xpath,
-      "//input[contains(@name, 'methodToCall.add#{field}')]")
-    rescue Capybara::ElementNotFound
-      kaiki.click_button("Add Unit")
-    end
-  elsif item == 'delete'
-    if field != nil
-      field = field.gsub(/\s/,'')
-    end
-    @element = kaiki.find(
-      :xpath,
-      "//th[contains(text(), '#{field}')]/following-sibling::td/div/input"     \
-      "[contains(@name, 'methodToCall.delete')]")
-  elsif item == 'time & money'
-    @element = kaiki.find(:name, 'methodToCall.timeAndMoney')
-  elsif item == 'return to award'
-    @element = kaiki.find(:name, 'methodToCall.returnToAward')
-  elsif item == 'edit'
-    @element = kaiki.find(:name, 'methodToCall.editOrVersion')
-  elsif item == 'delete selected'
-    @element = kaiki.find(:name, 'methodToCall.deletePerson')
-  elsif item == 'open proposal'
-    xpath = "//img[@title = '#{button}']"
-    @element = kaiki.find(:xpath, xpath)
-  elsif item == 'create new'  
-    xpath = "//img[@alt = '#{item}']"
-    @element = kaiki.find(:xpath, xpath)
-  elsif item == 'copy proposal'                                                 
-    @element = kaiki.find(:name, 'methodToCall.copyProposal.anchorCopytoNewDocument')
-  elsif item == 'unlock selected'                                                 #Added for test 13
-    @element = kaiki.find(:name, 'methodToCall.unlockSelected.anchorFundedAwards')
+  elsif specific_buttons_hash.key?(button.downcase)
+    @element = kaiki.find_approximate_element([specific_buttons_hash[button.downcase]])
   else
-    raise NotImplementedError
+    case button.downcase
+    when 'add'
+      if subsection
+# factory0 - KFS PA004-0304 (Purchase Order)
+        factory0 =
+          ApproximationsFactory.transpose_build(
+            "//h2[contains(., '#{@tab}')]/../../../../following-sibling::"     \
+            "div/descendant::%s/descendant::tr[contains(., '#{subsection}')]/" \
+            "following-sibling::tr/descendant::input[contains(@title, 'Insert')]",
+            ["h3[contains(., '#{@section}')]/following-sibling::table"],
+            ["span[contains(., '#{@section}')]/../../following-sibling::tr"])
+# factory1 - KC Feat. 7 (Key Personnel)
+        factory1 =
+          ApproximationsFactory.transpose_build(
+            "//h2[contains(., '#{@tab}')]/../../../../following-sibling::"     \
+            "div/descendant::h3[contains(., '#{@section}')]/"                  \
+            "following-sibling::table/descendant::div[text()[contains(., '#{subsection}')]]/"\
+            "following-sibling::div/descendant::%s[contains(@title, 'Add Unit')]",\
+            ['input'])
+        @approximate_xpath = factory0                                          \
+                           + factory1
+      else
+# factory0 - KC Feat. 1 (Special Review)
+# factory0 - KC Feat. 2 (Award, Commitments, Time & Money)
+# factory0 - KC Feat. 3 (Special Review)
+# factory0 - KC Feat. 7 (Special Review)
+# factory0 - KC Feat. 7 (Budget Versions)
+        factory0 =
+          ApproximationsFactory.transpose_build(
+            "//%s[contains(@name, 'methodToCall.add#{field}')]",
+            ['input'])
+# factory1 - KFS PA004-01   (Create Requisition)
+# factory1 - KFS PA004-0304 (Purchase Order)
+# factory1 - KC Feat. 4     (Time and Money, Commitments)
+# factory1 - KC Feat. 6     (Special Review)
+        factory1 =
+          ApproximationsFactory.transpose_build(
+            "//h2[contains(., '#{@tab}')]/../../../../following-sibling::div/" \
+            "descendant::%s/descendant::input[contains(@title, 'Add')]",
+            ["h3[contains(., '#{@section}')]/following-sibling::table"],
+            ["span[contains(., '#{@section}')]/../../following-sibling::tr"])
+        @approximate_xpath = factory0                                          \
+                           + factory1
+      end
+      @element = kaiki.find_approximate_element(@approximate_xpath)
+    when 'open'
+# KC Feat. 1 (Budget Versions)
+# KC Feat. 3 (Budget Versions)
+# KC Feat. 4 (Search Page (Award Lookup))
+# KC Feat. 7 (Budget Versions)
+# KC Feat. 8 (Budget Versions)
+      approximate_xpath =
+        ApproximationsFactory.transpose_build(
+          "//%s[contains(text(), '#{field}')]"                                 \
+            "/following-sibling::td/div/input[contains(@alt, 'open budget')]",
+          ['td'],
+          ['th'])
+      @element = kaiki.find_approximate_element(approximate_xpath)
+# KFS PA004-0304 (Purchase Order)     - Continue
+# KFS PA004-06   (Vendor Credit Memo) - Continue
+# KC Feat. 3     (Proposal Actions)   - continue
+    when 'continue'
+      if kaiki.application.eql?("kfs")
+        button = "Continue"
+      else
+        button = "continue"
+      end
+      @element = kaiki.find_approximate_element(["//input[@title='#{button}']"])
+    else
+      raise NotImplementedError
+    end
   end
   @element.click
 end
 
-# Public: Returns the chosen result from a search query
-#
-# Known Issue: This function will click the 'return value' link on the first
-#              row that contains the value anywhere on the data row. Capybara
-#              version 2+ has a method to extract the xpath from a Capybara
-#              element to do string manipulation and find the correct column to
-#              look in. If there is a way to do this in Capybara v1.1.4 which
-#              is currently in use, this is remains elusive.
+# Public: Contains an array which holds all of the button we interact with by
+#         their title. Certain button titles are cased in certain ways.
 #
 # Parameters:
-#   column - the column to look in
-#   value  - result to be returned
+#   button_name - title of the button being clicked
+#
+# Returns the buttons name to be used.
+def button_title_match(button_name)
+  title_buttons =
+    [
+      "create_new",
+      "approve",
+      "cancel",
+      "disapprove",
+      "search",
+      "submit",
+      "close",
+      "reload",
+      "Calculate",
+      "blanket approve",
+      "save",
+      "clear",
+      "Print",
+      "Submit To Sponsor",
+      "Clear all tax"
+    ]
+  title_buttons.each do |value|
+    if value.casecmp(button_name) == 0
+      return value
+    end
+  end
+  return nil
+end
+
+# Description: Selects the radio button next to the option that is given by
+#         using the approximation factory to find the xpath to the radio
+#         button.
+#
+# Parameters:
+#   field      - name of the label next to the radio button
+#   subsection - subsection of the page the radio should be in
 #
 # Returns nothing.
-When(/^I return the record with "(.*?)" of "(.*?)"$/) do |column, value|
-  kaiki.pause
-  kaiki.switch_default_content
-  kaiki.select_frame("iframeportlet")
+When (/^I click the "([^"]*)" radio button(?:| (?:under|in) the "(.*?)" subsection)$/)\
+  do |field, subsection|
+
+  kaiki.get_ready
+# factory0 - KFS PA004-01 (Create Requisition)
+# factory0 - KC  Feat. 8  (Proposal Actions)
+  factory0=
+    ApproximationsFactory.transpose_build(
+    "//h2[contains(., '#{@tab}')]/../../../../following-sibling::div/"         \
+      "descendant::h3[contains(., '#{@section}')]/following-sibling::table/"   \
+      "descendant::%s[contains(@title, '#{field}')]",
+      ['input'])
+# factory 1 - KC Feat. 3 (Proposal Actions)
   factory1 =
     ApproximationsFactory.transpose_build(
-      "//%s[contains(text(),'#{column}')]"                                     \
-        "/%s[contains(text(),'#{value}')]"                                     \
-        "/%s[contains(text(),'return value')]",
-      ['th/a', '../../../following-sibling::tbody/tr/td/a', '../../td/a'])
-  approximate_xpath = factory1
+      "//h2[contains(., '#{@tab}')]/../../../../following-sibling::div/"       \
+      "descendant::h3[contains(., '#{@section}')]/following-sibling::table/"   \
+      "descendant::td[contains(text(), '#{field}')]/preceding-sibling::th/%s",
+      ['input'])
+  approximate_xpath = factory0                                                 \
+                    + factory1
   element = kaiki.find_approximate_element(approximate_xpath)
-  element.click
+  button_type = element[:type]
+  kaiki.click_approximate_field(approximate_xpath, button_type)
 end
 
-# Public: Takes the name of the button and clicks on the button with that name
-#
-# Parameters:
-#   item  - name of the item to be clicked
-#
-# Returns nothing.
-When(/^I start a lookup for "(.*?)"$/) do |item|
-  kaiki.pause
-  item = item.downcase
-  case item
-  when 'employee'
-    @element = kaiki.find(
-      :name, 
-      "methodToCall.performLookup.(!!org.kuali.kra.bo.KcPerson!!)"             \
-        ".(((personId:newPersonId))).((``)).((<>)).(([])).((**)).((^^))"       \
-        ".((&&)).((//)).((~~)).(::::;;::::).anchor")
-   when 'non-employee'
-    @element = kaiki.find(
-      :name, 
-      "methodToCall.performLookup.(!!org.kuali.kra.bo"                         \
-        ".NonOrganizationalRolodex!!).(((rolodexId:newRolodexId))).((``))"     \
-        ".((<>)).(([])).((**)).((^^)).((&&)).((//)).((~~)).(::::;;::::).anchor")
-  when 'institutional proposal id'
-    @element = kaiki.find(
-      :name, 
-      "methodToCall.performLookup.(!!org.kuali.kra.institutionalproposal.home" \
-        ".InstitutionalProposal!!).(((proposalId:fundingProposalBean"          \
-        ".newFundingProposal.proposalId))).((`fundingProposalBean"             \
-        ".newFundingProposal.proposalNumber:proposalNumber`)).((<>)).(([]))"   \
-        ".((**)).((^^)).((&&)).((//)).((~~)).(::::;;::::)"                     \
-        ".anchorFundingProposals")
-  when 'sponsor template code'
-    @element = kaiki.find(
-      :name, 
-      "methodToCall.performLookup.(!!org.kuali.kra.award.home"                 \
-        ".AwardTemplate!!).(((templateCode:document.award"                     \
-        ".templateCode,description:document.award.awardTemplate"               \
-        ".description))).((``)).((<>)).(([])).((**)).((^^)).((&&)).((//))"     \
-        ".((~~)).(::::;;::::).anchor61")
-  when 'award id'
-    @element = kaiki.find(
-      :name, 
-      "methodToCall.performLookup.(!!org.kuali.kra.award.home.Award!!)"        \
-        ".(((awardNumber:document.developmentProposalList[0]"                  \
-        ".currentAwardNumber))).((``)).((<>)).(([])).((**)).((^^)).((&&))"     \
-        ".((//)).((~~)).(::::;;::::).anchorRequiredFieldsforSavingDocument")
-  when 'grants.gov'
-    @element = kaiki.find(
-      :xpath,
-      "//div[contains(., '#{item}')]/input[contains(@title, 'Search')]")
-  when 'original institutional proposal id'                                     
-    @element = kaiki.find(
-      :name,
-      "methodToCall.performLookup.(!!org.kuali.kra.institutionalproposal.home" \
-        ".InstitutionalProposal!!).(((proposalNumber:document"                 \
-        ".developmentProposalList[0].continuedFrom))).((``)).((<>)).(([]))"    \
-        ".((**)).((^^)).((&&)).((//)).((~~)).(::::;;::::)"                     \
-        ".anchorRequiredFieldsforSavingDocument")
-  else
-    raise NotImplementedError
-  end
-  @element.click
-end
+# KFS all features
 
-# Public: The following Webdriver code tells kaikifs to set the pause time to 0.
+# Description: Locates and clicks the link on the page
 #
-# Returns nothing.
-When (/^I am fast$/) do
-  kaiki.log.debug "I am fast (pause_time = 0.5)"
-  kaiki.pause_time = 0.5
-end
-
-# Public: The following Webdriver code tells kaikifs to increase the pause time
-# by 2.
-#
-# Returns nothing.
-When (/^I slow down$/) do
-  kaiki.log.debug "I slow down (pause_time = #{kaiki.pause_time + 2})"
-  kaiki.pause_time += 4
-end
-
-# Public: Performs an action on the first record in the table.
-#
-# Parameters:
-#   action - This is the action to be performed on the first record.
-#
-# Returns nothing.
-When(/^I "(.*?)" the first record$/) do |action|
-  kaiki.pause
-  kaiki.switch_default_content
-  kaiki.select_frame("iframeportlet")
-  element = kaiki.find(:xpath, "//a[contains(text(), '#{action}')]")
-  element.click
-end
-
-# Public: Changes focus to the new browser window that is opened
-#
-# Returns nothing.
-Then(/^a new browser window appears$/) do
-	kaiki.pause
-	kaiki.last_window_focus
-end
-
-# Public: Takes the name of the button and clicks on the button with that name
-#
-# Parameters:
-#   link  - name of the item to be clicked
-#
-# Returns nothing.
-When(/^I click the "(.*?)" search link$/) do |link|
-  kaiki.pause
-  element = kaiki.find(:xpath, "//td[contains(text(), '#{link}')]"             \
-                               "/following-sibling::td/a[2]")
-  element.click
-end
-
-#Created for Testing
-#Public: Orders records in order of latest created
-#
-#Returns nothing.
-When (/^I sort by Award ID$/) do
-  kaiki.pause
-  element = kaiki.find(
-    :xpath,
-    "/html/body/form/table/tbody/tr/td[2]/table/thead/tr/th[2]/a")
-  element.click
-  kaiki.wait_for(
-    :xpath,
-    "/html/body/form/table/tbody/tr/td[2]/table/thead/tr/th[2]/a")
-  element = kaiki.find(
-    :xpath,
-    "/html/body/form/table/tbody/tr/td[2]/table/thead/tr/th[2]/a")
-  element.click
-end
-
-#Created for Testing
-#Public: Orders records in order of latest created
-#
-#Returns nothing.
-When (/^I sort by Institutional Proposal ID$/) do
-#~ kaiki.pause
-#~ kaiki.find(:xpath, "/html/body/form/table/tbody/tr/td[2]/table/thead/tr/th[2]/a").click
-#~ kaiki.find(:xpath, "/html/body/form/table/tbody/tr/td[2]/table/thead/tr/th[2]/a").click
-  kaiki.pause
-  element = kaiki.find(
-    :xpath,
-    "/html/body/form/table/tbody/tr/td[2]/table/thead/tr/th[2]/a")
-  element.click
-  kaiki.wait_for(
-    :xpath,
-    "/html/body/form/table/tbody/tr/td[2]/table/thead/tr/th[2]/a")
-  element = kaiki.find(
-    :xpath,
-    "/html/body/form/table/tbody/tr/td[2]/table/thead/tr/th[2]/a")
-  element.click
-end
-
-# Public: Locates and clicks the link on the page
-# 
 # Parameters:
 #   link - name of the link to click
 #
 # Returns nothing.
 When(/^I (?:click|click the) "([^"]*)" link$/) do |link|
-  kaiki.pause
-  element = kaiki.find(:xpath, "//a[contains(text(), '#{link}')]")
-  element.click
+  kaiki.get_ready
+  kaiki.find_approximate_element(["//a[@title='#{link}']"]).click
 end
