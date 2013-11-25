@@ -211,11 +211,6 @@ class Kaiki::CapybaraDriver::Base
   #
   # Returns nothing.
   def login_via_webauth_with(username, password=nil)
-    print "Logging in via webauth\n"
-    
-    print "username:..#{username}..\n"
-    print "password: ..#{password}..\n"
-    
     retries = 2
     begin
       password ||= self.class.shared_password_for username
@@ -315,8 +310,6 @@ class Kaiki::CapybaraDriver::Base
         window.resizeTo(#{width}, #{height});
       };
     ]
-    
-    print "Changed browser window size\n"
   end
 
   # Public: Set `@screenshot_dir`, and make the screenshot directory
@@ -327,7 +320,6 @@ class Kaiki::CapybaraDriver::Base
     @screenshot_dir = File.join(base, Time.now.strftime("%Y-%m-%d.%H"))
     return if Dir::exists? @screenshot_dir
     Dir::mkdir(@screenshot_dir)
-    print "Made scrnsht dir\n"
   end
 
   # Public: Pause for `@pause_time` by default, or for `time` seconds.
@@ -400,8 +392,6 @@ class Kaiki::CapybaraDriver::Base
     @driver = page.driver.browser
 
     @base_window_handle = @driver.window_handles.first
-    
-    print "Started session\n"
   end
 
   # Public: Gathers the shared password for test users to use when logging in
