@@ -21,7 +21,6 @@ require 'highline/import'
 
 def set_env_defaults
   ENV['KAIKI_IS_HEADLESS'] = "true" if ENV['KAIKI_IS_HEADLESS'].nil?
-  ENV['KAIKI_NETID'] = "uartest"    if ENV['KAIKI_NETID'].nil?
   ENV['KAIKI_ENV'] = "cdf"          if ENV['KAIKI_ENV'].nil?
 end
 
@@ -36,7 +35,8 @@ end
 #
 # Returns nothing.
 task :KC do
-  ENV['KAIKI_APP'] = "kc" if ENV['KAIKI_APP'].nil?
+  ENV['KAIKI_NETID'] = "uartest" if ENV['KAIKI_NETID'].nil?
+  ENV['KAIKI_APP'] = "kc"        if ENV['KAIKI_APP'].nil?
   set_env_defaults
   File.basename("katt-kaiki-dev-financial/features/support/test_tags.rb")
   kc_tags.each do |i|
@@ -59,7 +59,8 @@ end
 #
 # Returns nothing.
 task :KFS do
-  ENV['KAIKI_APP'] = "kfs" if ENV['KAIKI_APP'].nil?
+  ENV['KAIKI_NETID'] = "uartest" if ENV['KAIKI_NETID'].nil?
+  ENV['KAIKI_APP'] = "kfs"        if ENV['KAIKI_APP'].nil?
   set_env_defaults
   File.basename("katt-kaiki-dev-financial/features/support/test_tags.rb")
   kfs_tags.each do |i|
