@@ -39,12 +39,11 @@ end
 # Returns nothing.
 Given (/^I (?:am logged in|log in) as "(.*?)"$/) do |username|
   kaiki.get_ready
-  if ENV['BUILD_NUMBER'].nil?
+  # if ENV['BUILD_NUMBER'].nil?
     kaiki.login_as(username, :backdoor)
-  else
-    kaiki.login_as(username)
-  end
-
+  # else
+    # kaiki.login_as(username)
+  # end
 end
 
 # Description: Logs in the user that kicked off the tests to WebAuth using the
