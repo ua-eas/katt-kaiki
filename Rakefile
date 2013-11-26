@@ -59,7 +59,7 @@ end
 #
 # Returns nothing.
 task :KFS do
-  ENV['KAIKI_NETID'] = "uartest" if ENV['KAIKI_NETID'].nil?
+  ENV['KAIKI_NETID'] = "kfs-test-sec9" if ENV['KAIKI_NETID'].nil?
   ENV['KAIKI_APP'] = "kfs"        if ENV['KAIKI_APP'].nil?
   set_env_defaults
   File.basename("katt-kaiki-dev-financial/features/support/test_tags.rb")
