@@ -60,9 +60,6 @@ end
 task :KFS do
   ENV['KAIKI_NETID'] = "kfs-test-sec9" if ENV['KAIKI_NETID'].nil?
   ENV['KAIKI_APP'] = "kfs"             if ENV['KAIKI_APP'].nil?
-  
-  print "KAIKI_NETID: #{ENV['KAIKI_NETID']}\n"
-  
   set_env_defaults
   kfs_tags.each do |i|
     i.each do |j|
