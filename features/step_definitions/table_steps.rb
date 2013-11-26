@@ -156,8 +156,10 @@ def table_fill(subsection_name, table_name, table, options=nil)
                 ["input"   ],
                 ["select"  ],
                 ["textarea"])
-# factory1 - KFS PA004-01 (Create Requisition)
-            factory1_string = step1 + step2 + back2 +                          \
+# factory1 - KFS PA004-05 (Payment Request)
+# factory1 - KFS PA004-06 (Vendor Credit Memo)
+            factory1_string = step1 + step2 + step6 +                          \
+              "/../following-sibling::td/descendant::"                         \
               "%s[contains(@title, '#{column_name}')]"
             factory1 =
               ApproximationsFactory.transpose_build(
@@ -165,10 +167,8 @@ def table_fill(subsection_name, table_name, table, options=nil)
                 ["input"],
                 ["select"],
                 ["textarea"])
-# factory2 - KFS PA004-05 (Payment Request)
-# factory2 - KFS PA004-06 (Vendor Credit Memo)
-            factory2_string = step1 + step2 + step6 +                          \
-              "/../following-sibling::td/descendant::"                         \
+# factory2 - KFS PA004-01 (Create Requisition)
+            factory2_string = step1 + step2 + back2 +                          \
               "%s[contains(@title, '#{column_name}')]"
             factory2 =
               ApproximationsFactory.transpose_build(
