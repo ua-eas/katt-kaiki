@@ -38,7 +38,6 @@ task :KC do
   ENV['KAIKI_NETID'] = "uartest" if ENV['KAIKI_NETID'].nil?
   ENV['KAIKI_APP'] = "kc"        if ENV['KAIKI_APP'].nil?
   set_env_defaults
-  File.basename("katt-kaiki-dev-financial/features/support/test_tags.rb")
   kc_tags.each do |i|
     i.each do |j|
       Cucumber::Rake::Task.new(:KC, "Run all tests in required order.") do |t|
@@ -60,9 +59,11 @@ end
 # Returns nothing.
 task :KFS do
   ENV['KAIKI_NETID'] = "kfs-test-sec9" if ENV['KAIKI_NETID'].nil?
-  ENV['KAIKI_APP'] = "kfs"        if ENV['KAIKI_APP'].nil?
+  ENV['KAIKI_APP'] = "kfs"             if ENV['KAIKI_APP'].nil?
+  
+  print "KAIKI_NETID: #{ENV['KAIKI_NETID']}\n"
+  
   set_env_defaults
-  File.basename("katt-kaiki-dev-financial/features/support/test_tags.rb")
   kfs_tags.each do |i|
     i.each do |j|
       Cucumber::Rake::Task.new(:KFS, "Run all tests in required order.") do |t|
