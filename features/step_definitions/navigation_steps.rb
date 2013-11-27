@@ -24,7 +24,8 @@ end
 #
 # Returns nothing.
 Given(/^I am on the "([^"]*)" system tab$/) do |sys_tab|
-  kaiki.get_ready
+  kaiki.pause
+  kaiki.switch_default_content
   kaiki.find_approximate_element(["//a[@title='#{sys_tab}']"]).click
 end
 
