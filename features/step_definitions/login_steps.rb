@@ -16,7 +16,8 @@
 #
 # Returns nothing.
 Given(/^I (?:am backdoored|backdoor) as "([^"]*)"$/) do |username|
-  kaiki.get_ready
+  kaiki.pause
+  kaiki.switch_default_content
   kaiki.backdoor_as(username)
 end
 
@@ -38,7 +39,8 @@ end
 #
 # Returns nothing.
 Given (/^I (?:am logged in|log in) as "(.*?)"$/) do |username|
-  kaiki.get_ready
+  kaiki.pause
+  kaiki.switch_default_content
   # if ENV['BUILD_NUMBER'].nil?
     kaiki.login_as(username, :backdoor)
   # else
