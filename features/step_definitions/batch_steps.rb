@@ -3,8 +3,8 @@
 #
 # Original Date: November 17th, 2013
 
-# class BatchException < Exception
-# end
+class BatchException < Exception
+end
 
 # Description: Connects and executes a batch script to UofA server
 #
@@ -40,11 +40,16 @@ end
 # Returns true(successful) false(unsuccessful) or nil(failed)
 When(/^I verify that an "([^"]*)" file starting with "([^"]*)" exists in "([^"]*)" of the KFS working directory$/)\
   do |file_ext, file_prefix, path_to_dir|
-  host = kaiki.envs[kaiki.env]['host']
-  system("ssh kbatch@#{host} \"ls ~/app/work/kfs/#{path_to_dir}/\"")
-  build_cmd = "ssh kbatch@#{host} \"ls ~/app/work/kfs/#{path_to_dir}/#{file_prefix}*#{file_ext}\""
-  result = system(build_cmd)
-  print "#{result}\n"
+  result = ""
+  30.times do
+    host = kaiki.envs[kaiki.env]['host']
+    system("ssh kbatch@#{host} \"ls ~/app/work/kfs/#{path_to_dir}/\"")
+    build_cmd = "ssh kbatch@#{host} \"ls ~/app/work/kfs/#{path_to_dir}/#{file_prefix}*#{file_ext}\""
+    result = system(build_cmd)
+    print "#{result}\n"
+    kaiki.pause(10)
+    break if result == true
+  end
   if result != true
     raise BatchException, "Batch process was unsuccessful or failed on verifying a file/s starting with #{file_prefix} & ending with #{file_ext}"
   end

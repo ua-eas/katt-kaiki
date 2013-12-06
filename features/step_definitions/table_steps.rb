@@ -90,6 +90,7 @@ def table_fill(subsection_name, table_name, table, options=nil)
       step4="/../following-sibling::table/descendant::tr/th[contains(text(), '#{subsection}')]"
       step5="/../following-sibling::table/descendant::"
       step6="/../../../../descendant::tr/td/b[contains(., '#{row_name}')]"
+      step7="/../../../../following-sibling::div/descendant::h3[contains(text(), '#{@section}')]"
       back1="/../following-sibling::tr/descendant::"
       back2="/../../following-sibling::tr/descendant::"
 
@@ -176,9 +177,19 @@ def table_fill(subsection_name, table_name, table, options=nil)
                 ["input"],
                 ["select"],
                 ["textarea"])
-            @approximate_xpath = factory0                                      \
-                               + factory1                                      \
-                               + factory2
+# factory3 - KFS CASH001-01 (Open Cash Drawer)
+            column_name = "Amount" if column_name.eql?("Amt")                                
+            factory3_string = step1 + step7 + "/following-sibling::table/descendant::%s[contains(@title, '#{column_name}')]"  #Added for CASH001-01
+            factory3 =
+              ApproximationsFactory.transpose_build(
+                factory3_string,
+                ["input"],
+                ["select"],
+                ["textarea"])      
+            @approximate_xpath = factory0                                       \
+                              + factory1                                       \
+                              + factory2                                       \
+                              + factory3
           when "kc"
             option1 = "input[contains(@title, '#{column_name}')]"
             option2 = "select[contains(@title, '#{column_name}')]"

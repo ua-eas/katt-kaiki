@@ -101,7 +101,9 @@ When(/^I (?:click|click the) "(.*?)" (?:button|(?:on|to) "(.*?)")(?:| (?:under|i
     "unlock selected"    => "//input[@name='methodToCall.unlockSelected.anchorFundedAwards']",
     "collapse all"       => "//input[@name='methodToCall.hideAllTabs']",
     "apply"              => "//input[contains(@name, 'methodToCall.apply#{field}')]",
-    "delete"             => "//th[contains(text(), '#{field}')]/following-sibling::td/div/input[contains(@name, 'methodToCall.delete')]"
+    "delete"             => "//th[contains(text(), '#{field}')]/following-sibling::td/div/input[contains(@name, 'methodToCall.delete')]",
+    "open existing"      => "//input[@name='methodToCall.openExisting']",        
+    "add final deposit"  => "//input[@name='methodToCall.addFinalDeposit']"      
     }
 
   if not item.eql?(nil)
@@ -136,8 +138,19 @@ When(/^I (?:click|click the) "(.*?)" (?:button|(?:on|to) "(.*?)")(?:| (?:under|i
             "following-sibling::table/descendant::div[text()[contains(., '#{subsection}')]]/"\
             "following-sibling::div/descendant::%s[contains(@title, 'Add Unit')]",\
             ['input'])
+# factory2 - KFS DI003-01 (Initiate DI)
+# factory2 - KFS PRE001-01 (Initiate Pre-Encumbrance)
+# factory2 - KFS TF001-01  (Initiate Transfer of Funds)
+        factory2 =                                                              
+        ApproximationsFactory.transpose_build(
+          "//h2[contains(., '#{@tab}')]/../../../../following-sibling::"       \
+          "div/descendant::span[contains(., '#{@section}')]/../../"            \
+          "following-sibling::tr/td[contains(text(), '#{subsection}')]/../"    \
+          "following-sibling::tr/descendant::%s[contains(@title, 'Add')]",
+          ['input'])                                                            
         @approximate_xpath = factory0                                          \
-                           + factory1
+                           + factory1                                          \
+                           + factory2
       else
 # factory0 - KC Feat. 1 (Special Review)
 # factory0 - KC Feat. 2 (Award, Commitments, Time & Money)
@@ -184,7 +197,11 @@ When(/^I (?:click|click the) "(.*?)" (?:button|(?:on|to) "(.*?)")(?:| (?:under|i
       else
         button = "continue"
       end
-      @element = kaiki.find_approximate_element(["//input[@title='#{button}']"])
+     approximate_xpath = [                                                      
+      "//input[@title='#{button}']",
+      "//input[@name='methodToCall.continueFormat']"
+      ]
+      @element = kaiki.find_approximate_element(approximate_xpath)
     else
       raise NotImplementedError
     end
@@ -216,7 +233,10 @@ def button_title_match(button_name)
       "clear",
       "Print",
       "Submit To Sponsor",
-      "Clear all tax"
+      "Clear all tax",
+      "begin format",                                                            
+      "Open Cash Drawer",                                                        
+      "create"                                                                   
     ]
   title_buttons.each do |value|
     if value.casecmp(button_name) == 0

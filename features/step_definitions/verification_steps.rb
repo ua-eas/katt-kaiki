@@ -40,9 +40,15 @@ Then (/^I should see (?:|the )"(.*?)" text set to "(.*?)" in the document header
     "//th[contains(., '#{label}')]/following-sibling::%s",
     ['td'])
   approximate_xpath = factory0
-  element = kaiki.find_approximate_element(approximate_xpath)
-  field_text = element.text
-  raise Capybara::ExpectationNotMet unless field_text.include?(text)
+  begin
+    element = kaiki.find_approximate_element(approximate_xpath)
+    field_text = element.text
+    raise Capybara::ExpectationNotMet unless field_text.include?(text)
+  rescue Capybara::ExpectationNotMet
+    kaiki.get_ready
+    kaiki.click_approximate_field(["//a[@title='reload']"])
+    retry
+  end
 end
 
 # Description: Verifies the given text is present on the page and verifies
@@ -188,12 +194,14 @@ def verify_text(label, text, subsection, person, mode='exact')
           ['input'],
           ['select'])
 # factory1 - KC Feat. 2 (Time & Money)
+# factory1 - CASH001-01 (Cash Drawer)
       factory1 =
         ApproximationsFactory.transpose_build(
           "//h2[contains(., '#{@tab}')]/../../../../following-sibling::div/"   \
           "descendant::h3[contains(., '#{@section}')]/following-sibling::"     \
-          "div/descendant::%s[contains(@name, '#{label}')]",
-          ['input'])
+          "div/descendant::%s[contains(%s, '#{label}')]",
+          ['input', '@name'],
+          [ nil,    '@title'])
 # factory2- KC Feat. 8 (Custom Data)
       factory2 =
         ApproximationsFactory.transpose_build(
@@ -284,6 +292,18 @@ Then (/^I should see (?:|the )"([^"]*)" text set to (?:|([^"]*) )"([^"]*)"(?:| (
         ["td"])
     approximate_xpath = factory0
     @element = kaiki.find_approximate_element(approximate_xpath)
+  when "Future Action Requests"                                                 
+    kaiki.select_frame("routeLogIFrame")
+# factory0 - KFS PRE001-01 (Initiate Pre-Encumbrance)
+# factory0 - KFS TF001-01  (Initiate Transfer of Funds)
+    factory0 =
+      ApproximationsFactory.transpose_build(
+        "//h2[contains(., '#{@tab}')]/../../../../following-sibling::div/"     \
+          "descendant::tr/%s/../following-sibling::"                           \
+          "tr/%s[text()[contains(., '#{text}')]]",
+        ["th[3 and text()[contains(., '#{label}')]]", "td[3]/a"])
+    approximate_xpath = factory0
+    @element = kaiki.find_approximate_element(approximate_xpath)                 
   else
     if subsection
 # factory0 - KC Feat. 2 (Award)
@@ -858,6 +878,120 @@ Then(/^I should see the Budget Versions table filled out with:$/) do |table|
         "//h2[contains(., '#{@tab}')]/../../../../following-sibling::div/"     \
         "descendant::h3[contains(., '#{@section}')]/following-sibling::table/" \
         "descendant::tr[1]/td[contains(., '#{value}')]")
+    else
+      raise Capybara::ExpectationNotMet
+    end
+  end
+end
+
+# Public: This step is specific to the Final Deposit section on the              
+#         Deposits tab. To guarantee the values show up under the specified 
+#         headers, this is the best way we can achieve this.
+#         All the data is pulled from the page section, and then our table
+#         data is verified against it.
+#
+# Parameters:
+#   table - table of headers and values that should appear in the sections
+#
+# Returns nothing.
+Then(/^I should see the Final Deposit table filled out with:$/) do |table|
+  kaiki.pause
+  kaiki.switch_default_content
+  begin
+    kaiki.select_frame("iframeportlet")
+  rescue Selenium::WebDriver::Error::NoSuchFrameError
+  end
+
+  data_table = table.raw
+  data_hash = Hash.new
+
+  #There are 5 columns on the page. For now this is the easiest way to run this loop.
+  (0..4).each do |data_row_counter|
+    header_value = kaiki.find(
+      :xpath,
+      "//h2[contains(., '#{@tab}')]/../../../../following-sibling::div/"       \
+      "descendant::h3[contains(., '#{@section}')]/following-sibling::table/"   \
+      "descendant::table/tbody/tr[1]/th[#{data_row_counter+1}]").text.strip
+    factory0 =
+      ApproximationsFactory.transpose_build(
+        "//h2[contains(., '#{@tab}')]/../../../../following-sibling::div/"     \
+        "descendant::h3[contains(., '#{@section}')]/following-sibling::table/" \
+        "descendant::table/tbody/tr[2]/td[#{data_row_counter+1}]%s",
+        ['/input'],
+        [''])        
+    data_element = kaiki.get_approximate_field(factory0)
+    data_hash.store(header_value, data_element)
+  end
+  rows = data_table.length-1
+  (0..rows).each do |data_row_counter|
+    header_name = data_table[data_row_counter][0]
+    value = data_table[data_row_counter][1]
+    data_hash.each_key { |key| header_name = key if key.include?(header_name) }
+
+    if data_hash[header_name].include?(value)
+      print "#{data_hash[header_name]}\n"
+      kaiki.highlight(
+        :xpath,
+        "//h2[contains(., '#{@tab}')]/../../../../following-sibling::div/"     \
+        "descendant::h3[contains(., '#{@section}')]/following-sibling::table/" \
+        "descendant::table/descendant::tr[2]/td[contains(., '#{value}')]")
+    else
+      raise Capybara::ExpectationNotMet
+    end
+  end
+end
+
+# Public: This step is specific to the Cash Receipts section on the              
+#         Deposits tab. To guarantee the values show up under the specified 
+#         headers, this is the best way we can achieve this.
+#         All the data is pulled from the page section, and then our table
+#         data is verified against it.
+#
+# Parameters:
+#   table - table of headers and values that should appear in the sections
+#
+# Returns nothing.
+Then(/^I should see the Cash Receipts table filled out with:$/) do |table|
+  kaiki.pause
+  kaiki.switch_default_content
+  begin
+    kaiki.select_frame("iframeportlet")
+  rescue Selenium::WebDriver::Error::NoSuchFrameError
+  end
+
+  data_table = table.raw
+  data_hash = Hash.new
+
+  #There are 4 columns on the page. For now this is the easiest way to run this loop.
+  (0..3).each do |data_row_counter|
+    header_value = kaiki.find(
+      :xpath,
+      "//h2[contains(., '#{@tab}')]/../../../../following-sibling::div/"       \
+      "descendant::h3[contains(., '#{@section}')]/following-sibling::table/"   \
+      "tbody/tr[5]/th[#{data_row_counter+1}]").text.strip
+    factory0 =
+      ApproximationsFactory.transpose_build(
+        "//h2[contains(., '#{@tab}')]/../../../../following-sibling::div/"     \
+        "descendant::h3[contains(., '#{@section}')]/following-sibling::table/" \
+        "tbody/tr[6]/td[#{data_row_counter+1}]%s",
+        ['/a'],
+        [''])
+    data_element = kaiki.get_approximate_field(factory0)
+    data_hash.store(header_value, data_element)
+  end
+  rows = data_table.length-1
+  (0..rows).each do |data_row_counter|
+    header_name = data_table[data_row_counter][0]
+    value = data_table[data_row_counter][1]
+    data_hash.each_key { |key| header_name = key if key.include?(header_name) }
+
+    if data_hash[header_name].include?(value)
+      print "#{data_hash[header_name]}\n"
+      kaiki.highlight(
+        :xpath,
+        "//h2[contains(., '#{@tab}')]/../../../../following-sibling::div/"     \
+        "descendant::h3[contains(., '#{@section}')]/following-sibling::table/" \
+        "descendant::tr[6]/td[contains(., '#{value}')]")
     else
       raise Capybara::ExpectationNotMet
     end

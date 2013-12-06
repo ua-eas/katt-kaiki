@@ -22,6 +22,8 @@ When(/^I (?:set the|set) "([^"]*)" to "([^"]*)"(?:| (?:under|in) the "([^"]*)" s
 
   if field.include? "Cost"
     field = "Cost"
+  elsif field.include? "Amt"                                                    
+    field = "Amount"  
   end
 
   special_case_field = {
@@ -29,7 +31,8 @@ When(/^I (?:set the|set) "([^"]*)" to "([^"]*)"(?:| (?:under|in) the "([^"]*)" s
     "Oblg. End" => {:section => "Award Hierarchy", :field => "awardHierarchyNodeItems[1].obligationExpirationDate"},
     "Obligated" => {:section => "Award Hierarchy", :field => "awardHierarchyNodeItems[1].amountObligatedToDate"},
     "Anticipated" => {:section => "Award Hierarchy", :field => "awardHierarchyNodeItems[1].anticipatedTotalAmount"},
-    "Project End" => {:section => "Award Hierarchy", :field => "awardHierarchyNodeItems[1].finalExpirationDate"}
+    "Project End" => {:section => "Award Hierarchy", :field => "awardHierarchyNodeItems[1].finalExpirationDate"},
+    "Deposit" => {:section => "Deposit Header", :field => "depositTicketNumber"}
   }
 
   special_case_value = {
@@ -59,15 +62,16 @@ When(/^I (?:set the|set) "([^"]*)" to "([^"]*)"(?:| (?:under|in) the "([^"]*)" s
   else
     if subsection
 # factory0 - KFS PA004-01 (Create Requisition)
-      factory0 =
+# factory0 - KFS DI003-01 (Initiate DI)
+      factory0 =                                                                
         ApproximationsFactory.transpose_build(
-        "//h2[contains(., '#{@tab}')]/../../../../following-sibling::div/"     \
-        "descendant::span[contains(., '#{@section}')]/../../following-sibling::"\
-        "tr[contains(., '#{subsection}')]/following-sibling::tr/"              \
-        "descendant::%s[contains(@title, '#{field}')]",
-        ['textarea'],
-        ['input'],
-        ['select'])
+          "//h2[contains(., '#{@tab}')]/../../../../following-sibling::"       \
+          "div/descendant::span[contains(., '#{@section}')]/../../"            \
+          "following-sibling::tr/td[text()[contains(., '#{subsection}')]]/../" \
+          "following-sibling::tr/descendant::%s[contains(@title, '#{field}')]",
+          ['textarea'],
+          ['input'],
+          ['select'])                                                           
 # factory1 - KFS PA004-0304 (Purchase Order)
       factory1 =
         ApproximationsFactory.transpose_build(
@@ -294,8 +298,22 @@ end
 #   check_name - name of the checkbox
 #
 # Returns nothing.
-When(/^I check the "([^"]*)" checkbox$/) do |check_name|
+When(/^I check the "([^"]*)" checkbox(?:| for "([^"]*)")$/) do |check_name, row_number|
   kaiki.get_ready
+# factory0 - KFS CASH001-01 (Open Cash Drawer)  
+  if row_number                                                                  
+    row_number = "#" if row_number.eql?("all")
+    factory0 =
+      ApproximationsFactory.transpose_build(
+      "//h2[contains(., '#{@tab}')]/../../../../following-sibling::"           \
+        "div/descendant::h3[contains(., '#{@section}')]/following-sibling::"   \
+        "div/descendant::%s[contains(., '#{row_number}')]/"                    \
+        "preceding-sibling::td/descendant::%s",
+        ['th',  'input'],                                                       
+        ['td',  nil])
+    approximate_xpath = factory0                                                
+  kaiki.check_approximate_field(approximate_xpath)
+  else
 # factory0 - KFS PA004-05 (Payment Request)
 # factory0 - KC Feat. 7   (Budget Versions Parameters Page)
 # factory0 - KC Feat. 8   (Proposal Actions, Budget Versions)
@@ -320,6 +338,7 @@ When(/^I check the "([^"]*)" checkbox$/) do |check_name|
                     + factory1                                                 \
                     + factory2
   kaiki.check_approximate_field(approximate_xpath)
+  end
 end
 
 # KC Feat. 2 (Time & Money)
