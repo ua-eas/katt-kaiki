@@ -81,7 +81,7 @@ class Kaiki::CapybaraDriver::Base
     end
     
     if ENV['BUILD_NUMBER']
-      @default_pause_time = 2
+      @default_pause_time = 5
     else
       @default_pause_time   = 0.5
     end
