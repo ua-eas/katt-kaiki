@@ -146,7 +146,8 @@ def verify_text(label, text, subsection, person, mode='exact')
         ["div[text()[contains(., '#{text}')]]"])
       approximate_xpath = factory0                                             \
                         + factory1
-      @element = kaiki.find_approximate_element(approximate_xpath)
+      #@element = kaiki.find_approximate_element(approximate_xpath)
+      @field_text = kaiki.get_approximate_field(approximate_xpath)
     elsif subsection
 # factory0 - KC Feat. 2 (Award, Contacts)
 # factory0 - KC Feat. 4 (Award)
@@ -173,7 +174,8 @@ def verify_text(label, text, subsection, person, mode='exact')
               ['td/input'])
         approximate_xpath = factory0                                           \
                           + factory1
-        @element = kaiki.find_approximate_element(approximate_xpath)
+      #@element = kaiki.find_approximate_element(approximate_xpath)
+      @field_text = kaiki.get_approximate_field(approximate_xpath)
     else
 # factory0 - KFS PA004-02   (Assign CM)
 # factory0 - KFS PA004-0304 (Purchase Order)
@@ -214,22 +216,23 @@ def verify_text(label, text, subsection, person, mode='exact')
       approximate_xpath = factory0                                             \
                         + factory1                                             \
                         + factory2
-      @element = kaiki.find_approximate_element(approximate_xpath)
+      #@element = kaiki.find_approximate_element(approximate_xpath)
+      @field_text = kaiki.get_approximate_field(approximate_xpath)
     end
   end
 
-  if @element[:type] == "text"
-    @field_text = @element[:value]
-  elsif @element[:type] == "select-one"
-    begin
-      @element_option = @element.find(:xpath, "option[@selected ='selected']")
-    rescue Capybara::ElementNotFound
-      @element_option = @element.find(:xpath, "option[@value='#{@element[:value]}']")
-    end
-    @field_text = @element_option.text
-  else
-    @field_text = @element.text.strip
-  end
+#  if @element[:type] == "text"
+#    @field_text = @element[:value]
+#  elsif @element[:type] == "select-one"
+#    begin
+#      @element_option = @element.find(:xpath, "option[@selected ='selected']")
+#    rescue Capybara::ElementNotFound
+#      @element_option = @element.find(:xpath, "option[@value='#{@element[:value]}']")
+#    end
+#    @field_text = @element_option.text
+#  else
+#    @field_text = @element.text.strip
+#  end
 
   if mode == 'exact'
     unless @field_text == text
@@ -281,7 +284,8 @@ Then (/^I should see (?:|the )"([^"]*)" text set to (?:|([^"]*) )"([^"]*)"(?:| (
       "//%s[contains(., '#{label}')]/following-sibling::td[1]",
       ['th'])
     approximate_xpath = factory0
-    @element = kaiki.find_approximate_element(approximate_xpath)
+    #@element = kaiki.find_approximate_element(approximate_xpath)
+    @field_text = kaiki.get_approximate_field(approximate_xpath)
   when "1099 Classification"
 # factory0 - KFS PA004-05 (Payment Request)
 # factory0 - KFS PA004-06 (Vendor Credit Memo)
@@ -291,7 +295,8 @@ Then (/^I should see (?:|the )"([^"]*)" text set to (?:|([^"]*) )"([^"]*)"(?:| (
           "descendant::%s[contains(text(), '#{label}')]",
         ["td"])
     approximate_xpath = factory0
-    @element = kaiki.find_approximate_element(approximate_xpath)
+    #@element = kaiki.find_approximate_element(approximate_xpath)
+    @field_text = kaiki.get_approximate_field(approximate_xpath)
   when "Future Action Requests"                                                 
     kaiki.select_frame("routeLogIFrame")
 # factory0 - KFS PRE001-01 (Initiate Pre-Encumbrance)
@@ -303,7 +308,8 @@ Then (/^I should see (?:|the )"([^"]*)" text set to (?:|([^"]*) )"([^"]*)"(?:| (
           "tr/%s[text()[contains(., '#{text}')]]",
         ["th[3 and text()[contains(., '#{label}')]]", "td[3]/a"])
     approximate_xpath = factory0
-    @element = kaiki.find_approximate_element(approximate_xpath)                 
+    #@element = kaiki.find_approximate_element(approximate_xpath)
+    @field_text = kaiki.get_approximate_field(approximate_xpath)               
   else
     if subsection
 # factory0 - KC Feat. 2 (Award)
@@ -340,7 +346,8 @@ Then (/^I should see (?:|the )"([^"]*)" text set to (?:|([^"]*) )"([^"]*)"(?:| (
       approximate_xpath = factory0                                             \
                         + factory1                                             \
                         + factory2
-      @element = kaiki.find_approximate_element(approximate_xpath)
+      #@element = kaiki.find_approximate_element(approximate_xpath)
+      @field_text = kaiki.get_approximate_field(approximate_xpath)
     else
       case @sec_type
       when "h3"
@@ -361,7 +368,8 @@ Then (/^I should see (?:|the )"([^"]*)" text set to (?:|([^"]*) )"([^"]*)"(?:| (
           ["th[contains(text(), '#{label}')]",          "td"],
           [ nil,                                        "th/div"])
         approximate_xpath = factory0
-        @element = kaiki.find_approximate_element(approximate_xpath)
+        #@element = kaiki.find_approximate_element(approximate_xpath)
+        @field_text = kaiki.get_approximate_field(approximate_xpath)
       when "td"
 # factory0 - KFS PA004-0304 (Purchase Order)
 # factory0 - KFS PA004-05   (Payment Request)
@@ -375,23 +383,24 @@ Then (/^I should see (?:|the )"([^"]*)" text set to (?:|([^"]*) )"([^"]*)"(?:| (
           ["th[contains(text(), '#{label}')]",          "td"],
           [ nil,                                        "th/div"])
         approximate_xpath = factory0
-        @element = kaiki.find_approximate_element(approximate_xpath)
+        #@element = kaiki.find_approximate_element(approximate_xpath)
+        @field_text = kaiki.get_approximate_field(approximate_xpath)
       end
     end
   end
 
-  if @element[:type] == "text"
-    @field_text = @element[:value]
-  elsif @element[:type] == "select-one"
-    begin
-      @element_option = @element.find(:xpath, "option[@selected ='selected']")
-    rescue Capybara::ElementNotFound
-      @element_option = @element.find(:xpath, "option[@value='#{@element[:value]}']")
-    end
-    @field_text = @element_option.text
-  else
-    @field_text = @element.text.strip
-  end
+#  if @element[:type] == "text"
+#    @field_text = @element[:value]
+#  elsif @element[:type] == "select-one"
+#    begin
+#      @element_option = @element.find(:xpath, "option[@selected ='selected']")
+#    rescue Capybara::ElementNotFound
+#      @element_option = @element.find(:xpath, "option[@value='#{@element[:value]}']")
+#    end
+#    @field_text = @element_option.text
+#  else
+#    @field_text = @element.text.strip
+#  end
 
   if @tab == "1099 Classification"
     @field_text = @field_text[/\d+[.]\d+/]
