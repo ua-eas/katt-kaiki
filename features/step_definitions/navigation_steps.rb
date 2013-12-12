@@ -80,7 +80,8 @@ When(/^I (?:click|click the) "(.*?)" (?:button|(?:on|to) "(.*?)")(?:| (?:under|i
   downcase_alt_buttons = [
       "return to proposal",
       "refresh",
-      "refresh account summary"
+      "refresh account summary",
+      "refresh from account lines"
     ]
   specific_buttons_hash = {
     "get document"       => "//input[@name='methodToCall.#{button.downcase.gsub(/\s/, '_')}']",
