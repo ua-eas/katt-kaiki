@@ -20,9 +20,7 @@ When(/^I (?:set the|set) "([^"]*)" to "([^"]*)"(?:| (?:under|in) the "([^"]*)" s
 
   kaiki.get_ready
 
-  if field.include? "Cost"
-    field = "Cost"
-  elsif field.include? "Amt"                                                    
+  if field.include? "Amt"                                                    
     field = "Amount"  
   end
 
@@ -32,6 +30,7 @@ When(/^I (?:set the|set) "([^"]*)" to "([^"]*)"(?:| (?:under|in) the "([^"]*)" s
     "Obligated" => {:section => "Award Hierarchy", :field => "awardHierarchyNodeItems[1].amountObligatedToDate"},
     "Anticipated" => {:section => "Award Hierarchy", :field => "awardHierarchyNodeItems[1].anticipatedTotalAmount"},
     "Project End" => {:section => "Award Hierarchy", :field => "awardHierarchyNodeItems[1].finalExpirationDate"},
+    "Extended Cost" => {:section => "Additional Charges", :field => "Unit Cost"},
     "Deposit" => {:section => "Deposit Header", :field => "depositTicketNumber"}
   }
 
