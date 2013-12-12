@@ -216,18 +216,28 @@ When(/^I (?:set the|set) "([^"]*)" to something like "([^"]*)"$/)              \
 
   kaiki.get_ready
 # factory0 - KC Feat. 2 (Time & Money)
-  factory0 =
-    ApproximationsFactory.transpose_build(
-      "//%s[contains(@title,'#{field}')]",
-      ['select'],
-      ['input' ])
+  # factory0 =
+    # ApproximationsFactory.transpose_build(
+      # "//%s[contains(@title,'#{field}')]",
+      # ['select'],
+      # ['input' ])
 # factory1 - KC Feat. 4 (Time and Money)
-  factory1 =
-    ApproximationsFactory.transpose_build(
-      "//th[contains(., '#{field}')]"                                          \
-        "/../following-sibling::tr/td/div/%s[contains(@title, '#{field}')]",
-      ['select[1]'              ])
-  approximate_xpath = factory0 + factory1
+  # factory1 =
+    # ApproximationsFactory.transpose_build(
+      # "//th[contains(., '#{field}')]"                                          \
+        # "/../following-sibling::tr/td/div/%s[contains(@title, '#{field}')]",
+      # ['select[1]'])
+      factory0 =
+        ApproximationsFactory.transpose_build(
+        "//h2[contains(., '#{@tab}')]/../../../../following-sibling::div/"     \
+        "descendant::h3[contains(., '#{@section}')]/following-sibling::"       \
+        "table/descendant::%s[contains(@title, '#{field}')]",
+        ['textarea'],
+        ['input'],
+        ['select'])
+#  approximate_xpath = factory0                                                 \
+#                    + factory1
+  approximate_xpath = factory0
   element = kaiki.find_approximate_element(approximate_xpath)
   element_option = element.find(:xpath, "option[contains(text(), '#{value}')]")
   element_option.click
