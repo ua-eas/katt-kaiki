@@ -622,7 +622,7 @@ class Kaiki::CapybaraDriver::Base
         begin
           return element.find(:xpath, "option[@selected ='selected']").text.strip
         rescue Capybara::ElementNotFound
-          return element.find(:xpath, "option[@value='#{@element[:value]}']").text.strip
+          return element.find(:xpath, "option[@value='#{element[:value]}']").text.strip
         end
       elsif element[:type] == "radio"
         return element[:checked]
