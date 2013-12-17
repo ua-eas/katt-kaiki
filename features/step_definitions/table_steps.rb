@@ -243,6 +243,16 @@ end
 # KFS PA004-07 (Verify GL Entry) 
 # KFS DV001-01 (Check ACH)
 
+# Public: This method will retrieve the first X headers for a table on the
+#         page. X is specified by the number_of_columns parameter.
+#
+# Parameters:
+#   location          - This is the Xpath for the table to retrieve headers
+#                       from.
+#   number_of_columns - This is the number of columns to retrieve.
+#
+# Returns: a Hash containing the headers. Each of the headers are stored as
+#          the key, and the value is the column number.
 def get_page_table_headers(location, number_of_columns)
   header_row = Hash[]
   number_of_columns.to_i
