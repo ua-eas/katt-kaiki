@@ -88,7 +88,7 @@ class Kaiki::CapybaraDriver::Base
     end
 
     if ENV['BUILD_NUMBER']
-      @default_pause_time  = 5
+      @default_pause_time  = 3
     else
       @default_pause_time  = 0.5
     end
@@ -622,7 +622,7 @@ class Kaiki::CapybaraDriver::Base
         begin
           return element.find(:xpath, "option[@selected ='selected']").text.strip
         rescue Capybara::ElementNotFound
-          return element.find(:xpath, "option[@value='#{element[:value]}']").text.strip
+          return element.find(:xpath, "option[@value='#{@element[:value]}']").text.strip
         end
       elsif element[:type] == "radio"
         return element[:checked]

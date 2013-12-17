@@ -18,6 +18,7 @@ When (/^I am in the "(.*?)" tab$/) do |tab|
   kaiki.get_ready
   @tab = tab
   @section = tab
+  @subsection = nil
   factory0 =
     ApproximationsFactory.transpose_build(
     "//%s[contains(text(), '#{tab}')]",
@@ -38,6 +39,7 @@ end
 When (/^I am in the "(.*?)" section$/) do |section|
   kaiki.get_ready
   @section = section
+  @subsection = nil
   begin
     kaiki.find_approximate_element(["//h3[contains(text(), '#{section}')]"])
     @sec_type = "h3"
@@ -92,7 +94,7 @@ When(/^I click "([^"]*)" (?:on the "([^"]*)" (?:tab|for "([^"]*)"))$/)         \
   kaiki.get_ready
   @tab = tab
   @section = tab
-
+  @subsection = nil
   special_case = {
     "Future Action Requests" => {:link => "//a[contains(@href, 'RouteLog.do?showFuture')]",
                                  :frame =>"routeLogIFrame"}
@@ -120,7 +122,7 @@ When(/^I click "([^"]*)" (?:on the "([^"]*)" (?:tab|for "([^"]*)"))$/)         \
 end
 
 # Description: This function is to click on the show/hide button for a section
-#         within a tab.
+#              within a tab.
 #
 # Parameters:
 #    tab        - this is the tab to look into
@@ -185,5 +187,34 @@ When(/^I click "([^"]*)"(?: on the| on) (?:"([^"]*)" section|"([^"]*)" subsectio
                       + factory2
     @element = kaiki.find_approximate_element(approximate_xpath)
   end
+  @element.click
+end
+
+# KFS PA004-01 (Create Requisition)
+
+# Description: This function is to click on the show/hide buttons                
+#              specificly for the Accounting Lines in PA004-05 Requisition page.
+#
+# Parameters:
+#    tab        - this is the tab to look into
+#    section    - this is the section we want to show/hide
+#    subsection - this is the subsection we want to show/hide
+#    option     - this is the action we want to perform
+#
+# Returns nothing.
+When(/^I click "([^"]*)" on Accounting Lines under the "([^"]*)" subsection$/)\
+  do |option, subsection|
+
+  kaiki.get_ready
+  
+  factory0 =
+    ApproximationsFactory.transpose_build(
+      "//h2[contains(text(), '#{@tab}')]/../../../.."                          \
+      "/following-sibling::div/descendant::span[contains(text(), '#{@section}')]/../.." \
+      "/following-sibling::tr/td[text()[contains(., '#{subsection}')]]/../following-sibling::tr" \
+      "/descendant::%s[contains(@title, 'toggle')]",
+      ['input'])
+  approximate_xpath = factory0
+  @element = kaiki.find_approximate_element(approximate_xpath)
   @element.click
 end

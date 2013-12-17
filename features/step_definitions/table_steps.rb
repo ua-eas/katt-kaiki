@@ -12,7 +12,7 @@
 #   subsection - area of the pay it may appear in
 #   table      - data to be used
 #
-# Returns nothing.#
+# Returns nothing.
 When(/^I fill out the "(.*?)" table(?:| (?:under|in) the "(.*?)" subsection) with:$/)\
   do |table_name, subsection, table|
 
@@ -169,6 +169,7 @@ def table_fill(subsection_name, table_name, table, options=nil)
                 ["select"],
                 ["textarea"])
 # factory2 - KFS PA004-01 (Create Requisition)
+# factory2 - KFS DV001-01 (Check ACH)
             factory2_string = step1 + step2 + back2 +                          \
               "%s[contains(@title, '#{column_name}')]"
             factory2 =
@@ -186,10 +187,10 @@ def table_fill(subsection_name, table_name, table, options=nil)
                 ["input"],
                 ["select"],
                 ["textarea"])      
-            @approximate_xpath = factory0                                       \
-                              + factory1                                       \
-                              + factory2                                       \
-                              + factory3
+            @approximate_xpath = factory0                                      \
+                               + factory1                                      \
+                               + factory2                                      \
+                               + factory3
           when "kc"
             option1 = "input[contains(@title, '#{column_name}')]"
             option2 = "select[contains(@title, '#{column_name}')]"
@@ -238,3 +239,20 @@ def table_fill(subsection_name, table_name, table, options=nil)
     end
   end
 end
+
+# KFS PA004-07 (Verify GL Entry) 
+# KFS DV001-01 (Check ACH)
+
+def get_page_table_headers(location, number_of_columns)
+  header_row = Hash[]
+  number_of_columns.to_i
+  
+  (1..number_of_columns).each do |column_counter|
+    header_xpath    = "th[#{column_counter}]"
+    header_location = "#{location}/#{header_xpath}"
+    header_value  = kaiki.get_approximate_field([header_location])
+    header_row.store(header_value, column_counter)
+  end
+  return header_row
+end
+

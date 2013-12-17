@@ -16,12 +16,12 @@
 #   Then I should see the message "Document was successfully saved."
 #
 # Returns nothing.
-Then (/^I should see the message "(.*?)"$/) do |message|
+Then(/^I should see the message "(.*?)"$/) do |message|
   kaiki.get_ready
   kaiki.should(have_content(message))
 end
 
-# KC all features
+# KC and KFS all features
 
 # Description: This step definition is to verify text that shows up in the
 #              document header.
@@ -31,7 +31,7 @@ end
 #   text  - text to be verified on the page
 #
 # Returns nothing.
-Then (/^I should see (?:|the )"(.*?)" text set to "(.*?)" in the document header$/)\
+Then(/^I should see (?:|the )"(.*?)" text set to "(.*?)" in the document header$/)\
   do |label, text|
 
   kaiki.get_ready
@@ -52,7 +52,7 @@ Then (/^I should see (?:|the )"(.*?)" text set to "(.*?)" in the document header
 end
 
 # Description: Verifies the given text is present on the page and verifies
-#         the value in the text field is correct.
+#              the value in the text field is correct.
 #
 # Parameters:
 #   label      - optional matcher for given text
@@ -82,7 +82,7 @@ Then(/^I should see "(.*?)" (?:as|set to)(?:| active URL) "(.*?)"(?:| (?:under|i
 end
 
 # Description: Verifies the given text is present on the page and verifies
-#         the value in the text field is correct, using a fuzzy match.
+#              the value in the text field is correct, using a fuzzy match.
 #
 # Parameters:
 #   label      - optional matcher for given text
@@ -146,8 +146,7 @@ def verify_text(label, text, subsection, person, mode='exact')
         ["div[text()[contains(., '#{text}')]]"])
       approximate_xpath = factory0                                             \
                         + factory1
-      #@element = kaiki.find_approximate_element(approximate_xpath)
-      @field_text = kaiki.get_approximate_field(approximate_xpath)
+      @element = kaiki.find_approximate_element(approximate_xpath)
     elsif subsection
 # factory0 - KC Feat. 2 (Award, Contacts)
 # factory0 - KC Feat. 4 (Award)
@@ -174,12 +173,13 @@ def verify_text(label, text, subsection, person, mode='exact')
               ['td/input'])
         approximate_xpath = factory0                                           \
                           + factory1
-      #@element = kaiki.find_approximate_element(approximate_xpath)
-      @field_text = kaiki.get_approximate_field(approximate_xpath)
+        @element = kaiki.find_approximate_element(approximate_xpath)
     else
 # factory0 - KFS PA004-02   (Assign CM)
 # factory0 - KFS PA004-0304 (Purchase Order)
 # factory0 - KFS PA004-06   (Vendor Credit Memo)
+# factory0 - CASH001-01     (Cash Drawer)
+# factory0 - DV001-01       (Check ACH)
 # factory0 - KC  Feat. 2    (Award, Time & Money, Commitments, Custom Data)
 # factory0 - KC  Feat. 3    (Proposal)
 # factory0 - KC  Feat. 4    (Proposal, Commitments)
@@ -216,23 +216,22 @@ def verify_text(label, text, subsection, person, mode='exact')
       approximate_xpath = factory0                                             \
                         + factory1                                             \
                         + factory2
-      #@element = kaiki.find_approximate_element(approximate_xpath)
-      @field_text = kaiki.get_approximate_field(approximate_xpath)
+      @element = kaiki.find_approximate_element(approximate_xpath)
     end
   end
 
-#  if @element[:type] == "text"
-#    @field_text = @element[:value]
-#  elsif @element[:type] == "select-one"
-#    begin
-#      @element_option = @element.find(:xpath, "option[@selected ='selected']")
-#    rescue Capybara::ElementNotFound
-#      @element_option = @element.find(:xpath, "option[@value='#{@element[:value]}']")
-#    end
-#    @field_text = @element_option.text
-#  else
-#    @field_text = @element.text.strip
-#  end
+  if @element[:type] == "text"
+    @field_text = @element[:value]
+  elsif @element[:type] == "select-one"
+    begin
+      @element_option = @element.find(:xpath, "option[@selected ='selected']")
+    rescue Capybara::ElementNotFound
+      @element_option = @element.find(:xpath, "option[@value='#{@element[:value]}']")
+    end
+    @field_text = @element_option.text
+  else
+    @field_text = @element.text.strip
+  end
 
   if mode == 'exact'
     unless @field_text == text
@@ -257,7 +256,7 @@ end
 #   subsection     - area of the page the text should be located in
 #
 # Returns nothing.
-Then (/^I should see (?:|the )"([^"]*)" text set to (?:|([^"]*) )"([^"]*)"(?:| (?:under|in) the "([^"]*)" subsection)$/)\
+Then(/^I should see (?:|the )"([^"]*)" text set to (?:|([^"]*) )"([^"]*)"(?:| (?:under|in) the "([^"]*)" subsection)$/)\
   do |label, something_like, text, subsection|
 
   kaiki.get_ready
@@ -266,7 +265,8 @@ Then (/^I should see (?:|the )"([^"]*)" text set to (?:|([^"]*) )"([^"]*)"(?:| (
     "the recorded document number" => kaiki.record[:document_number],
     "the recorded requisition number" => kaiki.record[:requisition_number],
     "the recorded purchase order number" => kaiki.record[:purchase_order_number],
-    "Today's Date" => kaiki.record[:today]
+    "Today's Date" => kaiki.record[:today],
+    "Check Amount" => kaiki.record[:check_amount]
     ]
 
   if special_case.key?(text)
@@ -278,25 +278,25 @@ Then (/^I should see (?:|the )"([^"]*)" text set to (?:|([^"]*) )"([^"]*)"(?:| (
   case @tab
   when "Route Log"
     kaiki.select_frame("routeLogIFrame")
-# KFS PA004-02 (Assign CM)
+# factory0 - KFS PA004-02   (Assign CM)
+# factory0 - KFS CASH001-01 (Open Cash Drawer) 
     factory0 =
       ApproximationsFactory.transpose_build(
       "//%s[contains(., '#{label}')]/following-sibling::td[1]",
       ['th'])
     approximate_xpath = factory0
-    #@element = kaiki.find_approximate_element(approximate_xpath)
-    @field_text = kaiki.get_approximate_field(approximate_xpath)
+    @element = kaiki.find_approximate_element(approximate_xpath)
   when "1099 Classification"
 # factory0 - KFS PA004-05 (Payment Request)
 # factory0 - KFS PA004-06 (Vendor Credit Memo)
+# factory0 - KFS DV001-01 (Check ACH)
     factory0 =
       ApproximationsFactory.transpose_build(
         "//h2[contains(., '#{@tab}')]/../../../../following-sibling::div/"     \
           "descendant::%s[contains(text(), '#{label}')]",
         ["td"])
     approximate_xpath = factory0
-    #@element = kaiki.find_approximate_element(approximate_xpath)
-    @field_text = kaiki.get_approximate_field(approximate_xpath)
+    @element = kaiki.find_approximate_element(approximate_xpath)
   when "Future Action Requests"                                                 
     kaiki.select_frame("routeLogIFrame")
 # factory0 - KFS PRE001-01 (Initiate Pre-Encumbrance)
@@ -308,8 +308,7 @@ Then (/^I should see (?:|the )"([^"]*)" text set to (?:|([^"]*) )"([^"]*)"(?:| (
           "tr/%s[text()[contains(., '#{text}')]]",
         ["th[3 and text()[contains(., '#{label}')]]", "td[3]/a"])
     approximate_xpath = factory0
-    #@element = kaiki.find_approximate_element(approximate_xpath)
-    @field_text = kaiki.get_approximate_field(approximate_xpath)               
+    @element = kaiki.find_approximate_element(approximate_xpath)                 
   else
     if subsection
 # factory0 - KC Feat. 2 (Award)
@@ -343,11 +342,18 @@ Then (/^I should see (?:|the )"([^"]*)" text set to (?:|([^"]*) )"([^"]*)"(?:| (
             "div[contains(., '#{subsection}')]/descendant::"                   \
             "th[contains(text(), '#{label}')]/following-sibling::%s",
             ['td'])
+# factory3 - KFS PVEN002-01 (Foreign PO Vendor)
+        field_element = vendor_page_field_location(label, subsection)
+        factory3 = [
+          "//h2[contains(., '#{@tab}')]/../../../../following-sibling::div" \
+            "/descendant::td[contains(., '#{subsection}')]/.."  \
+            "/following-sibling::tr/#{field_element}"
+          ]
       approximate_xpath = factory0                                             \
                         + factory1                                             \
-                        + factory2
-      #@element = kaiki.find_approximate_element(approximate_xpath)
-      @field_text = kaiki.get_approximate_field(approximate_xpath)
+                        + factory2                                             \
+                        + factory3
+      @element = kaiki.find_approximate_element(approximate_xpath)
     else
       case @sec_type
       when "h3"
@@ -368,8 +374,7 @@ Then (/^I should see (?:|the )"([^"]*)" text set to (?:|([^"]*) )"([^"]*)"(?:| (
           ["th[contains(text(), '#{label}')]",          "td"],
           [ nil,                                        "th/div"])
         approximate_xpath = factory0
-        #@element = kaiki.find_approximate_element(approximate_xpath)
-        @field_text = kaiki.get_approximate_field(approximate_xpath)
+        @element = kaiki.find_approximate_element(approximate_xpath)
       when "td"
 # factory0 - KFS PA004-0304 (Purchase Order)
 # factory0 - KFS PA004-05   (Payment Request)
@@ -383,24 +388,23 @@ Then (/^I should see (?:|the )"([^"]*)" text set to (?:|([^"]*) )"([^"]*)"(?:| (
           ["th[contains(text(), '#{label}')]",          "td"],
           [ nil,                                        "th/div"])
         approximate_xpath = factory0
-        #@element = kaiki.find_approximate_element(approximate_xpath)
-        @field_text = kaiki.get_approximate_field(approximate_xpath)
+        @element = kaiki.find_approximate_element(approximate_xpath)
       end
     end
   end
 
-#  if @element[:type] == "text"
-#    @field_text = @element[:value]
-#  elsif @element[:type] == "select-one"
-#    begin
-#      @element_option = @element.find(:xpath, "option[@selected ='selected']")
-#    rescue Capybara::ElementNotFound
-#      @element_option = @element.find(:xpath, "option[@value='#{@element[:value]}']")
-#    end
-#    @field_text = @element_option.text
-#  else
-#    @field_text = @element.text.strip
-#  end
+  if @element[:type] == "text"
+    @field_text = @element[:value]
+  elsif @element[:type] == "select-one"
+    begin
+      @element_option = @element.find(:xpath, "option[@selected ='selected']")
+    rescue Capybara::ElementNotFound
+      @element_option = @element.find(:xpath, "option[@value='#{@element[:value]}']")
+    end
+    @field_text = @element_option.text
+  else
+    @field_text = @element.text.strip
+  end
 
   if @tab == "1099 Classification"
     @field_text = @field_text[/\d+[.]\d+/]
@@ -415,7 +419,7 @@ Then (/^I should see (?:|the )"([^"]*)" text set to (?:|([^"]*) )"([^"]*)"(?:| (
 end
 
 # Description: Verifies the given values from the table are present on the web page
-#         in the correct text fields
+#              in the correct text fields
 #
 # Parameters:
 #   table_name  - name of the table to be filled in
@@ -442,7 +446,7 @@ Then(/^I should see the "([^"]*)" table filled out with:$/)                    \
       option5 = "input[@title='#{column_name} - #{value}']"
       case kaiki.application
       when "kfs"
-# factory0 - KFS PA004-0304 Purchase Order
+# factory0 - KFS PA004-0304 (Purchase Order)
         factory0 =
           ApproximationsFactory.transpose_build(
             "//h2[contains(., '#{@tab}')]/../../../../following-sibling::"     \
@@ -452,7 +456,7 @@ Then(/^I should see the "([^"]*)" table filled out with:$/)                    \
             [option3],
             [option1],
             [option2])
-# factory1 - KFS PA004-05 Payment Request
+# factory1 - KFS PA004-05 (Payment Request)
         factory1 =
           ApproximationsFactory.transpose_build(
             "//h2[contains(., '#{@tab}')]/../../../../following-sibling::"     \
@@ -513,8 +517,8 @@ end
 # KC Feat. 6 (Non-Personnel)
 
 # Description: This method may need another ApproximationsFactory segment added
-#         but as is, it will fill in an input/select/textarea field in a table
-#         given the name of the table.
+#              but as is, it will fill in an input/select/textarea field in a table
+#              given the name of the table.
 #
 # Parameters:
 #   table_name - name of the table
@@ -569,12 +573,11 @@ Then(/^I should see the "([^"]*)" table row "([^"]*)" filled with:$/)          \
   end
 end
 
-
 # KC Feat. 2 (Contacts)
 # KC Feat. 8 (Key Personnel)
 
 # Description: Verifies a row of data for the Combined Credit Split table contains
-#         the correct value.
+#              the correct value.
 #
 # Parameters:
 #   division   - This field is used in two possible ways:
@@ -618,7 +621,7 @@ Then(/^I should see Combined Credit Split for "(.*?)"(?:| under "(.*?)") with th
 end
 
 # Description: Verifies the given values from the table are present on the web page
-#         in the correct place
+#              in the correct place
 #
 # table_name - name of the table to be filled in
 # table      - table of data being read in from the feature file
@@ -664,7 +667,6 @@ Then(/^I should see (.*?) calculated as:$/) do |table_name, table|
         raise Capybara::ExpectationNotMet
       end
     end
-
 # KC Feat. 7 (Budget Versions Parameters)
 # KC Feat. 8 (Budget Versions Parameters)
   when "Totals"
@@ -704,10 +706,10 @@ end
 # KC Feat. 2 (Award)
 
 # Description: This step is specific to the Current Funding Proposals section on the
-#         Award tab when creating a new award. To guarantee the values show up
-#         under the specified headers, this is the best way we can achieve this.
-#         All the data is pulled from the page section, and then our table
-#         data is verified against it.
+#              Award tab when creating a new award. To guarantee the values show up
+#              under the specified headers, this is the best way we can achieve this.
+#              All the data is pulled from the page section, and then our table
+#              data is verified against it.
 #
 # Parameters:
 #   table - table of headers and values that should appear in the sections
@@ -754,10 +756,10 @@ end
 # KC Feat. 2 (Contacts)
 
 # Description: This step is specific to the Current Funding Proposals section on the
-#         Award tab when creating a new award. To guarantee the values show up
-#         under the specified headers, this is the best way we can achieve this.
-#         All the data is pulled from the page section, and then our table
-#         data is verified against it.
+#              Award tab when creating a new award. To guarantee the values show up
+#              under the specified headers, this is the best way we can achieve this.
+#              All the data is pulled from the page section, and then our table
+#              data is verified against it.
 #
 # Parameters:
 #   table - table of headers and values that should appear in the sections
@@ -799,7 +801,6 @@ Then(/^I should see the Sponsor Contacts table filled out with:$/) do |table|
     else
       @data_value = data_element.text.strip
     end
-
     data_hash.store(header_value, @data_value)
   end
   rows = data_table.length-1
@@ -823,9 +824,9 @@ end
 # KC Feat. 8 (Budget Versions Parameters)
 
 # Description: This step is specific to the Budget Versions table, to guarantee the
-#         values show up under the specified headers, this is the best way we
-#         can achieve this. All the data is pulled from the page section, and
-#         then our table data is verified against it.
+#              values show up under the specified headers, this is the best way we
+#              can achieve this. All the data is pulled from the page section, and
+#              then our table data is verified against it.
 #
 # Parameters:
 #   table - table of headers and values that should appear in the sections
@@ -893,6 +894,8 @@ Then(/^I should see the Budget Versions table filled out with:$/) do |table|
   end
 end
 
+# KFS CASH001-01 (Open Cash Drawer) 
+
 # Public: This step is specific to the Final Deposit section on the              
 #         Deposits tab. To guarantee the values show up under the specified 
 #         headers, this is the best way we can achieve this.
@@ -949,6 +952,8 @@ Then(/^I should see the Final Deposit table filled out with:$/) do |table|
     end
   end
 end
+
+# KFS CASH001-01 (Open Cash Drawer) 
 
 # Public: This step is specific to the Cash Receipts section on the              
 #         Deposits tab. To guarantee the values show up under the specified 
@@ -1008,7 +1013,7 @@ Then(/^I should see the Cash Receipts table filled out with:$/) do |table|
 end
 
 # Description: Dynamically waits for the test to pass through the processing page
-#         by polling the page to see if certain content still appears
+#              by polling the page to see if certain content still appears
 #
 # Returns nothing.
 When(/^I wait for the document to finish being processed$/) do
@@ -1058,10 +1063,10 @@ Then(/^I should see a message starting with "([^"]*)" and ending with "([^"]*)"$
   kaiki.should(have_content(text2))
 end
 
-# KC Test 7 (Custom Data)
+# KC Feat. 7 (Custom Data)
 
 # Description: Verifies that no messages appear at the top of the screen,
-#         because if one does appear, something has gone wrong.
+#              because if one does appear, something has gone wrong.
 #
 # Returns nothing.
 Then(/^I should not see a message at the top of the screen$/) do
@@ -1074,7 +1079,7 @@ end
 # KC Feat. 7
 
 # Description: Checks to see if a unit administrator has been set up for a
-#         specific unit.
+#              specific unit.
 #
 # Returns nothing.
 Given(/^unit administrator has been established$/) do
@@ -1094,7 +1099,7 @@ end
 # KC Feat. 7
 
 # Description: If no unit administrator has been set up, these are the steps
-#         used to set up the unit administrator.
+#              used to set up the unit administrator.
 #
 # Parameters:
 #   description - holds the description of the unit administrator
@@ -1126,7 +1131,7 @@ end
 # KC Feat. 7
 
 # Description: Verifies that the description for the unit administrator is
-#         NOT present on the screen.
+#              NOT present on the screen.
 #
 # Parameters:
 #   description - holds the description of the unit administrator
@@ -1141,8 +1146,8 @@ end
 # KFS PA004-01 (Create Requisition)
 
 # Description: Verifies the text "No Accounts" doesn't show up under the
-#         Accounts Summary tab for KFS test PA004-01. If it does show up,
-#         the "refresh accounts summary" button needs to be clicked.
+#              Accounts Summary tab for KFS test PA004-01. If it does show up,
+#              the "refresh accounts summary" button needs to be clicked.
 #
 # Parameters:
 #   message - message that should not appear on the page
@@ -1251,7 +1256,7 @@ end
 # KFS PA004-02 (Assign CM)
 
 # Description: Verifies that the recorded requisiton number appears within the table
-#         on the page.
+#              on the page.
 #
 # Parameters:
 #   value - requisition number
@@ -1264,4 +1269,115 @@ Then(/^I should see a table row with a Requisition Number of "(.*?)"$/) do |valu
     "/../../../../following-sibling::div/descendant::h3[contains(., '#{@section}')]"\
     "/following-sibling::table/descendant::tr/td[2]/a[contains(text(), '#{value}')]"])
   raise Capybara::ExpectationNotMet unless element.text.eql?(value)
+end
+
+# Public: This locates the identified text on the page and makes certain the
+#         field has no value.
+#
+# Parameters:
+#   field       - This is the header that identifies the text on the page.
+#   subsection  - This is the subsection the field belongs to.
+#
+# Example: (taken from PVEN002-01)
+#   Then I should see "Vendor #" text set to null in the "General Information" subsection
+#
+# Returns nothing.
+Then(/^I should see "(.*?)" text set to null in the "(.*?)" subsection$/) do |field, subsection|
+  kaiki.get_ready
+  field_element = vendor_page_field_location(field, subsection)
+  option1 = "../following-sibling::tr/#{field_element}"
+# factory0 - KFS PVEN002-01 (Foreign PO Vendor)
+  factory0 = [
+    "//h2[contains(., '#{@tab}')]/../../../../following-sibling::div" \
+      "/descendant::td[contains(., '#{subsection}')]/.."  \
+      "/following-sibling::tr/#{field_element}"]
+  approximate_xpath = factory0
+  field_value = kaiki.get_approximate_field(approximate_xpath)
+  raise Capybara::ExpectationNotMet if field_value != ""
+end
+
+# Public: This step will verify the checkbox is checked or unchecked using
+#         location awareness.
+#
+# Parameters:
+#   field - Name on the page for the checkbox.
+#   value - Indicator of "checked" or "unchecked".
+# 
+# Example: (taken from PVEN002-01)
+#   And I should see the "Active Indicator" checkbox is "checked" in the "Detail Information" subsection
+#
+# Returns nothing.
+Then(/^I should see the "(.*?)" checkbox is "(.*?)" in the "(.*?)" subsection$/) do |field, value, subsection|
+  kaiki.get_ready
+  field_element = vendor_page_field_location(field, subsection)
+# factory0 - KFS PVEN002-01 (Foreign PO Vendor)
+  factory0 =
+    ApproximationsFactory.transpose_build(
+      "//h2[contains(., '#{@tab}')]/../../../../following-sibling::div"      \
+        "/descendant::td[contains(., '#{subsection}')]/%s",
+      ["../following-sibling::tr/td/#{field_element}"                   ],
+      ["../../../following-sibling::table/descendant::#{field_element}" ])
+  approximate_xpath = factory0
+  element = kaiki.find_approximate_element(approximate_xpath)
+  if value.downcase == "checked"
+    value = "true"
+  elsif value.downcase == "unchecked"
+    value = nil
+  end
+  raise Capybara::ExpectationNotMet unless element[:checked].eql?(value)
+end
+
+# Public: This step will verify the values in the table provided match what
+#         is on the page.
+#
+# Parameters:
+#   table_name
+#   table
+#
+# Example:
+#   Then I should see the "Notes and Attachments" table text filled with:
+#     | # | Posted Timestamp             |
+#     | 1 | <document created timestamp> |
+#
+# Returns nothing.
+Then(/^I should see the "(.*?)" table text filled with:$/) do |table_name, table|
+  kaiki.get_ready
+  data_table = table.raw
+  rows = data_table.length-1
+  cols = data_table[0].length-1
+  table_location     = "//h2[contains(., '#{@tab}')]/../../../../"    \
+                         "following-sibling::div/"                    \
+                         "descendant::h3[contains(., '#{@section}')]" \
+                         "/following-sibling::table"
+  page_table_element = kaiki.find_approximate_element([table_location])
+  table_columns      = find_table_columns(table_location)
+
+  header_row_location = table_location + "/descendant::tr[1]"
+  page_header_row = get_page_table_headers(header_row_location, table_columns)
+
+  (1..rows).each do |data_row_counter|
+    (1..cols).each do |data_column_counter|
+      row_name = data_table[data_row_counter][0]
+      column_name = data_table[0][data_column_counter]
+      value = data_table[data_row_counter][data_column_counter]
+      if value == "<document created timestamp>"
+        datetime = kaiki.record[:created]
+        time = Time.strptime(datetime,"%H:%M %p %m/%d/%Y").strftime("%I:%M %p")
+        date = Date.strptime(datetime,"%H:%M %p %m/%d/%Y").strftime("%m/%d/%Y")
+        value = "#{date} #{time}"
+      end
+      column_number = page_header_row[column_name]
+      factory0 = [
+        "#{table_location}/descendant::tr/th[contains(.,#{row_name})]"\
+          "/following-sibling::td[#{column_number-1}]"
+        ]
+      approximate_xpath = factory0
+      field_text = kaiki.get_approximate_field(approximate_xpath)
+      begin
+        raise Capybara::ExpectationNotMet unless field_text.eql?(value)
+      rescue Capybara::ExpectationNotMet
+        raise Capybara::ExpectationNotMet unless field_text.eql?("true")
+      end
+    end
+  end
 end

@@ -39,8 +39,8 @@ These are a few of the current capabilities of the Kaiki framework.
 * Verify that a certain message appears on the screen
   - (`Then I should see the message "Document was successfully submitted"`)
 * Change focus to new windows
-* Close all extra windows that are not the first window
-* Record video when tests are run as headless
+* Close all extra, unused windows that are not the first window
+* Record video when tests are run using a headless browser
 * Automatically screenshot a point of failure
 * Log every click and attempt to find an element for debugging purposes
 * Highlight page elements during a scenario with javascript
@@ -145,6 +145,8 @@ When I backdoor as the UA FSO FM Team 451
   - `rake by_tag[@tag]`, will run any test(s) with the tag "@tag".
   **The specific tags for KC and KFS are held in `features/support/test_tags.rb`**
 * Tag names need to be added to the first line of each feature file.
+* Tag names can also be added to specific scenarios if you wish to run them
+  individually; such as with the KFS suites.
 
 ### Other Requirements
 

@@ -6,6 +6,8 @@
 class BatchException < Exception
 end
 
+# KFS BAT001-01 (Batch)
+
 # Description: Connects and executes a batch script to UofA server
 #
 # Parameters:
@@ -25,6 +27,8 @@ When(/^I run the "([^"]*)" job in the "([^"]*)" jobstream$/) do |job_name, job_s
     raise BatchException, "Batch process was unsuccessful or failed on #{job_name}"
   end
 end
+
+# KFS BAT001-01 (Batch)
 
 # Description: Verifies the existence of a file / files within the UofA server directory
 #

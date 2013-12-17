@@ -29,7 +29,7 @@ Given(/^I am on the "([^"]*)" system tab$/) do |sys_tab|
   kaiki.find_approximate_element(["//a[@title='#{sys_tab}']"]).click
 end
 
-# KC  all features
+# KC all features
 
 # Description: Changes to the given child tab at the top of the document
 #
@@ -66,7 +66,6 @@ end
 #   subsection - subsection of the page the radio should be in
 #
 # Returns nothing.
-# Modified the buttons to all use find_approximate_element so that highlighting works
 When(/^I (?:click|click the) "(.*?)" (?:button|(?:on|to) "(.*?)")(?:| (?:under|in) the "(.*?)" subsection)$/)\
   do |button, field, subsection|
 
@@ -78,6 +77,7 @@ When(/^I (?:click|click the) "(.*?)" (?:button|(?:on|to) "(.*?)")(?:| (?:under|i
   end
   item = button_title_match(button)
   downcase_alt_buttons = [
+      "fyi",
       "return to proposal",
       "refresh",
       "refresh account summary",
@@ -101,6 +101,7 @@ When(/^I (?:click|click the) "(.*?)" (?:button|(?:on|to) "(.*?)")(?:| (?:under|i
     "copy proposal"      => "//input[@name='methodToCall.copyProposal.anchorCopytoNewDocument']",
     "unlock selected"    => "//input[@name='methodToCall.unlockSelected.anchorFundedAwards']",
     "collapse all"       => "//input[@name='methodToCall.hideAllTabs']",
+    "expand all"       => "//input[@name='methodToCall.showAllTabs']",
     "apply"              => "//input[contains(@name, 'methodToCall.apply#{field}')]",
     "delete"             => "//th[contains(text(), '#{field}')]/following-sibling::td/div/input[contains(@name, 'methodToCall.delete')]",
     "open existing"      => "//input[@name='methodToCall.openExisting']",        
@@ -139,7 +140,7 @@ When(/^I (?:click|click the) "(.*?)" (?:button|(?:on|to) "(.*?)")(?:| (?:under|i
             "following-sibling::table/descendant::div[text()[contains(., '#{subsection}')]]/"\
             "following-sibling::div/descendant::%s[contains(@title, 'Add Unit')]",\
             ['input'])
-# factory2 - KFS DI003-01 (Initiate DI)
+# factory2 - KFS DI003-01  (Initiate DI)
 # factory2 - KFS PRE001-01 (Initiate Pre-Encumbrance)
 # factory2 - KFS TF001-01  (Initiate Transfer of Funds)
         factory2 =                                                              
@@ -148,10 +149,19 @@ When(/^I (?:click|click the) "(.*?)" (?:button|(?:on|to) "(.*?)")(?:| (?:under|i
           "div/descendant::span[contains(., '#{@section}')]/../../"            \
           "following-sibling::tr/td[contains(text(), '#{subsection}')]/../"    \
           "following-sibling::tr/descendant::%s[contains(@title, 'Add')]",
-          ['input'])                                                            
+          ['input'])                  
+# factory3 - KFS PVEN002-01 (Foreign PO Vendor)
+        locationPVEN002 = vendor_page_field_location(button, subsection)
+        factory3 =
+          ApproximationsFactory.transpose_build(
+            "//h2[contains(., '#{@tab}')]/../../../../following-sibling::div"  \
+              "/descendant::td[contains(., '#{subsection}')]/%s",
+            ["../following-sibling::tr/td/#{locationPVEN002}"],
+            ["../../../following-sibling::table/descendant::#{locationPVEN002}"])
         @approximate_xpath = factory0                                          \
                            + factory1                                          \
-                           + factory2
+                           + factory2                                          \
+                           + factory3
       else
 # factory0 - KC Feat. 1 (Special Review)
 # factory0 - KC Feat. 2 (Award, Commitments, Time & Money)
@@ -160,18 +170,21 @@ When(/^I (?:click|click the) "(.*?)" (?:button|(?:on|to) "(.*?)")(?:| (?:under|i
 # factory0 - KC Feat. 7 (Budget Versions)
         factory0 =
           ApproximationsFactory.transpose_build(
-            "//%s[contains(@name, 'methodToCall.add#{field}')]",
-            ['input'])
+            "//h2[contains(., '#{@tab}')]/../../../../following-sibling::div/" \
+            "descendant::%s/descendant::input[contains(@title, 'Add')]",
+            ["h3[contains(., '#{@section}')]/following-sibling::table"],
+            ["td[contains(., '#{@section}')]/../following-sibling::tr"],
+            ["span[contains(., '#{@section}')]/../../following-sibling::tr"])
 # factory1 - KFS PA004-01   (Create Requisition)
 # factory1 - KFS PA004-0304 (Purchase Order)
+# factory1 - KFS CASH001-01 (Open Cash Drawer) 
+# factory1 - KFS DV001-01   (Check ACH)
 # factory1 - KC Feat. 4     (Time and Money, Commitments)
 # factory1 - KC Feat. 6     (Special Review)
         factory1 =
           ApproximationsFactory.transpose_build(
-            "//h2[contains(., '#{@tab}')]/../../../../following-sibling::div/" \
-            "descendant::%s/descendant::input[contains(@title, 'Add')]",
-            ["h3[contains(., '#{@section}')]/following-sibling::table"],
-            ["span[contains(., '#{@section}')]/../../following-sibling::tr"])
+            "//%s[contains(@name, 'methodToCall.add#{field}')]",
+            ['input'])
         @approximate_xpath = factory0                                          \
                            + factory1
       end
@@ -182,13 +195,14 @@ When(/^I (?:click|click the) "(.*?)" (?:button|(?:on|to) "(.*?)")(?:| (?:under|i
 # KC Feat. 4 (Search Page (Award Lookup))
 # KC Feat. 7 (Budget Versions)
 # KC Feat. 8 (Budget Versions)
-      approximate_xpath =
+      factory0 =
         ApproximationsFactory.transpose_build(
           "//%s[contains(text(), '#{field}')]"                                 \
             "/following-sibling::td/div/input[contains(@alt, 'open budget')]",
           ['td'],
           ['th'])
-      @element = kaiki.find_approximate_element(approximate_xpath)
+      @approximate_xpath = factory0   
+      @element = kaiki.find_approximate_element(@approximate_xpath)
 # KFS PA004-0304 (Purchase Order)     - Continue
 # KFS PA004-06   (Vendor Credit Memo) - Continue
 # KC Feat. 3     (Proposal Actions)   - continue
@@ -248,21 +262,21 @@ def button_title_match(button_name)
 end
 
 # Description: Selects the radio button next to the option that is given by
-#         using the approximation factory to find the xpath to the radio
-#         button.
+#              using the approximation factory to find the xpath to the radio
+#              button.
 #
 # Parameters:
 #   field      - name of the label next to the radio button
 #   subsection - subsection of the page the radio should be in
 #
 # Returns nothing.
-When (/^I click the "([^"]*)" radio button(?:| (?:under|in) the "(.*?)" subsection)$/)\
+When(/^I click the "([^"]*)" radio button(?:| (?:under|in) the "(.*?)" subsection)$/)\
   do |field, subsection|
 
   kaiki.get_ready
 # factory0 - KFS PA004-01 (Create Requisition)
 # factory0 - KC  Feat. 8  (Proposal Actions)
-  factory0=
+  factory0 =
     ApproximationsFactory.transpose_build(
     "//h2[contains(., '#{@tab}')]/../../../../following-sibling::div/"         \
       "descendant::h3[contains(., '#{@section}')]/following-sibling::table/"   \
@@ -292,5 +306,54 @@ end
 # Returns nothing.
 When(/^I (?:click|click the) "([^"]*)" link$/) do |link|
   kaiki.get_ready
-  kaiki.find_approximate_element(["//a[@title='#{link}']"]).click
+  approximate_xpath = [
+    "//a[@title = '#{link}']",
+    "//a/font[contains(.,'#{link}')]"
+    ]
+  kaiki.find_approximate_element(approximate_xpath).click
+end
+
+# KFS BAT001-01 (Batch)
+
+# Description: Locates and clicks the button on the page if the message is 
+#              not displayed.
+#
+# Parameters:
+#   button  - name of the button to click
+#   message - message to check for
+#
+# Returns nothing.
+When(/^I click the "(.*?)" button if the "(.*?)" message is not displayed$/)   \
+  do |button, message|
+  
+  kaiki.get_ready
+  kaiki.wait_for(:xpath, "//div[@class='left-errmsg']")
+  element = kaiki.find(:xpath, "//div[@class='left-errmsg']")
+  unless element.text.include?(message)
+    steps %{
+      And I click the "#{button}" button
+    }
+  end
+end
+
+# Not used currently, but could be eventually
+
+# Description: Locates and clicks the button on the page if the message is 
+#              displayed.
+#
+# Parameters:
+#   button  - name of the button to click
+#   message - message to check for
+#
+# Returns nothing.
+When(/^I click the "(.*?)" button if the "(.*?)" message is displayed$/)   \
+  do |button, message|
+  
+  kaiki.get_ready
+  element = kaiki.find(:xpath, "//*[text()[contains(., '#{message}')]]")
+  if element.text.include?(message)
+    steps %{
+      And I click the "#{button}" button
+    }
+  end
 end

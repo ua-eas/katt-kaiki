@@ -3,7 +3,6 @@
 #
 # Original Date: August 20, 2011
 
-
 # Description: Defines what is to be put into a given field
 #
 # Parameters:
@@ -20,7 +19,9 @@ When(/^I (?:set the|set) "([^"]*)" to "([^"]*)"(?:| (?:under|in) the "([^"]*)" s
 
   kaiki.get_ready
 
-  if field.include? "Amt"                                                    
+  if field.include? "Cost"
+    field = "Cost"
+  elsif field.include? "Amt"                                                    
     field = "Amount"  
   end
 
@@ -30,7 +31,6 @@ When(/^I (?:set the|set) "([^"]*)" to "([^"]*)"(?:| (?:under|in) the "([^"]*)" s
     "Obligated" => {:section => "Award Hierarchy", :field => "awardHierarchyNodeItems[1].amountObligatedToDate"},
     "Anticipated" => {:section => "Award Hierarchy", :field => "awardHierarchyNodeItems[1].anticipatedTotalAmount"},
     "Project End" => {:section => "Award Hierarchy", :field => "awardHierarchyNodeItems[1].finalExpirationDate"},
-    "Extended Cost" => {:section => "Additional Charges", :field => "Unit Cost"},
     "Deposit" => {:section => "Deposit Header", :field => "depositTicketNumber"}
   }
 
@@ -56,12 +56,12 @@ When(/^I (?:set the|set) "([^"]*)" to "([^"]*)"(?:| (?:under|in) the "([^"]*)" s
 
   case @tab
   when "Route Log"
-    #Place holder for now, in case we need to set some field in the
-    #Route Log tab
+    # Place holder for now, in case we need to set some field in the Route Log tab
   else
     if subsection
-# factory0 - KFS PA004-01 (Create Requisition)
-# factory0 - KFS DI003-01 (Initiate DI)
+# factory0 - KFS PA004-01  (Create Requisition)
+# factory0 - KFS DI003-01  (Initiate DI)
+# factory0 - KFS PRE001-01 (Initiate Pre-Encumbrance)
       factory0 =                                                                
         ApproximationsFactory.transpose_build(
           "//h2[contains(., '#{@tab}')]/../../../../following-sibling::"       \
@@ -91,7 +91,8 @@ When(/^I (?:set the|set) "([^"]*)" to "([^"]*)"(?:| (?:under|in) the "([^"]*)" s
         ['textarea'],
         ['input'],
         ['select'])
-# factory3 - KFS PA004-01 (Create Requisition)
+# factory3 - KFS PA004-01   (Create Requisition)KFS 1099001-01 ( 
+# factory3 - KFS 1099001-01 (Search for Payee)
       factory3 =
         ApproximationsFactory.transpose_build(
         "//h2[contains(., '#{@tab}')]/../../../../following-sibling::div/"     \
@@ -138,10 +139,14 @@ When(/^I (?:set the|set) "([^"]*)" to "([^"]*)"(?:| (?:under|in) the "([^"]*)" s
       @approximate_xpath = factory0                                            \
                          + factory1
     else
-# factory0 - KFS PA004-01 (Create Requisition)
+# factory0 - KFS PA004-01   (Create Requisition)
 # factory0 - KFS PA004-0304 (Purchase Order)
 # factory0 - KFS PA004-05   (Payment Request)
 # factory0 - KFS PA004-06   (Vendor Credit Memo)
+# factory0 - KFS CASH001-01 (Open Cash Drawer) 
+# factory0 - KFS 1099001-01 (Search for Payee)
+# factory0 - KFS DV001-01   (Check ACH)
+# factory0 - KFS PRE001-01  (Initiate Pre-Encumbrance)
 # factory0 - KC Feat. 1     (Proposal, Key Personnel, Special Review)
 # factory0 - KC Feat. 2     (Award, Commitments, Time & Money)
 # factory0 - KC Feat. 3     (Proposal, Key Personnel, Special Review)
@@ -158,11 +163,12 @@ When(/^I (?:set the|set) "([^"]*)" to "([^"]*)"(?:| (?:under|in) the "([^"]*)" s
         ['textarea'],
         ['input'],
         ['select'])
-# factory1 - KC Feat. 1 (Budget Versions)
-# factory1 - KC Feat. 2 (Time & Money)
-# factory1 - KC Feat. 3 (Budget Versions)
-# factory1 - KC Feat. 7 (Budget Versions)
-# factory1 - KC Feat. 8 (Budget Verisons)
+# factory1 - KFS CASH001-01 (Open Cash Drawer) 
+# factory1 - KC Feat. 1     (Budget Versions)
+# factory1 - KC Feat. 2     (Time & Money)
+# factory1 - KC Feat. 3     (Budget Versions)
+# factory1 - KC Feat. 7     (Budget Versions)
+# factory1 - KC Feat. 8     (Budget Verisons)
       factory1 =
         ApproximationsFactory.transpose_build(
         "//h2[contains(., '#{@tab}')]/../../../../following-sibling::div/"     \
@@ -170,31 +176,42 @@ When(/^I (?:set the|set) "([^"]*)" to "([^"]*)"(?:| (?:under|in) the "([^"]*)" s
         "%s/descendant::%s[contains(@name, '#{field}')]",
         ['div',    'input'],
         ['table',  nil])
-      # factory2 =
-        # ApproximationsFactory.transpose_build(
-        # "//h2[contains(., '#{@tab}')]/../../../../following-sibling::div/"     \
-        # "descendant::h3[contains(., '#{@section}')]/../following-sibling::"    \
-        # "tr/descendant::%s[contains(@title, '#{field}')]",
-        # ['textarea'],
-        # ['input'],
-        # ['select'])
-# factory3 - KFS PA004-01 (Create Requisition)
-# factory3 - KC Feat. 1   (Custom Data)
-# factory3 - KC Feat. 3   (Custom Data)
-# factory3 - KC Feat. 6   (Custom Data)
-# factory3 - KC Feat. 7   (Custom Data)
-      factory3 =
+# factory2 - KFS PA004-01   (Create Requisition)
+# factory2 - KFS CASH001-01 (Open Cash Drawer) 
+# factory2 - KC Feat. 1     (Custom Data)
+# factory2 - KC Feat. 3     (Custom Data)
+# factory2 - KC Feat. 6     (Custom Data)
+# factory2 - KC Feat. 7     (Custom Data)
+      factory2 =
         ApproximationsFactory.transpose_build(
         "//h2[contains(., '#{@tab}')]/../../../../following-sibling::div/"     \
         "descendant::h3[contains(., '#{@section}')]/following-sibling::"       \
         "table/descendant::th[contains(., '#{field}')]/following-sibling::td/%s",
         ['input'],
         ['select'])
-      # @approximate_xpath = factory0                                            \
-                         # + factory1                                            \
-                         # + factory2                                            \
-                         # + factory3
-      @approximate_xpath = factory0 + factory1 + factory3
+# factory3 - KFS DV001-01 (Check ACH)
+      factory3 =
+        ApproximationsFactory.transpose_build(
+          "//h2[contains(., '#{@tab}')]/../../../../following-sibling::div"\
+            "/descendant::span[contains(., '#{@section}')]/../.."\
+            "/following-sibling::tr/descendant::%s[contains(@title, '#{field}')]",
+         ['input' ],
+         ['select'])
+      if value.include? '<todays date>'
+        value = value.sub('<todays date>', Time.now.strftime("%m%d%Y%H%M"))
+      end 
+# factory4 - KFS PVEN002-01 (Foreign PO Vendor)
+      locationPVEN002 = vendor_page_field_location(field)
+      factory4 = [
+        "//h2[contains(., '#{@tab}')]/../../../../following-sibling::div"\
+          "/descendant::h3[contains(., '#{@section}')]"\
+          "/following-sibling::table/descendant::#{locationPVEN002}"
+        ]
+      @approximate_xpath = factory0                                            \
+                         + factory1                                            \
+                         + factory2                                            \
+                         + factory3                                            \
+                         + factory4
     end
   end
   kaiki.set_approximate_field(@approximate_xpath, value)
@@ -215,28 +232,18 @@ When(/^I (?:set the|set) "([^"]*)" to something like "([^"]*)"$/)              \
 
   kaiki.get_ready
 # factory0 - KC Feat. 2 (Time & Money)
-  # factory0 =
-    # ApproximationsFactory.transpose_build(
-      # "//%s[contains(@title,'#{field}')]",
-      # ['select'],
-      # ['input' ])
+  factory0 =
+    ApproximationsFactory.transpose_build(
+      "//%s[contains(@title,'#{field}')]",
+      ['select'],
+      ['input' ])
 # factory1 - KC Feat. 4 (Time and Money)
-  # factory1 =
-    # ApproximationsFactory.transpose_build(
-      # "//th[contains(., '#{field}')]"                                          \
-        # "/../following-sibling::tr/td/div/%s[contains(@title, '#{field}')]",
-      # ['select[1]'])
-      factory0 =
-        ApproximationsFactory.transpose_build(
-        "//h2[contains(., '#{@tab}')]/../../../../following-sibling::div/"     \
-        "descendant::h3[contains(., '#{@section}')]/following-sibling::"       \
-        "table/descendant::%s[contains(@title, '#{field}')]",
-        ['textarea'],
-        ['input'],
-        ['select'])
-#  approximate_xpath = factory0                                                 \
-#                    + factory1
-  approximate_xpath = factory0
+  factory1 =
+    ApproximationsFactory.transpose_build(
+      "//th[contains(., '#{field}')]"                                          \
+        "/../following-sibling::tr/td/div/%s[contains(@title, '#{field}')]",
+      ['select[1]'              ])
+  approximate_xpath = factory0 + factory1
   element = kaiki.find_approximate_element(approximate_xpath)
   element_option = element.find(:xpath, "option[contains(text(), '#{value}')]")
   element_option.click
@@ -301,7 +308,7 @@ When(/^I fill out the Combined Credit Split for "(.*?)"(?:| under "(.*?)") with 
 end
 
 # Description: Checks a checkbox given the name by utlizing the ApproximationFactory
-#         to find the xpath of the checkbox.
+#              to find the xpath of the checkbox.
 #
 # Parameters:
 #   check_name - name of the checkbox
@@ -337,7 +344,7 @@ When(/^I check the "([^"]*)" checkbox(?:| for "([^"]*)")$/) do |check_name, row_
     ApproximationsFactory.transpose_build(
       "//h2[contains(text(), '#{check_name}')]/preceding-sibling::%s",
       ['input'])
-# factory6 - KC Feat. 13 (Institutional Proposal Actions Page)
+# factory2 - KC Feat. 13 (Institutional Proposal Actions Page)
   factory2 =
     ApproximationsFactory.transpose_build(
       "//tr/th[contains(text(), '#{check_name}')]"                             \
@@ -353,7 +360,7 @@ end
 # KC Feat. 2 (Time & Money)
 
 # Description: This method will fill in a specific field in a specific row
-#         in a specific table on the page.
+#              in a specific table on the page.
 #
 # Parameters:
 #   label      - the name of the field to be filled in
@@ -396,7 +403,6 @@ When(/^I click the "(.*?)" calendar and set the date to "(.*?)"$/)\
   do |label, date_option|
 
   kaiki.get_ready
-
   calendar_name = label.sub('Date', '').gsub(/\s/, '')
   kaiki.find_approximate_element(["//h2[contains(., '#{@tab}')]/../../../../"  \
     "following-sibling::div/descendant::img[contains(@id, '#{calendar_name}')]"]).click

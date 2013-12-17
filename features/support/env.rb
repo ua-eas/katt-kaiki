@@ -49,25 +49,19 @@ class KaikiWorld
   firefox_profile = ENV['KAIKI_FIREFOX_PROFILE']
   firefox_path    = ENV['KAIKI_FIREFOX_PATH']
 
-  case application
-  when 'kc'
-    @@kaiki = Kaiki::CapybaraDriver::KC.new(username, password, :envs => env,
-                                            :application => application,
-                                            :is_headless => is_headless,
-                                            :highlight_on => highlight_on,
-                                            :firefox_profile => firefox_profile,
-                                            :firefox_path => firefox_path)
-  when 'kfs'
-    @@kaiki = Kaiki::CapybaraDriver::KFS.new(username, password, :envs => env,
-                                             :application => application,
-                                             :is_headless => is_headless,
-                                             :highlight_on => highlight_on,
-                                             :firefox_profile => firefox_profile,
-                                             :firefox_path => firefox_path)
-  else
-    raise "InvalidApplication"
-  end
+  all_apps = JSON.parse(IO.readlines('apps.json').map{ |l| l.gsub(/[\r\n]/, '') }.join(""))
+  raise "InvalidApplication" unless all_apps.key?(application)
+  apps = all_apps.select { |k,v| application.eql?(k) }
+  application = apps[application.downcase]['code']
 
+  options = {:envs => env, :application => application,
+             :is_headless => is_headless, :highlight_on => highlight_on,
+             :firefox_profile => firefox_profile, :firefox_path => firefox_path}
+
+  app = "Kaiki::CapybaraDriver::#{application.upcase}".split('::').inject(Object)\
+    { |o,c| o.const_get c }
+
+  @@kaiki = app.new(username, password, options)
   @@kaiki.mk_screenshot_dir(File.join(Dir::pwd, 'features', 'screenshots'))
   @@kaiki.start_session
   @@kaiki.maximize_ish
@@ -106,13 +100,16 @@ Before do |scenario|
   kaiki.scenario = scenario
   kaiki.setup_logger
 
-  if kaiki.is_headless
+  scenario_file_name = File.basename(scenario.file)
+  if not scenario_file_name.include?('BAT') and kaiki.is_headless
     kaiki.log.debug "Starting video..."
     kaiki.headless.video.start_capture
   end
 
   @record_file = "features/support/recorded_numbers.yaml"
   kaiki.record = YAML.load_file(@record_file) if File::exists? @record_file
+  kaiki.record = {} if kaiki.record.eql?(false)
+
   kaiki.get_date("today")
   kaiki.puts_method = method(:puts)
 end
@@ -138,7 +135,8 @@ After do |scenario|
   record_file.close
   if scenario.failed?
     screenshot_file = File.basename(scenario.file_colon_line) + '_' +          \
-                      scenario.name.gsub(/\s/, '-').gsub('/', '') + '_' +      \
+                      scenario.name.gsub(/\s/, '-').gsub('/', '').gsub(':', '.')\
+                      + '_' +      \
                       Time.now.strftime("%Y%m%d%H%M%S")
     kaiki.screenshot(screenshot_file)
   end

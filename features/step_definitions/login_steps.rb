@@ -4,7 +4,7 @@
 #
 # Original Date: August 20, 2011
 
-# KC  all features
+# KC all features
 
 # Description: Backdoors as the given username to the Kuali system.
 #
