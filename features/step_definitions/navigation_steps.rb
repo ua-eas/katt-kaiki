@@ -205,6 +205,7 @@ When(/^I (?:click|click the) "(.*?)" (?:button|(?:on|to) "(.*?)")(?:| (?:under|i
       @element = kaiki.find_approximate_element(@approximate_xpath)
 # KFS PA004-0304 (Purchase Order)     - Continue
 # KFS PA004-06   (Vendor Credit Memo) - Continue
+# KFS BAT001-01  (Batch)
 # KC Feat. 3     (Proposal Actions)   - continue
     when 'continue'
       if kaiki.application.eql?("kfs")
