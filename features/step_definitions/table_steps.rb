@@ -4,13 +4,18 @@
 #
 # Original Date: November 4th, 2013
 
-# Description: Takes the given table's name, possible subsection, and data and
+# Description: This step takes the given table's name, possible subsection, and data then
 #              calls the table_fill method to fill it out.
 #
 # Parameters:
-#   table_name - name of the table to be filled out
-#   subsection - area of the pay it may appear in
-#   table      - data to be used
+#   table_name - Name of the table to be filled out.
+#   subsection – OPTIONAL - Area of the pay it may appear in.
+#   table      - The data to be used.
+#
+# Example
+#    And I fill out the "Accounting Lines" table with:
+#      | Item # | Chart | Account Number | Object | Percent | Action |
+#      | Item 1 | UA    | 1732100        | 5230   | 100     | Add    |
 #
 # Returns nothing.
 When(/^I fill out the "(.*?)" table(?:| (?:under|in) the "(.*?)" subsection) with:$/)\
@@ -20,13 +25,17 @@ When(/^I fill out the "(.*?)" table(?:| (?:under|in) the "(.*?)" subsection) wit
   table_fill(subsection, table_name, table)
 end
 
-# Description: Takes the given table's name, possible subsection, and data and
+# Description: This step takes the given table's name, possible subsection, and data and
 #              calls the table_fill method to fill it out.
 #
 # Parameters:
-#   table_name - name of the table to be filled out
-#   subsection - area of the pay it may appear in
-#   table      - data to be used
+#   table_name - Name of the table to be filled out.
+#   subsection - OPTIONAL - Area of the pay it may appear in.
+#   table      - The data to be used.
+#
+#    And I add to the "Add Item" table with:
+#      | Item Type        | Quantity | Unit Of Measure Code | Catalog # | Description       | Unit Cost | Action |
+#      | QUANTITY TAXABLE | 10       | EA@                  | 123-ABC   | Bunny Slippers    | 6         | Add    |
 #
 # Returns nothing.
 When(/^I add to the "([^"]*)" table(?:| (?:under|in) the "(.*?)" subsection) with:$/)\
@@ -54,13 +63,13 @@ end
 #              Using location awareness greatly improves accuracy.
 #
 # Parameters:
-#   subsection_name - name of the subsection the table may appear in
-#   table_name      - identifier of the table
-#   table           - data to be used
-#   options         - for now, a placeholder for ":add", used for adding lines
-#                     to an existing table
+#   subsection_name - Name of the subsection the table may appear in.
+#   table_name      - Name/identifier of the table.
+#   table           - The data to be used.
+#   options         - OPTIONAL - For now, a placeholder for ":add",
+#                     used for adding lines to an existing table.
 #
-# Returns nothing.
+# Returns nothing
 def table_fill(subsection_name, table_name, table, options=nil)
   data_table = table.raw
   header_row = data_table[0]
@@ -179,14 +188,14 @@ def table_fill(subsection_name, table_name, table, options=nil)
                 ["select"],
                 ["textarea"])
 # factory3 - KFS CASH001-01 (Open Cash Drawer)
-            column_name = "Amount" if column_name.eql?("Amt")                                
+            column_name = "Amount" if column_name.eql?("Amt")
             factory3_string = step1 + step7 + "/following-sibling::table/descendant::%s[contains(@title, '#{column_name}')]"  #Added for CASH001-01
             factory3 =
               ApproximationsFactory.transpose_build(
                 factory3_string,
                 ["input"],
                 ["select"],
-                ["textarea"])      
+                ["textarea"])
             @approximate_xpath = factory0                                      \
                                + factory1                                      \
                                + factory2                                      \
@@ -240,7 +249,7 @@ def table_fill(subsection_name, table_name, table, options=nil)
   end
 end
 
-# KFS PA004-07 (Verify GL Entry) 
+# KFS PA004-07 (Verify GL Entry)
 # KFS DV001-01 (Check ACH)
 
 # Public: This method will retrieve the first X headers for a table on the
@@ -256,7 +265,7 @@ end
 def get_page_table_headers(location, number_of_columns)
   header_row = Hash[]
   number_of_columns.to_i
-  
+
   (1..number_of_columns).each do |column_counter|
     header_xpath    = "th[#{column_counter}]"
     header_location = "#{location}/#{header_xpath}"
@@ -265,4 +274,3 @@ def get_page_table_headers(location, number_of_columns)
   end
   return header_row
 end
-

@@ -1,6 +1,7 @@
 # Description: A file that grabs login information and starts and stops
 #              video recording to a file path;
 #              also sets up a screenshot on fail.
+#
 # Original Date: August 20, 2011
 
 require File.join(File.dirname(__FILE__), '..', '..', 'lib', 'kaiki')

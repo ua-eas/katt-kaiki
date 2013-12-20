@@ -98,42 +98,6 @@ test-user: some-password
 Then you can `export KAIKI_NETID=test-user1` and that user will be used
 as the original log in. (See ff-13.0.1_env)
 
-### `config/accounts.yaml`
-
-There are a few steps in `features/step_definitions/login_steps.rb` that
-take advantage of configure files, where you can specify various roles.
-As an example, if you fill out `config/accounts.yaml` to look like:
-
-```yaml
----
-1089999:
-  account_number: 1089999
-  account_name: SIERRA CAMPUS
-  fiscal_officer: jdoe
-```
-
-Then you can use a step in a scenario like so:
-
-```gherkin
-When I backdoor as the fiscal officer
-```
-
-You can also specify global roles in `config/arizona_teams.yaml`
-(or rename, and rename in the code):
-
-```yaml
----
-ua_fso_fm_team_451:
-  name: ua_fso_fm_team_451
-  user: test-user2
-```
-
-And use:
-
-```gherkin
-When I backdoor as the UA FSO FM Team 451
-```
-
 ### Rakefile Requirements
 
 * `rake (10.1.0, 0.9.2.2)` should be installed to run rake tasks.
@@ -155,10 +119,10 @@ When I backdoor as the UA FSO FM Team 451
 * Look at `features/support/env.rb` for various environment variables that
   can be used.
 * `envs.json` is a way to store environment names and use them in tests.
+* `apps.json` is a way to store application names and use them in tests.
   A lot of this is hardcoded U of A stuff.
 * On Linux systems, the xvfb package allows the Headless gem to do its thing.
-* Look at `ff-13.0.1_env` for examples of how I set up my environment to be
-  headless.
+
 
 Versioning
 ----------

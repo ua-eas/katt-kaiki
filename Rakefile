@@ -1,4 +1,3 @@
-#
 # Description: This is the Rakefile that is used to run the features from Jenkins.
 #			         This sets environment variables and starts a video.
 #              This can run all features, a certain feature, a certain
@@ -29,9 +28,8 @@ end
 #         to the tags contained within said array.
 #
 # Parameters:
-#   kc_tags   - name of the array holding the tags for kuali coeus test senarios that need to be
-#               run in order
-#
+#   kc_tags   - name of the array holding the tags for kuali coeus test
+#               senarios that need to be run in order
 #
 # Returns nothing.
 task :KC do
@@ -41,7 +39,7 @@ task :KC do
   kc_tags.each do |i|
     i.each do |j|
       Cucumber::Rake::Task.new(:KC, "Run all tests in required order.") do |t|
-        t.cucumber_opts = "--tags #{j} --format pretty --format html --out ./features/reports/#{j}.html"
+        t.cucumber_opts = "--tags #{j}"
       end
     end
   end
@@ -52,19 +50,20 @@ end
 #         to the tags contained within said array.
 #
 # Parameters:
-#   kfs_tags   - name of the array holding the tags for kuali financial system test senarios that need
-#                to be run in order
-#
+#   kfs_tags   - name of the array holding the tags for kuali financial system
+#                test senarios that need to be run in order
 #
 # Returns nothing.
 task :KFS do
   ENV['KAIKI_NETID'] = "kfs-test-sec9" if ENV['KAIKI_NETID'].nil?
   ENV['KAIKI_APP'] = "kfs"             if ENV['KAIKI_APP'].nil?
   set_env_defaults
-  kfs_tags.each do |i|
+  kfs_tags.each do |day, i|
     i.each do |j|
-      Cucumber::Rake::Task.new(:KFS, "Run all tests in required order.") do |t|
-        t.cucumber_opts = "--tags #{j} --format pretty --format html --out ./features/reports/#{j}.html"
+      j.each do |k|
+        Cucumber::Rake::Task.new(:KFS, "Run all tests in required order.") do |t|
+          t.cucumber_opts = "--tags #{k}"
+        end
       end
     end
   end
@@ -84,7 +83,7 @@ task :by_tag, :tag do |t, args|
   tag_name = args[:tag]
   Cucumber::Rake::Task.new(:by_tag) do |t|
     set_env_defaults
-    t.cucumber_opts = "--tags #{tag_name} --format pretty --format html --out ./features/reports/#{tag_name}.html"
+    t.cucumber_opts = "--tags #{tag_name}"
   end
 end
 

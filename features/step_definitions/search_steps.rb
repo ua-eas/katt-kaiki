@@ -4,10 +4,13 @@
 #
 # Original Date: November 20th, 2013
 
-# Description: Takes the name of the button and clicks on the button with that name
+# Description: This step takes the name of the button and clicks on the button with that name
 #
 # Parameters:
-#   link  - name of the item to be clicked
+#   link  - Name of the item to be clicked.
+#
+# Example:
+#	  When I click the “Award” search link
 #
 # Returns nothing.
 When(/^I click the "(.*?)" search link$/) do |link|
@@ -18,73 +21,59 @@ When(/^I click the "(.*?)" search link$/) do |link|
   element.click
 end
 
-# Description: Takes the name of the button and clicks on the button with that name
+# Description: This step takes the name of the button and clicks on the button with that name
 #
 # Parameters:
-#   button     - name of the button to be clicked
-#   subsection - subsection of the page the radio should be in
+#   button     - Name of the button to be clicked.
+#   subsection - OPTIONAL - Subsection of the page the radio should be in.
+#
+# Example:
+#	  When I start a lookup for “Employee”
 #
 # Returns nothing.
 When(/^I start a lookup for "(.*?)"(?:| (?:under|in) the "(.*?)" subsection)$/) do |button, subsection|
   kaiki.get_ready
   item = button.downcase
-  lookup_button_by_name = Hash[
-    "employee"                            => "methodToCall.performLookup.(!!org.kuali.kra.bo.KcPerson!!).(((personId:newPersonId))).((``)).((<>)).(([])).((**)).((^^)).((&&)).((//)).((~~)).(::::;;::::).anchor",
-    "non-employee"                        => "methodToCall.performLookup.(!!org.kuali.kra.bo.NonOrganizationalRolodex!!).(((rolodexId:newRolodexId))).((``)).((<>)).(([])).((**)).((^^)).((&&)).((//)).((~~)).(::::;;::::).anchor",
-    "institutional proposal id"           => "methodToCall.performLookup.(!!org.kuali.kra.institutionalproposal.home.InstitutionalProposal!!).(((proposalId:fundingProposalBean.newFundingProposal.proposalId))).((`fundingProposalBean.newFundingProposal.proposalNumber:proposalNumber`)).((<>)).(([])).((**)).((^^)).((&&)).((//)).((~~)).(::::;;::::).anchorFundingProposals",
-    "sponsor template code"               => "methodToCall.performLookup.(!!org.kuali.kra.award.home.AwardTemplate!!).(((templateCode:document.award.templateCode,description:document.award.awardTemplate.description))).((``)).((<>)).(([])).((**)).((^^)).((&&)).((//)).((~~)).(::::;;::::).anchor61",
-    "award id"                            => "methodToCall.performLookup.(!!org.kuali.kra.award.home.Award!!).(((awardNumber:document.developmentProposalList[0].currentAwardNumber))).((``)).((<>)).(([])).((**)).((^^)).((&&)).((//)).((~~)).(::::;;::::).anchorRequiredFieldsforSavingDocument",
-    "original institutional proposal id"  => "methodToCall.performLookup.(!!org.kuali.kra.institutionalproposal.home.InstitutionalProposal!!).(((proposalNumber:document.developmentProposalList[0].continuedFrom))).((``)).((<>)).(([])).((**)).((^^)).((&&)).((//)).((~~)).(::::;;::::).anchorRequiredFieldsforSavingDocument",
-    "person"                              => "methodToCall.performLookup.(!!org.kuali.rice.kim.bo.Person!!).(((principalName:newAdHocRoutePerson.id,name:newAdHocRoutePerson.name))).((#newAdHocRoutePerson.id:principalName#)).((<>)).(([])).((**)).((^^)).((&&)).((//)).((~~)).(::::;;::::).anchor32",
-    "vendor #"                            => "methodToCall.performLookup.(!!org.kuali.kfs.vnd.businessobject.VendorDetail!!).(((vendorHeaderGeneratedIdentifier:document.newMaintainableObject.vendorHeaderGeneratedIdentifier,vendorDetailAssignedIdentifier:document.newMaintainableObject.vendorDetailAssignedIdentifier,vendorNumber:document.newMaintainableObject.vendorNumber,))).((#document.newMaintainableObject.vendorHeaderGeneratedIdentifier:vendorHeaderGeneratedIdentifier,document.newMaintainableObject.vendorDetailAssignedIdentifier:vendorDetailAssignedIdentifier,document.newMaintainableObject.vendorNumber:vendorNumber,#)).((<>)).(([])).((**)).((^^)).((&&)).((/vendorDetail/)).((~~)).(::::;https://kf-#{kaiki.env}.mosaic.arizona.edu/kfs-#{kaiki.env}/kr/lookup.do;::::).anchor1",
-    "1099 payee id"                       => "methodToCall.performLookup.(!!com.rsmart.kuali.kfs.tax.businessobject.Payee!!).(((id:document.newMaintainableObject.payeeId,))).((#document.newMaintainableObject.payeeId:id,#)).((<>)).(([])).((**)).((^^)).((&&)).((/payee/)).((~~)).(::::;https://kf-#{kaiki.env}.mosaic.arizona.edu/kfs-#{kaiki.env}/kr/lookup.do;::::).anchor1"
-  ]
+  lookup_button_by_name = {
+    "employee"                           => "methodToCall.performLookup.(!!org.kuali.kra.bo.KcPerson!!).(((personId:newPersonId))).((``)).((<>)).(([])).((**)).((^^)).((&&)).((//)).((~~)).(::::;;::::).anchor",
+    "non-employee"                       => "methodToCall.performLookup.(!!org.kuali.kra.bo.NonOrganizationalRolodex!!).(((rolodexId:newRolodexId))).((``)).((<>)).(([])).((**)).((^^)).((&&)).((//)).((~~)).(::::;;::::).anchor",
+    "institutional proposal id"          => "methodToCall.performLookup.(!!org.kuali.kra.institutionalproposal.home.InstitutionalProposal!!).(((proposalId:fundingProposalBean.newFundingProposal.proposalId))).((`fundingProposalBean.newFundingProposal.proposalNumber:proposalNumber`)).((<>)).(([])).((**)).((^^)).((&&)).((//)).((~~)).(::::;;::::).anchorFundingProposals",
+    "sponsor template code"              => "methodToCall.performLookup.(!!org.kuali.kra.award.home.AwardTemplate!!).(((templateCode:document.award.templateCode,description:document.award.awardTemplate.description))).((``)).((<>)).(([])).((**)).((^^)).((&&)).((//)).((~~)).(::::;;::::).anchor61",
+    "award id"                           => "methodToCall.performLookup.(!!org.kuali.kra.award.home.Award!!).(((awardNumber:document.developmentProposalList[0].currentAwardNumber))).((``)).((<>)).(([])).((**)).((^^)).((&&)).((//)).((~~)).(::::;;::::).anchorRequiredFieldsforSavingDocument",
+    "original institutional proposal id" => "methodToCall.performLookup.(!!org.kuali.kra.institutionalproposal.home.InstitutionalProposal!!).(((proposalNumber:document.developmentProposalList[0].continuedFrom))).((``)).((<>)).(([])).((**)).((^^)).((&&)).((//)).((~~)).(::::;;::::).anchorRequiredFieldsforSavingDocument",
+    "person"                             => "methodToCall.performLookup.(!!org.kuali.rice.kim.bo.Person!!).(((principalName:newAdHocRoutePerson.id,name:newAdHocRoutePerson.name))).((#newAdHocRoutePerson.id:principalName#)).((<>)).(([])).((**)).((^^)).((&&)).((//)).((~~)).(::::;;::::).anchor32",
+    "vendor #"                           => "methodToCall.performLookup.(!!org.kuali.kfs.vnd.businessobject.VendorDetail!!).(((vendorHeaderGeneratedIdentifier:document.newMaintainableObject.vendorHeaderGeneratedIdentifier,vendorDetailAssignedIdentifier:document.newMaintainableObject.vendorDetailAssignedIdentifier,vendorNumber:document.newMaintainableObject.vendorNumber,))).((#document.newMaintainableObject.vendorHeaderGeneratedIdentifier:vendorHeaderGeneratedIdentifier,document.newMaintainableObject.vendorDetailAssignedIdentifier:vendorDetailAssignedIdentifier,document.newMaintainableObject.vendorNumber:vendorNumber,#)).((<>)).(([])).((**)).((^^)).((&&)).((/vendorDetail/)).((~~)).(::::;https://kf-#{kaiki.env}.mosaic.arizona.edu/kfs-#{kaiki.env}/kr/lookup.do;::::).anchor1",
+    "1099 payee id"                      => "methodToCall.performLookup.(!!com.rsmart.kuali.kfs.tax.businessobject.Payee!!).(((id:document.newMaintainableObject.payeeId,))).((#document.newMaintainableObject.payeeId:id,#)).((<>)).(([])).((**)).((^^)).((&&)).((/payee/)).((~~)).(::::;https://kf-#{kaiki.env}.mosaic.arizona.edu/kfs-#{kaiki.env}/kr/lookup.do;::::).anchor1",
+    "payee id"                           => "methodToCall.performLookup.(!!org.kuali.kfs.fp.businessobject.DisbursementPayee!!).(((payeeIdNumber:document.dvPayeeDetail.disbVchrPayeeIdNumber,payeeTypeCode:document.dvPayeeDetail.disbursementVoucherPayeeTypeCode,paymentReasonCode:document.dvPayeeDetail.disbVchrPaymentReasonCode))).((##)).((<>)).(([])).((**)).((^^)).((&&)).((//)).((~~)).(::::;;::::).anchor",
+    "object"                             => "methodToCall.performLookup.(!!org.kuali.kfs.coa.businessobject.ObjectCode!!).(((chartOfAccountsCode:newSourceLine.chartOfAccountsCode,universityFiscalYear:newSourceLine.postingYear,financialObjectCode:newSourceLine.financialObjectCode))).((#newSourceLine.chartOfAccountsCode:chartOfAccountsCode,newSourceLine.postingYear:universityFiscalYear,newSourceLine.financialObjectCode:financialObjectCode#)).((<>)).(([])).((**)).((^^)).((&&)).((/null/)).((~~)).anchor"
+  }
 
-  lookup_button_by_xpath = Hash[
-    "grants.gov"                          => "//div[contains(., '#{item}')]/input[contains(@title, 'Search')]",
-    "unit of measure code"                => "/html/body/form/table/tbody/tr/td[2]/div/div[4]/div[2]/table/tbody/tr[3]/td[4]/input[2]",
-    "note text"                           => "/html/body/form/table/tbody/tr/td[2]/div/div[4]/div[2]/table/tbody/tr[2]/td/input"
-  ]
+  lookup_button_by_xpath = {
+    "grants.gov"           => "//div[contains(., '#{item}')]/input[contains(@title, 'Search')]",
+    "chart/org"            => "//div[text()='Chart/Org:']/../following-sibling::td/input[contains(@title, 'Search')]",
+    "building"             => "//div[text()='Building:']/../following-sibling::td/input[contains(@title, 'Search')]",
+    "room"                 => "//div[text()='Room:']/../following-sibling::td/input[contains(@title, 'Search')]",
+    "receiving address"    => "//div[text()='Receiving Address:']/../following-sibling::td/input[contains(@title, 'Search')]",
+    "suggested vendor"     => "//div[text()='Suggested Vendor:']/../following-sibling::td/input[contains(@title, 'Search')]",
+    "unit of measure code" => "/html/body/form/table/tbody/tr/td[2]/div/div[4]/div[2]/table/tbody/tr[3]/td[4]/input[2]",
+    "note text"            => "/html/body/form/table/tbody/tr/td[2]/div/div[4]/div[2]/table/tbody/tr[2]/td/input"
+  }
 
-  name  = lookup_button_by_name[item]
-  xpath = lookup_button_by_xpath[item]
+  lookup_button_by_value = {
+    "contract manager" => kaiki.record[:requisition_number]
+  }
 
-  if name
-    @element = kaiki.find_approximate_element(["//input[@name='#{name}']"])
-  elsif xpath
-    @element = kaiki.find_approximate_element([xpath])
+  if lookup_button_by_name.key?(item)
+    kaiki.click_approximate_field(["//input[@name='#{lookup_button_by_name[item]}']"])
+  elsif lookup_button_by_xpath.key?(item)
+    kaiki.click_approximate_field([lookup_button_by_xpath[item]])
+  elsif lookup_button_by_value.key?(item)
+    value = lookup_button_by_value[item]
+    xpath = "//a[contains(text(), '#{value}')]/../preceding-sibling::td/input[contains(@title, 'Search')]"
+    kaiki.click_approximate_field([xpath])
   else
-# factory0 - KFS PA004-01   (Create Requisition)
-# factory0 - KFS PA004-0304 (Purchase Order)
-# factory0 - KFS DV001-01   (Check ACH)
-    factory0 =
-      ApproximationsFactory.transpose_build(
-        "//h2[contains(., '#{@tab}')]/../../../../following-sibling::div/"     \
-        "descendant::%s/descendant::th/div[text()[contains(., '#{button}')]]/../"\
-        "following-sibling::td/input[contains(@title, 'Search')]",
-        ["h3[contains(., '#{@section}')]/following-sibling::table"],
-        ["td[contains(text(), '#{@section}')]/../following-sibling::tr"])
-    value = kaiki.record[:requisition_number]
-# factory1 - KFS PA004-02 (Assign CM)
-    factory1 =
-      ApproximationsFactory.transpose_build(
-        "//h2[contains(., '#{@tab}')]/../../../../following-sibling::div/"     \
-        "descendant::%s/descendant::td/a[contains(text(), '#{value}')]"        \
-        "/../preceding-sibling::td/input[contains(@title, 'Search')]",
-        ["h3[contains(., '#{@section}')]/following-sibling::table"])
-# factory2 - KFS DV001-01 (Check ACH)
-   factory2 = 
-      ApproximationsFactory.transpose_build(
-        "//h2[contains(., '#{@tab}')]/../../../../following-sibling::div/"     \
-        "descendant::%s/descendant::input[contains(@title, 'Search #{button}')]",
-        ["h3[contains(., '#{@section}')]/following-sibling::table"],
-        ["td[contains(., '#{@section}')]/../following-sibling::tr"])
-      approximate_xpath = factory0                                             \
-                        + factory1                                             \
-                        + factory2
-      @element = kaiki.find_approximate_element(approximate_xpath)
+    raise "NotImplementedError"
   end
-  @element.click
 end
 
 # KFS PA004-01    (Create Requisition)
@@ -102,13 +91,11 @@ end
 # KC Feat. 8      (Search Page (Proposal Lookup), Search Page (Institutional Proposal Lookup))
 # KC Feat. 13     (Search Page (Institutional Proposal Lookup))
 
-# Description: Step methods for feature files for filling in forms and tables
-#
-# Description: Defines what is to be put into a given field
+# Description: This step is for filling in forms and tables to a specified field
 #
 # Parameters:
-#   field - name of text field
-#   value - a text or numeral value
+#   field - Name of text field.
+#   value - A text or numeral value.
 #
 # Example:
 #    And I set "Award Status" to "Active" on the search page
@@ -117,15 +104,16 @@ end
 When (/^I set "(.*?)" to "(.*?)" on the search page$/) do |field, value|
   kaiki.get_ready
 
-  value_hash = Hash[
-    "the recorded document number"                    => kaiki.record[:document_number],                    
-    "the recorded requisition number"                 => kaiki.record[:requisition_number],                 
-    "the recorded purchase order number"              => kaiki.record[:purchase_order_number],              
-    "the recorded requisition document number"        => kaiki.record[:requisition_document_number],        
-    "the recorded purchase order document number"     => kaiki.record[:purchase_order_document_number],     
-    "the recorded payment request document number"    => kaiki.record[:payment_request_document_number],    
-    "the recorded vendor credit memo document number" => kaiki.record[:vendor_credit_memo_document_number], 
-  ]
+  value_hash = {
+    "the recorded document number"                    => kaiki.record[:document_number],
+    "the recorded requisition number"                 => kaiki.record[:requisition_number],
+    "the recorded purchase order number"              => kaiki.record[:purchase_order_number],
+    "the recorded requisition document number"        => kaiki.record[:requisition_document_number],
+    "the recorded purchase order document number"     => kaiki.record[:purchase_order_document_number],
+    "the recorded payment request document number"    => kaiki.record[:payment_request_document_number],
+    "the recorded vendor credit memo document number" => kaiki.record[:vendor_credit_memo_document_number],
+    "the recorded vendor name"                        => kaiki.record[:vendor_name]
+  }
   value = value_hash[value] if value_hash.key?(value)
 
   factory0 =
@@ -137,7 +125,35 @@ When (/^I set "(.*?)" to "(.*?)" on the search page$/) do |field, value|
   kaiki.set_approximate_field(approximate_xpath, value)
 end
 
-# Description: Verifies that the search returns at least one item
+# Description: Sets a dropdown using a fuzzy match
+#
+# Parameters:
+#   field - name of dropdown
+#   value - a text or numeral value
+#
+# Example:
+#   And I set the "Destination Award" to something like "-00001"
+#
+# Returns nothing.
+When(/^I (?:set the|set) "([^"]*)" to something like "([^"]*)" on the search page$/)\
+  do |field, value|
+
+  kaiki.get_ready
+  factory0 =
+    ApproximationsFactory.transpose_build(
+      "//%s[contains(text(), '#{field}')]/../following-sibling::td/%s",
+      ['th/label',    'select'],
+      ['th/div',      'input'])
+  approximate_xpath = factory0
+  element = kaiki.find_approximate_element(approximate_xpath)
+  element_option = element.find(:xpath, "option[contains(text(), '#{value}')]")
+  element_option.click
+end
+
+# Description: This step verifies that the search returns at least one item
+#
+# Example:
+#	  Then I should see one or more items retrieved on the search page
 #
 # Returns nothing.
 Then(/^I should see one or more items retrieved on the search page$/) do
@@ -150,7 +166,10 @@ Then(/^I should see one or more items retrieved on the search page$/) do
   kaiki.should(have_content('retrieved'))
 end
 
-# Description: Orders records in descending order for the selected column
+# Description: This step orders records in descending order for the selected column
+#
+# Example:
+#	  When I sort by Award ID on the search page
 #
 # Returns nothing.
 When(/^I sort by ([^"]*) on the search page$/) do |column|
@@ -166,10 +185,7 @@ When(/^I sort by ([^"]*) on the search page$/) do |column|
     "//a[contains(text(), '#{column}')]").click
 end
 
-# KFS 1099001-01 (Search for Payee)
-# KFS DV001-01   (Check ACH)
-
-# Description: Returns the chosen result from a search query
+# Description: This step returns the chosen result from a search query
 #
 # Known Issue: This function will click the 'return value' link on the first
 #              row that contains the value anywhere on the data row. Capybara
@@ -179,19 +195,30 @@ end
 #              is currently in use, this is remains elusive.
 #
 # Parameters:
-#   column - the column to look in
-#   value  - result to be returned
+#   column - The column to look in.
+#   value  - The result to be returned.
+#
+# Example:
+#	    And I return the record with "Vendor #" of "11223-0" on the search page
 #
 # Returns nothing.
-When(/^I return the record with "(.*?)" of "(.*?)" on the search page$/)       \
-  do |column, value|
+When(/^I ([^"]*) the record with "(.*?)" of "(.*?)" on the search page$/)      \
+  do |option, column, value|
+
+  option_hash = {
+    "return" => "return value",
+    "edit" => "edit",
+    "copy" => "copy"
+  }
+
+  option = option_hash[option] if option_hash.key?(option)
 
   kaiki.get_ready
   factory0 =
     ApproximationsFactory.transpose_build(
       "//th/a[contains(text(),'#{column}')]/../../../"                         \
       "following-sibling::tbody/tr/td%s[contains(text(),'#{value}')]%s/"       \
-      "td/a[contains(text(),'return value')]",
+      "td/a[contains(text(),'#{option}')]",
       ['/a', '/../..'],
       ['',   '/..'])
   approximate_xpath = factory0
@@ -199,12 +226,13 @@ When(/^I return the record with "(.*?)" of "(.*?)" on the search page$/)       \
   element.click
 end
 
-# KC & KFS all features
-
-# Description: Performs an action on the first record in the table.
+# Description: This step performs an action on the first record in the table.
 #
 # Parameters:
 #   action - This is the action to be performed on the first record.
+#
+# Example:
+#	  When I “return” the first record on the search page
 #
 # Returns nothing.
 When(/^I "(.*?)" the first record on the search page$/) do |action|
@@ -213,12 +241,13 @@ When(/^I "(.*?)" the first record on the search page$/) do |action|
   element.click
 end
 
-# KC & KFS all features
-
-# Description: Performs an action on the returned record in the table.
+# Description: This step performs an action on the returned record in the table.
 #
 # Parameters:
 #   action - This is the action to be performed on the first record.
+#
+# Example:
+#	  When I select the first document on the search page
 #
 # Returns nothing.
 When(/^I select the first document on the search page$/) do
@@ -228,18 +257,15 @@ When(/^I select the first document on the search page$/) do
   element.click
 end
 
-# KFS PA004-0304 (Purchase Order)
-# KFS PA004-05   (Payment Request)
-# KFS PA004-06   (Vendor Credit Memo)
-# KFS CASH001-01 (Open Cash Drawer) 
-# KFS 1099001-01 (Search for Payee)
-
-# Description: Used to open a saved document that has a given descriptive number,
-#              i.e. document number, requisition number, etc.
+# Description: This step is used to open a saved document that has a given descriptive number,
+#	             i.e. document number, requisition number, etc.
 #
 # Parameters:
-#   column - name of the field the value corresponds to
-#   value  - number on the page to look for
+#   column - Name of the field the value corresponds to.
+#   value  - The number on the page to look for.
+#
+# Example:
+#	    When I open the saved document with "Document/Notification Id" of "the recorded document number" on the search page
 #
 # Returns nothing.
 When(/^I open the saved document with "(.*?)" of "(.*?)" on the search page$/) \
@@ -247,29 +273,30 @@ When(/^I open the saved document with "(.*?)" of "(.*?)" on the search page$/) \
 
   kaiki.get_ready
 
-  case value
-  when "the recorded document number"
-    value = kaiki.record[:document_number]
-  when "the recorded requisition number"
-    value = kaiki.record[:requisition_number]
-  when "the recorded purchase order number"
-    value = kaiki.record[:purchase_order_number]
-  else
-    raise NotImplementedError
-  end
+  value_hash = {
+    "the recorded document number"                    => kaiki.record[:document_number],
+    "the recorded requisition number"                 => kaiki.record[:requisition_number],
+    "the recorded purchase order number"              => kaiki.record[:purchase_order_number],
+    "the recorded requisition document number"        => kaiki.record[:requisition_document_number],
+    "the recorded purchase order document number"     => kaiki.record[:purchase_order_document_number],
+    "the recorded payment request document number"    => kaiki.record[:payment_request_document_number],
+    "the recorded vendor credit memo document number" => kaiki.record[:vendor_credit_memo_document_number],
+    "the recorded vendor name"                        => kaiki.record[:vendor_name]
+  }
+  value = value_hash[value] if value_hash.key?(value)
 
-  element = kaiki.find_approximate_element(
+  kaiki.click_approximate_field(
     ["//th/a[contains(text(),'#{column}')]/../../../"                          \
     "following-sibling::tbody/tr/td/a[contains(text(),'#{value}')]"])
-  element.click
 end
 
-# KC & KFS all features
-
-# Description: Performs a search for a specified field on a search page.
+# Description: This step performs a search for a specified field on a search page.
 #
 # Parameters:
-#   field - field in which you want to search for
+#   field - Field in which you want to search for.
+#
+# Example:
+#	  When I start a lookup for “Contract Manager” on the search page
 #
 # Returns nothing.
 When (/^I start a lookup for "(.*?)" on the search page$/) do |field|
@@ -278,19 +305,28 @@ When (/^I start a lookup for "(.*?)" on the search page$/) do |field|
   element.click
 end
 
-# KC & KFS all features 
-
-# Public: This sets the value for a group of radio buttons to the specified
-#         option. Generates a title for the button to click as
-#         "<group name> - <option>" and attempts to click it. This is
-#         specifically for a search page and does not contain location
-#         awareness.
+# Description: Checks or unchecks the appropriate checkbox on a search page.
 #
 # Parameters:
-#   field   - the name of the group of radio buttons.
-#   option  - the name of the option within the group to be chosen.
+#   checkbox - label next to the checkbox to identify by
 #
-# Example: 
+# Returns nothing.
+When(/^I check the "(.*?)" checkbox on the search page$/) do |checkbox|
+  kaiki.get_ready
+  kaiki.check_approximate_field(["//input[@title='#{checkbox}']"])
+end
+
+# Description: This step sets the value for a group of radio buttons to the specified
+#              option. Generates a title for the button to click as
+#              "<group name> - <option>" and attempts to click it. This is
+#              specifically for a search page and does not contain location
+#              awareness.
+#
+# Parameters:
+#   field   - The name of the group of radio buttons.
+#   option  - The name of the option within the group to be chosen.
+#
+# Example:
 #   When I set the "Pending Entry Approved Indicator" option to "No" on the search page
 #   This will generate the title "Pending Entry Approved Indicator - No" and
 #   attempt to click the field that has this as its title.
@@ -302,22 +338,23 @@ When(/^I set the "(.*?)" option to "(.*?)" on the search page$/) do |field, opti
 
   approximate_xpath = ["//input[@title = '#{field} - #{option}']"]
   kaiki.click_approximate_field(approximate_xpath)
-  
+
 end
 
-# KFS PA004-07 (Verify GL Entry) 
-
-# Public: This step definition compares a specified field on a search page to 
-#         the current fiscal year.
+# Description: This step definition compares a specified field on a search page to
+#              the current fiscal year.
 #
 # Parameters:
-#   field - the name of the field to be filled.
+#   field - The name of the field to be filled.
+#
+# Example:
+#	  And I should see “Fiscal Year” set to the current fiscal year on the search page
 #
 # Returns nothing.
 When(/^I should see "(.*?)" set to the current fiscal year on the search page$/) do |field|
 
   kaiki.get_ready
-  
+
   value = current_fiscal_year
 
   special_case_field = {
@@ -336,33 +373,37 @@ When(/^I should see "(.*?)" set to the current fiscal year on the search page$/)
   end
   approximate_xpath = factory0
   element = kaiki.get_approximate_field(approximate_xpath)
-  
-  if element != value
+
+  unless element.eql?(value)
     raise Capybara::ExpectationNotMet
   end
 end
 
-# KFS PA004-07 (Verify GL Entry) 
-
-# Public: This step definition will read the table from the page (after
-#         verifying that we are on the correct lookup/search page), then
-#         verifies that the rows of data read from the feature file exists
-#         somewhere in the rows of data on the page.
+# Description: This step definition will read the table from the page (after
+#	             verifying that we are on the correct lookup/search page), then
+#	             verifies that the rows of data read from the feature file exists
+#	             somewhere in the rows of data on the page.
 #
 # Parameters:
-#   lookup_name - the name of the lookup being performed.
+#   lookup_name - The name of the lookup being performed.
 #   table       - A Cucumber::AST table that contains the information to be
 #                 verified.
+#
+# Example:
+#	  And I should see the General Ledger Entry Lookup results table on the search page filled with:
+#	   | Balance Type Code | Object Type Code | Debit Credit Code |
+#	   |       EX          |        EX        |         D         |
+#	   |       EX          |        FB        |         C          |
 #
 # Returns nothing.
 When(/^I should see the (.*?) results table on the search page filled with:$/) do |lookup_name, table|
 
   kaiki.get_ready
-  
+
   kaiki.should(have_content(lookup_name))
   page_header_row, page_table, page_table_columns, page_table_rows = read_page_table
   show_table(page_header_row, page_table)
-  
+
   data_table = table.raw
   data_header_row = data_table[0]
   max_data_rows = data_table.size - 1
@@ -374,12 +415,12 @@ When(/^I should see the (.*?) results table on the search page filled with:$/) d
     (1..page_table_rows).each do |page_row_counter|
       page_row   = page_table[page_row_counter]
         row_match = true
-  
+
       (0..max_data_columns).each do |data_column_counter|
         data_column_name = data_header_row[data_column_counter]
         data_value       = data_row[data_column_counter]
         page_value       = page_row[data_column_name]
-        match = false        
+        match = false
         match = true if data_value == page_value
         row_match = false if data_value != page_value
       end
@@ -389,14 +430,12 @@ When(/^I should see the (.*?) results table on the search page filled with:$/) d
         break
       end
     end
-    
+
     if data_row_match == false
       raise Capybara::ExpectationNotMet
-    end    
+    end
   end
 end
-
-# KFS PA004-07 (Verify GL Entry) 
 
 # Public: This function is used to get the current fiscal year. The way to
 #         determine this need to be clarified to be implemented. Currently, this
@@ -408,57 +447,16 @@ end
 #                   year.
 #                   (January 1, 2013 to December 31, 2013 is 2014)
 #
-# Returns: Integer (current year + 1)
+# Returns: Recorded  value
 def current_fiscal_year
   year = kaiki.record[:year]
 end
 
-# KFS PA004-07 (Verify GL Entry) 
-
-# Public: This function is used to print the data in a table, stored as either an
-#         array of arrays or a hash of hashes.
-#
-# Returns: Nothing.
-def show_table (header_data, table_data)
-  data_columns = header_data.size
-  data_rows = table_data.size
-
-  (1..data_columns).each do |column|
-  end
-
-  (1..data_rows).each do |row|
-    (1..data_columns).each do |column|
-      row_key = row
-      column_key = column
-      column_key = header_data[column] if table_data.class.to_s == "Hash"
-    end
-  end
-end
-
-# KFS PA004-07 (Verify GL Entry) 
-
-# Public: This function will add spaces to the end of a string until it contains
-#         a number of characters equal to the specified width.
-#
-# Parameters:
-#   width  - The desired minimum width for the string.
-#   string - The string to be modified.
-#
-# Returns: String (with added spaces at the end).
-def pad_to(width, string)
-  while string.length < width
-    string = "#{string} "
-  end
-  string
-end
-
-# KFS PA004-07 (Verify GL Entry) 
-
 # Public: This method reads in a table that is on the web page and determines
 #         the number of columns it has.
-# 
+#
 # Parameters:
-#   table_location - the xpath to the table on the web page
+#   table_location - The xpath to the table on the web page.
 #
 # Returns: Integer (the number of columns on the page)
 def find_table_columns (table_location)
@@ -476,13 +474,11 @@ def find_table_columns (table_location)
   end
 end
 
-# KFS PA004-07 (Verify GL Entry) 
-
 # Public: This method reads in a table that is on the web page and determines
 #         the number of rows it has.
-# 
+#
 # Parameters:
-#   table_location - the xpath to the table on the web page
+#   table_location - The xpath to the table on the web page.
 #
 # Returns: Integer (the number of rows on the page)
 def find_table_rows(table_location)
@@ -500,13 +496,11 @@ def find_table_rows(table_location)
   end
 end
 
-# KFS PA004-07 (Verify GL Entry) 
-
 # Public: This method reads in a table that is on the web page and stores the
-#         contents into a Hash in memory. This assumes you are interested in the
+#         contents into a hash in memory. This assumes you are interested in the
 #         results of a search.
-# 
-# Returns: 
+#
+# Returns:
 #   Hash  (the column names of the table)
 #   Hash  (the data of the table)
 #   Integer (the number of columns of data)
@@ -521,7 +515,7 @@ def read_page_table
   page_table_element = kaiki.find_approximate_element([table_location])
   table_columns      = find_table_columns(table_location)
   table_rows         = find_table_rows(table_location)
-  
+
   (1..table_columns).each do |page_column_counter|
     header_xpath    = "thead/tr[1]/th[#{page_column_counter}]"
     header_location = "#{table_location}/#{header_xpath}"
@@ -536,7 +530,7 @@ def read_page_table
     row_xpath       = "tbody/tr[#{row_counter}]"
     row_location    = "#{table_location}/#{row_xpath}"
     row_element     = page_table_element.find(row_xpath)
-    
+
     kaiki.highlight(:xpath, row_location)
     (1..table_columns).each do |column_counter|
       field_xpath    = "td[#{column_counter}]"

@@ -1,17 +1,19 @@
 # Description: This file contains everything pertaining to the visual aspect of
-#              kuali webpages; highlighting tabs and sections for users to
-#              follow either during live test runs or later on while watching
-#              video playback.
+#              kuali webpages; highlighting tabs, sections and toggling
+#              show/hide for users to follow either during live test runs
+#              or later on while watching video playback.
 #
 # Original Date: August 20, 2011
 
 # KC and KFS all features
 
-# Description: Sets the variable @section to the given input so the following
-#              steps after it, can look in a certain area of the page.
+# Description: This step sets the variable @tab and @section to the given input
+#              so the following steps after it, can look in a certain area of
+#              the page. It's common that the initial section after a tab
+#              matches that tab's name.
 #
 # Parameters:
-#   section - area of the page you want to be in (DARK GREY banners)
+#	  tab - Area of the page you want to be in. (LIGHT GREY manila file folder tab)
 #
 # Returns nothing.
 When (/^I am in the "(.*?)" tab$/) do |tab|
@@ -29,11 +31,14 @@ end
 
 # KC and KFS all features
 
-# Description: Sets the variable @section to the given input so the following
-#              steps after it, can look in a certain area of the page.
+# Description: This step sets the variable @section to the given input so the
+#              following steps after it, can look in a certain area of the page.
 #
 # Parameters:
-#   section - area of the page you want to be in (DARK GREY banners)
+#	  section - Area of the page you want to be in. (DARK GREY banners)
+#
+# Example:
+#	  When I am in the "Document Overview" section
 #
 # Returns nothing.
 When (/^I am in the "(.*?)" section$/) do |section|
@@ -56,11 +61,14 @@ end
 
 # KC and KFS all features - will be used in the future
 
-# Description: Sets the variable @subsection to the given input so the following
-#              steps after it, can look in a certain area of the page.
+# Description: This step sets the variable @subsection to the given input so the
+#              following steps after it, can look in a certain area of the page.
 #
 # Parameters:
-#   subsection - area of the page you want to be in (LIGHT GREY banners)
+#	  subsection - Area of the page you want to be in. (GREY banners)
+#
+# Example:
+#	  When I am in the "Detail Information" subsection
 #
 # Returns nothing.
 When (/^I am in the "(.*?)" subsection$/) do |subsection|
@@ -81,14 +89,18 @@ end
 
 # KC and KFS all features
 
-# Description: Clicks on "Show/Hide" on the specific tab
+# Description: This step clicks the show/hide on the specified tab
 #
 # Parameters:
-#   option - "Show" or "Hide"
-#   value  - Which tab is being toggled
+#	  option – The option should contain show/hide.
+#	  value  - Which tab is being toggled.
+# 	extra – OPTIONAL - Placeholder for extraneous text that may be after the value.
+#
+# Example:
+#	  When I click "Show" on the "Document Overview" tab
 #
 # Returns nothing.
-When(/^I click "([^"]*)" (?:on the "([^"]*)" (?:tab|for "([^"]*)"))$/)         \
+When (/^I click "([^"]*)" (?:on the "([^"]*)" (?:tab|for "([^"]*)"))$/)         \
   do |option, tab, extra|
 
   kaiki.get_ready
@@ -121,18 +133,20 @@ When(/^I click "([^"]*)" (?:on the "([^"]*)" (?:tab|for "([^"]*)"))$/)         \
   @sec_type = "h3"
 end
 
-# Description: This function is to click on the show/hide button for a section
-#              within a tab.
+# Description: This step clicks on the show/hide button for a section
+#	             or subsection within a tab.
 #
 # Parameters:
-#    tab        - this is the tab to look into
-#    section    - this is the section we want to show/hide
-#    subsection - this is the subsection we want to show/hide
-#    person     - this is the specific person/section we want to be under
-#    option     - this is the action we want to perform
+#    option     - This is the action we want to perform.
+#    section    - This is the section we want to show/hide.
+#    subsection - OPTIONAL - This is the subsection we want to show/hide.
+#    person     - OPTIONAL - This is the specific person/section we want to be under.
+#
+# Example:
+#	  When I click "Show" on the "Additional Charges" section
 #
 # Returns nothing.
-When(/^I click "([^"]*)"(?: on the| on) (?:"([^"]*)" section|"([^"]*)" subsection)(?:| under "([^"]*)")$/)\
+When (/^I click "([^"]*)"(?: on the| on) (?:"([^"]*)" section|"([^"]*)" subsection)(?:| under "([^"]*)")$/)\
   do |option, section, subsection, person|
 
   kaiki.get_ready
@@ -192,21 +206,22 @@ end
 
 # KFS PA004-01 (Create Requisition)
 
-# Description: This function is to click on the show/hide buttons                
-#              specificly for the Accounting Lines in PA004-05 Requisition page.
+# Description: This step clicks on the show/hide buttons specifically for the
+#              Accounting Lines in PA004-05 Requisition page.
 #
 # Parameters:
-#    tab        - this is the tab to look into
-#    section    - this is the section we want to show/hide
-#    subsection - this is the subsection we want to show/hide
-#    option     - this is the action we want to perform
+#    subsection - This is the subsection we want to show/hide.
+#    option     - This is the action we want to perform.
+#
+# Example:
+#	  When I click "Show" on the Accounting Lines under the "Item1" subsection
 #
 # Returns nothing.
-When(/^I click "([^"]*)" on Accounting Lines under the "([^"]*)" subsection$/)\
+When (/^I click "([^"]*)" on Accounting Lines under the "([^"]*)" subsection$/)\
   do |option, subsection|
 
   kaiki.get_ready
-  
+
   factory0 =
     ApproximationsFactory.transpose_build(
       "//h2[contains(text(), '#{@tab}')]/../../../.."                          \

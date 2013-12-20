@@ -1,0 +1,10 @@
+Gemfile.lock
+features/downloads/*
+features/logs/*
+features/reports/*.html
+features/screenshots/20*
+features/videos/*.mov
+features/videos/*.mpg
+features/testing.rb
+features/testing.feature
+shared_passwords.yaml

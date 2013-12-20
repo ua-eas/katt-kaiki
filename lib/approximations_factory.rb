@@ -1,16 +1,17 @@
-# Description: This class file is given the label of the textfield you wish to
-#              enter information into. It finds the xpath of the label and it's
-#              corresponding text field, and returns it to whichever method or
-#              class called ApproximationsFactory.
+# Description: The ApproximationsFactory class builds a list of
+#              "approximations" (an Array of Strings) based on the two
+#              arguments, the 'base', and the 'combinations'. This class is
+#              used within the Kaiki Framework to generate a list of possible
+#              Xpaths to use to find a specific field.
 #
 # Original Date: August 20th 2011
 
 class ApproximationsFactory
   # Public: Build a list of "approximations" (an Array of Strings) based on the
-  # two arguments, the `base`, and the `combinations`. Building the 
-  # approximations uses `base` as a format string. Really it keys in on the 
+  # two arguments, the `base`, and the `combinations`. Building the
+  # approximations uses `base` as a format string. Really it keys in on the
   # presence of `%s` in `base`. It will format the base repeatedly using the
-  # different combinations. 
+  # different combinations.
   #
   # Examples:
   #
@@ -124,7 +125,7 @@ class ApproximationsFactory
   # So now we are allowed to pass in our combinations as a visual list of _columns_, rather
   # than as a visual list of _rows_. In order to position things correctly, we need to fill
   # empty cells with `nils`.
-  
+
   def self.transpose_build(base, *combinations)
     if combinations[0].is_a? Array and combinations[0][0].is_a? Array
       combinations = combinations[0]

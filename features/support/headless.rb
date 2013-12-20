@@ -2,7 +2,6 @@
 # Description: This file sets up the browser to be headless
 #              and does iteration by build.
 # Original Date: August 20, 2011
-# NOTE- currently not in use but can be used at a later date
 #
 
 # Public: If the test is being run by Jenkins, this file will set up the

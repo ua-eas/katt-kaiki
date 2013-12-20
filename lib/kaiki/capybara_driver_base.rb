@@ -275,7 +275,7 @@ class Kaiki::CapybaraDriver::Base
   #         window manager's "maximize" capability, but rather resizes
   #         the window.  By default, it positions the window 64 pixels
   #         below and to the right of the top left corner, and sizes the
-  #         window to be 128 pixels smaller both vretically and horizontally
+  #         window to be 128 pixels smaller both vertically and horizontally
   #         than the available space.
   #
   # Parameters:
@@ -888,7 +888,10 @@ class Kaiki::CapybaraDriver::Base
   end
 
   # Public: Interacts with the most recent calendar object created on the page
-  #         and selectes the given date from it.
+  #         and selects the given date from it.
+  #
+  # Parameters:
+  #  date_option – The item being interacted with
   #
   # Returns nothing.
   def select_calender_date(date_option)
@@ -925,6 +928,10 @@ class Kaiki::CapybaraDriver::Base
 
   # Private: Adjusts the year within the current open calendar on the page.
   #
+  # Parameters:
+  #   year - The year to be set
+  #   calendar_year - the format of the year to be set
+  #
   # Returns nothing.
   def  change_year_view(year, calendar_year)
     lr = 5
@@ -941,6 +948,10 @@ class Kaiki::CapybaraDriver::Base
   private :change_year_view
 
   # Private: Adjusts the month within the current open calendar on the page.
+  #
+  # Parameters:
+  #   month – The item to be set
+  #   calendar_month – The format of the item to be set
   #
   # Returns nothing.
   def change_month_view(month, calendar_month)

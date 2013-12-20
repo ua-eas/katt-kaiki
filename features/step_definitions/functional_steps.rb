@@ -8,19 +8,22 @@
 # Description: This step set the pause time back to the default pause time.
 #
 # Returns nothing.
-When(/^I am fast$/) do
+When (/^I am fast$/) do
   kaiki.log.debug "I am fast (pause_time = #{kaiki.default_pause_time})"
   kaiki.pause_time = kaiki.default_pause_time
 end
 
 # Description: This step increases the pause time by 4 seconds by default,
-#              but can also increase the pause tiem by a specified amount.
+#              but can also increase the pause time by a specified amount.
 #
 # Parameters:
-#   how_much - either "a lot" or a specific number of seconds
+#   how_much - OPTIONAL - The number of seconds to increase the pause time by.
+#                       - OPTIONAL VALUE - "a lot" for 15 seconds.
+# Example: (taken from KC 1_proposal_new)
+#   And I slow down by a lot
 #
 # Returns nothing.
-When(/^I slow down(?:| by (.*?))$/) do |how_much|
+When (/^I slow down(?:| by (.*?))$/) do |how_much|
   if how_much == "a lot"
     kaiki.log.debug "I slow down (pause_time = #{kaiki.pause_time + 15})"
     kaiki.pause_time += 15
@@ -33,33 +36,46 @@ When(/^I slow down(?:| by (.*?))$/) do |how_much|
   end
 end
 
-# Description: Changes focus to the most recent browser window that is opened
+# Description: Will pause the test for the specified time in seconds
 #
 # Returns nothing.
-Then(/^a new browser window appears$/) do
+When (/^I sleep for "?([^"]*)"? seconds$/) do |seconds|
+  kaiki.log.debug "Sleeping for #{seconds} seconds"
+  sleep(seconds.to_i)
+end
+
+# Description: This step changes focus to the most recent browser window that
+#              has been opened by a previous step.
+#
+# Returns nothing.
+Then (/^a new browser window appears$/) do
 	kaiki.pause
 	kaiki.change_window_focus(:last)
   kaiki.switch_default_content
 end
 
-# Description: Changes focus to the browser window of your choice
+# Description: This step changes focus to the browser window of your choice.
 #
 # Parameters:
-#   win_num - number of the window you wish to switch to. (1st, 2nd, 3rd, etc.)
+#   win_num - The ordinal number of the window you wish to switch to. (1st, 2nd,
+#             3rd, etc.)
+#
+# Example: (taken from PA004-0304)
+#   Then I switch to the 2nd browser window
 #
 # Returns nothing.
-When(/^I switch to the (.*?) browser window$/) do |win_num|
+When (/^I switch to the (.*?) browser window$/) do |win_num|
 	kaiki.pause
   win_num = win_num[/\d+/]
 	kaiki.change_window_focus(win_num)
   kaiki.switch_default_content
 end
 
-# Description: Calls the close_extra_windows method. This closes all windows that are
-#              not the base window at program startup.
+# Description: Calls the close_extra_windows method. This closes all windows
+#              that are not the base window at program startup.
 #
 # Returns nothing.
-When(/^I close all extra browser windows$/) do
+When (/^I close all extra browser windows$/) do
   kaiki.close_extra_windows
 end
 
@@ -67,17 +83,20 @@ end
 # KFS PA004-0304 (Purchase Order)
 # KFS PA004-05   (Payment Request)
 # KFS PA004-06   (Vendor Credit Memo)
-# KFS CASH001-01 (Open Cash Drawer) 
+# KFS CASH001-01 (Open Cash Drawer)
 # KFS 1099001-01 (Search for Payee)
 
-# Description: This step records the appropriate number from the document to be used
-#              later on.
+# Description: This step records the appropriate number from the document to be
+#              used later on.
 #
 # Parameters:
-#   field - which number to record
+#   field - The number to be recorded.
+#
+# Example: (taken from PA004-01)
+#   When I record this "document" number in the document header
 #
 # Returns nothing.
-When(/^I record this "([^"]*)" number in the document header$/) do |field|
+When (/^I record this "([^"]*)" number in the document header$/) do |field|
   kaiki.get_ready
   doc_header_numbers = {
     "document"                    => "//th[contains(text(), 'Doc Nbr')]/following-sibling::td",
@@ -103,15 +122,18 @@ When(/^I record this "([^"]*)" number in the document header$/) do |field|
   end
 end
 
-# Description: This step finds the specified label on the page and records the text
-#              on the page in the field next to it. It is then stored in the
-#              kaiki.record() hash to be used elsewhere.
+# Description: This step finds the specified label on the page and records the
+#              text on the page or in the field next to it. It is then stored
+#              in the kaiki.record[] hash to be used elsewhere.
 #
 # Parameters:
-#   amount_label - label of the field you want to keep track of the text from
+#   amount_label - The label of the field or text to be recorded.
+#
+# Example: (taken from PA004-05)
+#   And I record the "[Vendor Remit Amount]" amount
 #
 # Returns nothing.
-When(/^I record the "(.*?)" amount$/) do |amount_label|
+When (/^I record the "(.*?)" amount$/) do |amount_label|
   @amount_label = amount_label.downcase.gsub(/\s/, '_').gsub(':', '').to_sym
   kaiki.get_ready
 # factory0 - KFS PA004-05 (Payment Request)
@@ -122,21 +144,21 @@ When(/^I record the "(.*?)" amount$/) do |amount_label|
         "descendant::%s[contains(., '#{amount_label}')]/../following-sibling::td/div",
       ['td/div'])
 # factory1 - KFS PA004-03-04 (Purchase Order)
-  factory1 =                                                                     
-    ApproximationsFactory.transpose_build(                         
+  factory1 =
+    ApproximationsFactory.transpose_build(
       "//h2[contains(., '#{@tab}')]/../../../../following-sibling::div"        \
         "/descendant::h3[contains(., '#{@section}')]/following-sibling::table" \
         "/descendant::%s[text()[contains(.,'#{amount_label}')]]/.."            \
         "/following-sibling::td",
-      ['th/label' ])  
+      ['th/label' ])
 # factory2 - KFS DV001-01 (Check ACH)
-  factory2 =                                                                    
-    ApproximationsFactory.transpose_build(                         
+  factory2 =
+    ApproximationsFactory.transpose_build(
       "//h2[contains(., '#{@tab}')]/../../../../following-sibling::div"        \
         "/descendant::h3[contains(., '#{@section}')]/following-sibling::table" \
         "/descendant::%s[contains(@title,'#{amount_label}')]",
-      ['input' ],                                                  
-      ['select'])  
+      ['input' ],
+      ['select'])
   approximate_xpath = factory0                                                 \
                     + factory1                                                 \
                     + factory2
@@ -146,17 +168,17 @@ end
 
 # KFS - PVEN002-01 (Foreign PO Vendor)
 
-# Public: This step will find the specified date in the document header and
-#         record it for later use.
+# Description: This step will find the specified date in the document header
+#              and record it for later use.
 #
 # Parameters:
-#   field - the identifying header next to the date to be recorded.
+#   field - The identifying header next to the date to be recorded.
 #
 # Example: (taken from PVEN002-01)
-#   When I record this "Created" date in the document header   
+#   When I record this "Created" date in the document header
 #
 # Returns nothing.
-When(/^I record this "(.*?)" date in the document header$/) do |field|
+When (/^I record this "(.*?)" date in the document header$/) do |field|
   kaiki.get_ready
   field_symbol = field.downcase.gsub(/\s/, '_').gsub(':', '').to_sym
   approximate_xpath = [
@@ -164,4 +186,50 @@ When(/^I record this "(.*?)" date in the document header$/) do |field|
     ]
   value = kaiki.find_approximate_element(approximate_xpath).text.strip
   kaiki.record[field_symbol] = value
+end
+
+# Description: This step is used to record the value of a field on the Vendor
+#              page. This is necessary due to the structure of the Vendor page.
+#
+# Parameters:
+#   field       - This is the name of the field to be recorded.
+#   subsection  - This is the subsection that contains the field.
+#
+# Example: (taken from @KFSI1021)
+#   When I record the "Vendor Name" vendor field in the "General Information" subsection
+#
+# Returns: nothing.
+When(/^I record the "(.*?)" vendor field in the "(.*?)" subsection$/) do |field, subsection|
+  kaiki.get_ready
+    location = vendor_page_field_location(field, subsection)
+    record = kaiki.get_approximate_field(["//#{location}"])
+    record_key = "#{field.downcase.gsub(/\s/, '_')}".to_sym
+    kaiki.record[record_key] = record
+end
+
+# Public: Takes in the original value and a hash containing options for
+#         modification and performs the modification that applies to the
+#         specific option.
+#         If :type = "digit" the {Xi} part of the original value will be
+#         replaced with a random string of digits with the length of X.
+#
+# Parameters:
+#   value   - item to be modified
+#   options - hash that contains options of modification
+#
+# Returns modified value.
+def mod_value(value, options = {})
+  length = value[/{\d+i}/][/\d+/].to_i
+  output = ""
+  case options[:type]
+  when "digit"
+    length.times do
+      digit = rand(0..9)
+      output += "#{digit}"
+    end
+  when "string"
+    #TODO: if needed in the future for string replacement
+  end
+  value = value.gsub(/{\d+i}/, output)
+  return value
 end

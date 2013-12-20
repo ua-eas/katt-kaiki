@@ -6,13 +6,14 @@
 
 # KC all features
 
-# Description: Backdoors as the given username to the Kuali system.
+# Description: This step uses the backdoor login method for the Kuali system
+#              using the given username.
 #
 # Parameters:
-#	  username - Desired user to be backdoored as
+#         username - The user to backdoor as.
 #
-# Example:
-#	  Given I backdoored as "Sandovar"
+# Example: (taken from KC 1_proposal_new)
+#   Given I backdoored as "sandovar"
 #
 # Returns nothing.
 Given(/^I (?:am backdoored|backdoor) as "([^"]*)"$/) do |username|
@@ -23,19 +24,18 @@ end
 
 # KFS all features
 
-# Description: Calls the capybara_driver method "login_as" and passes two parameters
-#         to it, user and the "type" of log in to perform.
-#         ***At the moment if this step is used by Jenkins test (or other CI
-#            environment that exports a build number) it will log out and
-#            relog using WebAuth.
-#            If the test is run elsewhere, it backdoors using the given
-#            username from the feature file.
+# Description: This step calls the capybara_driver method "login_as" and passes
+#              two parameters to it, user and the "type" of log in to perform.
+#              ***At the moment if this step is used by Jenkins test (or other
+#                 CI environment that exports a build number) it will log out
+#                 and relog using WebAuth. If the test is run elsewhere, it
+#                 backdoors using the given username from the feature file.
 #
 # Parameters:
-#	  username - Desired user to be logged in as
+#         username - The user to be logged in as.
 #
-# Example:
-#	  Given I login as "Sandovar"
+# Example: (taken from PA004-01)
+#   Given I am logged in as "kfs-test-sec1"
 #
 # Returns nothing.
 Given (/^I (?:am logged in|log in) as "(.*?)"$/) do |username|
@@ -48,8 +48,8 @@ Given (/^I (?:am logged in|log in) as "(.*?)"$/) do |username|
   # end
 end
 
-# Description: Logs in the user that kicked off the tests to WebAuth using the
-#              existing username and password
+# Description: This step logs in the user that kicked off the tests to WebAuth
+#              using the existing username and password.
 #
 # Returns nothing.
 Then(/^I log in to Web Auth$/) do
