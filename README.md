@@ -77,7 +77,7 @@ kuali system's features from your <base folder>.
     of the Kaiki framework are included with the framework. They have altered
     verbiage compared to the original features and will not work with the
     original framework.**
-
+```
 <base folder>-
               |
               |- features-
@@ -114,7 +114,7 @@ kuali system's features from your <base folder>.
               |- README.md
               |- selenium-server.jar
               |- tail_log.rb
-
+```
 
 Execution Path
 --------------
