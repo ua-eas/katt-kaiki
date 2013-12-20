@@ -37,14 +37,14 @@
   #
   # Returns nothing
   # After do |scenario|
-    # #if scenario.failed?
+    #if scenario.failed?
       # path = video_path(scenario)
       # headless.video.stop_and_save(path)
       # print "Saved video file to #{path}\n"
       # kaiki.log.debug "Stopping video for Jenkins build..."
-    # #else
-      # #headless.video.stop_and_discard
-    # #end
+    #else
+      #headless.video.stop_and_discard
+    #end
   # end
 
   # Public: Defines where the video is being saved.

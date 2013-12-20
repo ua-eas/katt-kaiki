@@ -1,23 +1,35 @@
-# Description: A file that grabs login information and starts and stops
-#              video recording to a file path;
-#              also sets up a screenshot on fail.
+# Description: This file contains all of the information pertaining to the
+#              runtime environment of the application. Things such as
+#              the kuali application, the application environment, and the
+#              user's username and password are defined here.
+#              The World object for the entire cucumber test is created here
+#              using the KaikiWorld class.
 #
 # Original Date: August 20, 2011
 
-require File.join(File.dirname(__FILE__), '..', '..', 'lib', 'kaiki')
+$LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', '..', 'lib'))
+# require File.join(File.dirname(__FILE__), '..', '..', 'lib', 'kaiki')
 #require File.join(File.dirname(__FILE__), 'english_numbers')
 require 'rspec'
 require 'headless'
 require 'highline/import'
 require 'active_support/inflector'
 require 'yaml'
+require 'require_all'
+
+require_all 'lib'
 
 STDOUT.sync = true
 
-# Public: This method sets up the environment for the test.
+# Public: This class sets up the environment for the test. It asks for your
+#         NETID username and password if they aren't already preset, along
+#         with the application and environment you wish to run your tests in.
+#         It then creates an instance of the CapybaraDriver for the specified
+#         application and kicks off the test.
 #
 # Returns nothing
 class KaikiWorld
+
   username     = ENV["KAIKI_NETID"]
   password     = ENV["KAIKI_PASSWORD"]
   application  = ENV["KAIKI_APP"]
@@ -25,10 +37,8 @@ class KaikiWorld
 
   env.split(',') if env
 
-
   if password.nil? && username
-    password = Kaiki::CapybaraDriver::Base.shared_password_for username     \
-      if password.nil? && username
+    password = Kaiki::CapybaraDriver::Base.shared_password_for(username)
   end
   username    ||=       ask("NetID: ")           { |q| q.echo = true }
   password    ||=       ask("Password: ")        { |q| q.echo = "*" }
@@ -51,8 +61,8 @@ class KaikiWorld
   firefox_path    = ENV['KAIKI_FIREFOX_PATH']
 
   all_apps = JSON.parse(IO.readlines('apps.json').map{ |l| l.gsub(/[\r\n]/, '') }.join(""))
-  raise "InvalidApplication" unless all_apps.key?(application)
   apps = all_apps.select { |k,v| application.eql?(k) }
+  raise "InvalidApplication" unless all_apps.key?(application)
   application = apps[application.downcase]['code']
 
   options = {:envs => env, :application => application,
@@ -70,17 +80,63 @@ class KaikiWorld
   @@kaiki.login_via_webauth_with(username, password)
 
 
-  @@kaiki.record[:document_number] = ENV['KAIKI_DOC_NUMBER']                  \
-                                     if ENV['KAIKI_DOC_NUMBER']
-  @@kaiki.record[:document_numbers] = ENV['KAIKI_DOC_NUMBERS'].split(',')     \
+  @@kaiki.record[:document_number] = ENV['KAIKI_DOC_NUMBER']                 \
+                                      if ENV['KAIKI_DOC_NUMBER']
+  @@kaiki.record[:document_numbers] = ENV['KAIKI_DOC_NUMBERS'].split(',')    \
                                       if ENV['KAIKI_DOC_NUMBERS']
+
+  @@search_page = Kaiki::Search_Page::Base.new
 
   at_exit do
     @@kaiki.headless.destroy if is_headless
   end
 
+  # Public: Gives subclasses access to the class variable @@kaiki
+  #
+  # Returns nothing.
   def kaiki
     @@kaiki
+  end
+
+  # Public: Gives access to @@kaiki for other classes that are not subclasses of
+  #         KaikiWorld
+  #
+  # Returns nothing.
+  def self.kaiki
+    @@kaiki
+  end
+
+  # Public: Gives subclasses access to the class variable @@current_page
+  #
+  # Returns nothing.
+  def current_page
+    @@current_page
+  end
+
+  # Public: Sets the class variable @@current_page for use by KaikiWorld's
+  #         subclasses.
+  #
+  # Parameters:
+  #   page - page to be set to @@current_page
+  #
+  # Returns nothing.
+  def self.set_current_page(page)
+    @@current_page = page
+  end
+
+  # Public: Gives subclasses access to the class variable @@search_page
+  #
+  # Returns nothing.
+  def search_page
+    @@search_page
+  end
+
+  # Public: Gives access to @@search_page for other classes that are not
+  #         subclasses of KaikiWorld
+  #
+  # Returns nothing.
+  def self.search_page
+    @@search_page
   end
 end
 
@@ -176,13 +232,6 @@ end
 #
 # Returns file path of video
 def video_path(scenario)
-  #f=File.new('tmp.txt', 'w')
-  #f.puts scenario.instance_variables.sort
-  #f.puts scenario.methods.sort
-  #f.puts scenario.file_colon_line
-  #f.close
-  #"features/videos/#{scenario.file_colon_line.split(':')[0]}.mov"
-  #basename = File.basename(scenario.file_colon_line.split(':')[0])
   basename = File.basename(scenario.file_colon_line)
   if basename =~ /^(.+):(\d+)$/
     basename = "#{$1}_%04d" % $2.to_i

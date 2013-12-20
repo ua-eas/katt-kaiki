@@ -1,3 +1,4 @@
+#
 # Description: This is the Rakefile that is used to run the features from Jenkins.
 #			         This sets environment variables and starts a video.
 #              This can run all features, a certain feature, a certain
@@ -20,6 +21,7 @@ require 'highline/import'
 
 def set_env_defaults
   ENV['KAIKI_IS_HEADLESS'] = "true" if ENV['KAIKI_IS_HEADLESS'].nil?
+  ENV['KAIKI_NETID'] = "uartest"    if ENV['KAIKI_NETID'].nil?
   ENV['KAIKI_ENV'] = "cdf"          if ENV['KAIKI_ENV'].nil?
 end
 
@@ -28,18 +30,20 @@ end
 #         to the tags contained within said array.
 #
 # Parameters:
-#   kc_tags   - name of the array holding the tags for kuali coeus test
-#               senarios that need to be run in order
+#   rows - rows of the array
+#   kc   - name of the tags for kuali coeus test senarios that need to be
+#          run in order
+#
 #
 # Returns nothing.
 task :KC do
-  ENV['KAIKI_NETID'] = "uartest" if ENV['KAIKI_NETID'].nil?
-  ENV['KAIKI_APP'] = "kc"        if ENV['KAIKI_APP'].nil?
+  ENV['KAIKI_APP'] = "kc" if ENV['KAIKI_APP'].nil?
   set_env_defaults
+  File.basename("katt-kaiki-dev-financial/features/support/test_tags.rb")
   kc_tags.each do |i|
     i.each do |j|
       Cucumber::Rake::Task.new(:KC, "Run all tests in required order.") do |t|
-        t.cucumber_opts = "--tags #{j}"
+        t.cucumber_opts = "--tags #{j} --format pretty --format html --out ./features/reports/#{tag_name}.html"
       end
     end
   end
@@ -50,20 +54,20 @@ end
 #         to the tags contained within said array.
 #
 # Parameters:
-#   kfs_tags   - name of the array holding the tags for kuali financial system
-#                test senarios that need to be run in order
+#   rows - rows of the array
+#   kc   - name of the tags for kuali financial system test senarios that need
+#          to be run in order
+#
 #
 # Returns nothing.
 task :KFS do
-  ENV['KAIKI_NETID'] = "kfs-test-sec9" if ENV['KAIKI_NETID'].nil?
-  ENV['KAIKI_APP'] = "kfs"             if ENV['KAIKI_APP'].nil?
+  ENV['KAIKI_APP'] = "kfs" if ENV['KAIKI_APP'].nil?
   set_env_defaults
-  kfs_tags.each do |day, i|
+  File.basename("katt-kaiki-dev-financial/features/support/test_tags.rb")
+  kfs_tags.each do |i|
     i.each do |j|
-      j.each do |k|
-        Cucumber::Rake::Task.new(:KFS, "Run all tests in required order.") do |t|
-          t.cucumber_opts = "--tags #{k}"
-        end
+      Cucumber::Rake::Task.new(:KFS, "Run all tests in required order.") do |t|
+        t.cucumber_opts = "--tags #{j} --format pretty --format html --out ./features/reports/#{tag_name}.html"
       end
     end
   end
@@ -72,9 +76,8 @@ end
 
 #Public: General Tag for features that dont need to run in order
 #
-# Parameters:
-#   t    - task name
-#   args - tag names for the tests to be run
+# Parameters
+#
 #
 # Returns nothing.
 task :by_tag, :tag do |t, args|
@@ -83,7 +86,7 @@ task :by_tag, :tag do |t, args|
   tag_name = args[:tag]
   Cucumber::Rake::Task.new(:by_tag) do |t|
     set_env_defaults
-    t.cucumber_opts = "--tags #{tag_name}"
+    t.cucumber_opts = "--tags #{tag_name} --format pretty --format html --out ./features/reports/#{tag_name}.html"
   end
 end
 

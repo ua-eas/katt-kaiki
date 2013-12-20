@@ -5,6 +5,12 @@
 #
 # Original Date: August 20th 2011
 
+module Kaiki
+end
+
+module Kaiki::CapybaraDriver
+end
+
 class Kaiki::CapybaraDriver::KC < Kaiki::CapybaraDriver::Base
 
   # Public: Desired url for the browser to navigate to.

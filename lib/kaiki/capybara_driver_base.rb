@@ -40,7 +40,7 @@ class Kaiki::CapybaraDriver::Base
   DEFAULT_DIMENSIONS = "1600x900x24"
 
   # The file that contains shared passwords for test users.
-  SHARED_PASSWORDS_FILE = "shared_passwords.yaml"
+  SHARED_PASSWORDS_FILE = "/home/vagrant/code/shared_passwords.yaml"
 
   # Public: Gets/Sets the driver used to power the browser. Gets/Sets whether
   #         the browser is headless. Gets/Sets the overridden puts method.
@@ -88,7 +88,7 @@ class Kaiki::CapybaraDriver::Base
     end
 
     if ENV['BUILD_NUMBER']
-      @default_pause_time  = 5
+      @default_pause_time  = 2
     else
       @default_pause_time  = 0.5
     end
@@ -108,7 +108,7 @@ class Kaiki::CapybaraDriver::Base
     @log = Logger.new 'debug_log'
     file_outputter = FileOutputter.new('file', :filename => File.join(Dir::pwd,\
                      'features', 'logs', "#{File.basename(@scenario.file)}"    \
-                     "_#{@scenario.name.gsub(/\s/,'-').gsub('/', '')}_"        \
+                     "_#{@scenario.name.gsub(/\s/,'-')}_"                      \
                      "#{Time.now.strftime("%Y.%m.%d-%H.%M.%S")}"))
     @log.outputters = file_outputter
     @log.level = DEBUG
@@ -167,7 +167,7 @@ class Kaiki::CapybaraDriver::Base
   #
   # Returns nothing.
   def login_as(username, method=nil)
-    if method.eql?(:backdoor)
+    if method == :backdoor
       print "Backdooring as #{username}\n"
       backdoor_as(username)
     else
@@ -230,10 +230,10 @@ class Kaiki::CapybaraDriver::Base
       status = find(:id, 'status')
       if has_content? "You entered an invalid NetID or password"
         raise WebauthAuthenticationError.new
-        page.execute_script("window.close()")
+        page.execute_script("window.close();")
       elsif has_content? "Password is a required field"
         raise WebauthAuthenticationError.new
-        page.execute_script("window.close()")
+        page.execute_script("window.close();")
       end
     rescue Selenium::WebDriver::Error::NoSuchElementError,
            Capybara::ElementNotFound
@@ -275,7 +275,7 @@ class Kaiki::CapybaraDriver::Base
   #         window manager's "maximize" capability, but rather resizes
   #         the window.  By default, it positions the window 64 pixels
   #         below and to the right of the top left corner, and sizes the
-  #         window to be 128 pixels smaller both vertically and horizontally
+  #         window to be 128 pixels smaller both vretically and horizontally
   #         than the available space.
   #
   # Parameters:
@@ -423,9 +423,9 @@ class Kaiki::CapybaraDriver::Base
   #   name - Name of the tab to toggle.
   #
   # Returns nothing.
-  def show_tab(name)
-    highlight(:xpath, "//*[contains(@title, 'open #{name}')]")
-    find(:xpath, "//input[contains(@title, 'open #{name}')]").click
+  def show_tab(xpath)
+    highlight(:xpath, xpath)
+    find(:xpath, xpath).click
   end
 
   # Public: Hide a visual vertical tab inside a document's layout.
@@ -437,9 +437,9 @@ class Kaiki::CapybaraDriver::Base
   #   name - Name of the tab to toggle.
   #
   # Returns nothing.
-  def hide_tab(name)
-    highlight(:xpath, "//*[contains(@title, 'close #{name}')]")
-    find(:xpath, "//input[contains(@title, 'close #{name}')]").click
+  def hide_tab(xpath)
+    highlight(:xpath, xpath)
+    find(:xpath, xpath).click
   end
 
   # Public: Deselect all `<option>s` within a `<select>`, suppressing any
@@ -506,7 +506,7 @@ class Kaiki::CapybaraDriver::Base
     raise Capybara::ElementNotFound
   end
 
-  # Private: Check a field, selecting by xpath.
+  # Public: Check a field, selecting by xpath.
   #
   # Parameters:
   #  xpath - Xpath of the item you're looking for.
@@ -518,7 +518,7 @@ class Kaiki::CapybaraDriver::Base
   end
   private :check_by_xpath
 
-  # Private: Uncheck a field, selecting by xpath.
+  # Public: Uncheck a field, selecting by xpath.
   #
   # Parameters:
   #   xpath - Xpath of the item you're looking for.
@@ -566,7 +566,7 @@ class Kaiki::CapybaraDriver::Base
     raise Capybara::ElementNotFound
   end
 
-  # Private: Click a link or button, selecting by xpath.
+  # Public: Click a link or button, selecting by xpath.
   #
   # Parameters:
   #   xpath - Xpath of the item you're looking for.
@@ -624,8 +624,6 @@ class Kaiki::CapybaraDriver::Base
         rescue Capybara::ElementNotFound
           return element.find(:xpath, "option[@value='#{@element[:value]}']").text.strip
         end
-      elsif element[:type] == "radio"
-        return element[:checked]
       else
         return element.text.strip
       end
@@ -659,7 +657,7 @@ class Kaiki::CapybaraDriver::Base
     raise Capybara::ElementNotFound
   end
 
-  # Private: Takes in the id of a selector, i.e. input, text area, select, etc.,
+  # Public: Takes in the id of a selector, i.e. input, text area, select, etc.,
   #         and inputs the value to this field.
   #
   # Parameters:
@@ -705,7 +703,7 @@ class Kaiki::CapybaraDriver::Base
         end
       else
         @log.warn "  set_field: locator (#{locator.inspect}) "                 \
-                  "has a \" in it, so... I couldn't check if the input was "   \
+                  "has a \" in it, so... I couldn't check if the input was " \
                   "empty. Good luck!"
       end
 
@@ -714,22 +712,19 @@ class Kaiki::CapybaraDriver::Base
       @log.debug "    set_field: node_name is #{node_name.inspect}"
       @log.debug "    set_field: locator is #{locator.inspect}"
       if not locator['"']
-        element_contents = get_field(locator)
-        unless element_contents.eql?("")
-          unless element_contents.eql?(true) || element_contents.nil?
-            @driver.execute_script("return document.evaluate(\"#{locator}\","  \
-                                   "document, null,"                           \
-                                   "XPathResult.FIRST_ORDERED_NODE_TYPE,"      \
-                                   "null).singleNodeValue.value = '';", nil)
-          end
+        unless get_field(locator).empty?
+          @driver.execute_script("return document.evaluate(\"#{locator}\","    \
+                                 "document, null,"                             \
+                                 "XPathResult.FIRST_ORDERED_NODE_TYPE,"        \
+                                 "null).singleNodeValue.value = '';", nil)
         end
       else
         @log.warn "  set_field: locator (#{locator.inspect}) "                 \
-                  "has a \" in it, so... I couldn't check if the input was "   \
+                  "has a \" in it, so... I couldn't check if the input was " \
                   "empty. Good luck!"
       end
       element = @driver.find_element(:xpath, locator)
-
+      #print "#{element[:type]}\n"
       if element[:type] == "radio"
         element.click
       else
@@ -767,8 +762,8 @@ class Kaiki::CapybaraDriver::Base
   end
 
   # Public: Takes in an array of xpaths (such as that provided by the
-  #           ApproximationFactory class and returns the first element found that
-  #           matches in the given array.
+  #         ApproximationFactory class) and returns the first element found that
+  #         matches in the given array.
   #
   # Parameters:
   #   selectors - The array of xpaths to be searched.
@@ -849,7 +844,7 @@ class Kaiki::CapybaraDriver::Base
     day.downcase!
     if day.include?("today")
       date = Date.today.strftime("%m/%d/%Y")
-      record[:today] = date
+      @record[:today] = date
     else
       raise NotImplementedError
     end
@@ -888,10 +883,7 @@ class Kaiki::CapybaraDriver::Base
   end
 
   # Public: Interacts with the most recent calendar object created on the page
-  #         and selects the given date from it.
-  #
-  # Parameters:
-  #  date_option – The item being interacted with
+  #         and selectes the given date from it.
   #
   # Returns nothing.
   def select_calender_date(date_option)
@@ -928,10 +920,6 @@ class Kaiki::CapybaraDriver::Base
 
   # Private: Adjusts the year within the current open calendar on the page.
   #
-  # Parameters:
-  #   year - The year to be set
-  #   calendar_year - the format of the year to be set
-  #
   # Returns nothing.
   def  change_year_view(year, calendar_year)
     lr = 5
@@ -948,10 +936,6 @@ class Kaiki::CapybaraDriver::Base
   private :change_year_view
 
   # Private: Adjusts the month within the current open calendar on the page.
-  #
-  # Parameters:
-  #   month – The item to be set
-  #   calendar_month – The format of the item to be set
   #
   # Returns nothing.
   def change_month_view(month, calendar_month)

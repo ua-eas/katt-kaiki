@@ -4,16 +4,15 @@
 #
 # Original Date: August 20, 2011
 
-# KC all features
+# KC  all features
 
-# Description: This step uses the backdoor login method for the Kuali system
-#              using the given username.
+# Description: Backdoors as the given username to the Kuali system.
 #
 # Parameters:
-#         username - The user to backdoor as.
+#	  username - Desired user to be backdoored as
 #
-# Example: (taken from KC 1_proposal_new)
-#   Given I backdoored as "sandovar"
+# Example:
+#	  Given I backdoored as "Sandovar"
 #
 # Returns nothing.
 Given(/^I (?:am backdoored|backdoor) as "([^"]*)"$/) do |username|
@@ -24,32 +23,34 @@ end
 
 # KFS all features
 
-# Description: This step calls the capybara_driver method "login_as" and passes
-#              two parameters to it, user and the "type" of log in to perform.
-#              ***At the moment if this step is used by Jenkins test (or other
-#                 CI environment that exports a build number) it will log out
-#                 and relog using WebAuth. If the test is run elsewhere, it
-#                 backdoors using the given username from the feature file.
+# Description: Calls the capybara_driver method "login_as" and passes two parameters
+#         to it, user and the "type" of log in to perform.
+#         ***At the moment if this step is used by Jenkins test (or other CI
+#            environment that exports a build number) it will log out and
+#            relog using WebAuth.
+#            If the test is run elsewhere, it backdoors using the given
+#            username from the feature file.
 #
 # Parameters:
-#         username - The user to be logged in as.
+#	  username - Desired user to be logged in as
 #
-# Example: (taken from PA004-01)
-#   Given I am logged in as "kfs-test-sec1"
+# Example:
+#	  Given I login as "Sandovar"
 #
 # Returns nothing.
 Given (/^I (?:am logged in|log in) as "(.*?)"$/) do |username|
   kaiki.pause
   kaiki.switch_default_content
-  # if ENV['BUILD_NUMBER'].nil?
+  if ENV['BUILD_NUMBER'].nil?
     kaiki.login_as(username, :backdoor)
-  # else
-    # kaiki.login_as(username)
-  # end
+  else
+    kaiki.login_as(username)
+  end
+
 end
 
-# Description: This step logs in the user that kicked off the tests to WebAuth
-#              using the existing username and password.
+# Description: Logs in the user that kicked off the tests to WebAuth using the
+#              existing username and password
 #
 # Returns nothing.
 Then(/^I log in to Web Auth$/) do

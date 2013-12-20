@@ -68,6 +68,92 @@ sudo apt-get install ffmpeg
 sudo apt-get install xvfb
 ```
 
+File Structure
+--------------
+This is how the file structure needs to be set up to properly run any of the
+kuali system's features from your <base folder>.
+
+  **Notice: The features that currently work in the page object implementation
+    of the Kaiki framework are included with the framework. They have altered
+    verbiage compared to the original features and will not work with the
+    original framework.**
+
+<base folder>-
+              |
+              |- features-
+              |           |- downloads
+              |           |- kuali-coeus            (KC feature files)
+              |           |- kuali-financial-system (KFS feature files)
+              |           |- logs
+              |           |- reports
+              |           |- screenshots
+              |           |- step_definitions
+              |           |- support
+              |           |- videos
+              |
+              |- lib-
+              |      |- kaiki
+              |      |- kaiki_pages-
+              |      |              |- kc_pages  (KC page class files)
+              |      |              |- kfs_pages (KFS page class files)
+              |      |
+              |      |- approximations_factory.rb
+              |      |- ffmpeg_factory.rb
+              |      |- file.rb
+              |      |- kaiki.rb
+              |      |- page_factory.rb
+              |      |- string.rb
+              |
+              |- apps.json
+              |- ChangeLog.txt
+              |- cuke-runner.sh
+              |- envs.json
+              |- Gemfile
+              |- LICENSE.md
+              |- Rakefile
+              |- README.md
+              |- selenium-server.jar
+              |- tail_log.rb
+
+
+Execution Path
+--------------
+There are multiple ways to kick off the cucumber tests using this framework,
+but they will all follow the same steps to actually execute the test.
+
+The easiest way to kick off a test is to run a simple command such as:
+```cucumber
+cucumber --tags <feature or scenario tag>
+```
+
+But other commands such as:
+```cucumber
+cucumber features/kuali-coeus/<test>.rb -r features
+```
+will work just as well.
+
+After the test is kicked off, these steps are followed:
+* env.rb is executed (in /features/support/)
+  - Checks apps.json to see if the user's chosen application is valid.
+  - Creates an instance of the Capybara driver (Kaiki::CapybaraDriver::Base)
+    corresponding to the user's chosen application.
+  - Creates an instance of the Search Page object (Kaiki::Search_Page::Base)
+    for use with all applications.
+  - Lastly the KaikiWorld object is created to actually get the ball rolling.
+* Before hooks in env.rb are executed
+  - recorded_numbers.yaml is read in
+  - video is started for headless tests that are not a Batch test
+* Steps are then executed in order according to cucumber's rules
+* When the step `When I am on the <page_name> page` is run, the create_page
+  method in PageFactory is executed.
+  This creates an instance of the object that matches the specified <page_name>
+  from the feature file.
+  **i.e. `When I am on the "Proposal" page` will create an instance of
+    the Proposal class**
+* Each step definition will either make a call to the current_page object or
+  search_page object; very few of them do any of the "grunt" work themselves,
+  all of the heavy code is held within the object classes.
+
 
 Contributing
 ------------
@@ -119,7 +205,6 @@ as the original log in. (See ff-13.0.1_env)
 * Look at `features/support/env.rb` for various environment variables that
   can be used.
 * `envs.json` is a way to store environment names and use them in tests.
-* `apps.json` is a way to store application names and use them in tests.
   A lot of this is hardcoded U of A stuff.
 * On Linux systems, the xvfb package allows the Headless gem to do its thing.
 
