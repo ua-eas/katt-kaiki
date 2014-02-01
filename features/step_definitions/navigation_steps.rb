@@ -390,7 +390,7 @@ end
 #   When I click the "Yes" button if the "" message is displayed
 #
 # Returns nothing.
-When (/^I click the "(.*?)" button if the "(.*?)" message is displayed$/)   \
+When (/^I click the "(.*?)" button if the "(.*?)" message is displayed$/)   
   do |button, message|
 
   kaiki.get_ready
@@ -399,6 +399,8 @@ When (/^I click the "(.*?)" button if the "(.*?)" message is displayed$/)   \
     steps %{
       And I click the "#{button}" button
     }
+  end  
+end
 
 # Public: This step set the pause time back to 0.5 seconds.
 #
