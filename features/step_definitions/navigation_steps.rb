@@ -390,8 +390,7 @@ end
 #   When I click the "Yes" button if the "" message is displayed
 #
 # Returns nothing.
-When (/^I click the "(.*?)" button if the "(.*?)" message is displayed$/)   
-  do |button, message|
+When (/^I click the "(.*?)" button if the "(.*?)" message is displayed$/) do |button, message|
 
   kaiki.get_ready
   element = kaiki.find(:xpath, "//*[text()[contains(., '#{message}')]]")
