@@ -1,6 +1,7 @@
 # Description: A file that grabs login information and starts and stops
 #              video recording to a file path;
 #              also sets up a screenshot on fail.
+#
 # Original Date: August 20, 2011
 
 require File.join(File.dirname(__FILE__), '..', '..', 'lib', 'kaiki')
@@ -17,50 +18,61 @@ STDOUT.sync = true
 #
 # Returns nothing
 class KaikiWorld
-  username   = ENV["KAIKI_NETID"]
-  password   = ENV["KAIKI_PASSWORD"]
-  env        = ENV["KAIKI_ENV"]
+  username     = ENV["KAIKI_NETID"]
+  password     = ENV["KAIKI_PASSWORD"]
+  application  = ENV["KAIKI_APP"]
+  env          = ENV["KAIKI_ENV"]
+
   env.split(',') if env
 
-#   SHARED_PASSWORDS_FILE = \
-#     '/home/vagrant/code/katt-kaiki/features/support/shared_passwords.yml'
-# #
-#   if File.exist? SHARED_PASSWORDS_FILE
-#    shared_passwords = YAML::load_file(File.join(File.dirname( \
-#      File.expand_path(__FILE__)), 'shared_passwords.yml'))
-#    # #print shared_passwords
-#    if password.nil? and username and shared_passwords.keys.any? { |user|    \
-#      username[user] }
-#      user_group = shared_passwords.keys.select { |user| username[user] }[0]
-#      password = shared_passwords[user_group]
-#    end
-#   end
+
   if password.nil? && username
     password = Kaiki::CapybaraDriver::Base.shared_password_for username     \
       if password.nil? && username
   end
-  username ||=       ask("NetID:  ")           { |q| q.echo = true }
-  password ||=       ask("Password:  ")        { |q| q.echo = "*" }
-  env      ||= [] << ask("Environment/URL:  ") { |q| q.echo = true;           \
-                                                     q.default='cdf' }
+  username    ||=       ask("NetID: ")           { |q| q.echo = true }
+  password    ||=       ask("Password: ")        { |q| q.echo = "*" }
+  application ||=       ask("Application: ")     { |q| q.echo = true;          \
+                                                    q.default = 'kfs' }
+  env         ||=       ask("Environment/URL: ") { |q| q.echo = true;          \
+                                                    q.default='cdf' }
 
   is_headless = true
   if ENV['KAIKI_IS_HEADLESS']
     is_headless = ENV['KAIKI_IS_HEADLESS'] =~ /1|true|yes/i
   end
 
+  highlight_on = true
+  if ENV['KAIKI_HIGHLIGHT']
+    highlight_on = ENV['KAIKI_HIGHLIGHT'] =~ /1|true|yes/i
+  end
+
   firefox_profile = ENV['KAIKI_FIREFOX_PROFILE']
   firefox_path    = ENV['KAIKI_FIREFOX_PATH']
 
-#  print "BUILD_NUMBER: #{ENV['BUILD_NUMBER']}\n"
+  all_apps = JSON.parse(IO.readlines('apps.json').map{ |l| l.gsub(/[\r\n]/, '') }.join(""))
+  raise "InvalidApplication" unless all_apps.key?(application)
+  apps = all_apps.select { |k,v| application.eql?(k) }
+  application = apps[application.downcase]['code']
 
-  @@kaiki = Kaiki::CapybaraDriver::Base.new(username, password, :envs => env, \
-                                            :is_headless => is_headless,      \
-                                            :firefox_profile => firefox_profile,\
-                                            :firefox_path => firefox_path)
+  options = {:envs => env, :application => application,
+             :is_headless => is_headless, :highlight_on => highlight_on,
+             :firefox_profile => firefox_profile, :firefox_path => firefox_path}
+
+  app = "Kaiki::CapybaraDriver::#{application.upcase}".split('::').inject(Object)\
+    { |o,c| o.const_get c }
+
+  @@kaiki = app.new(username, password, options)
+
+#OLD:  @@kaiki = Kaiki::CapybaraDriver::Base.new(username, password, :envs => env, \
+#                                            :is_headless => is_headless,      \
+#                                            :firefox_profile => firefox_profile,\
+#                                            :firefox_path => firefox_path)
+
   @@kaiki.mk_screenshot_dir(File.join(Dir::pwd, 'features', 'screenshots'))
   @@kaiki.start_session
   @@kaiki.maximize_ish
+  @@kaiki.find(:xpath, "//a[@title='Main Menu']").click if application.eql?("kfs")
   @@kaiki.login_via_webauth_with(username, password)
 
 
@@ -85,15 +97,53 @@ World do
   KaikiWorld.new
 end
 
-# Public: Takes a screenshot of the browser window on test failure.
+# Public: First sets the instance variable @scenario for the CapybaraDriver,
+#         then creates the logger for logging debug lines. It then starts
+#         video capture if the browser is headless. Lastly it loads recorded
+#         numbers from a specified text file.
+#
+# Returns nothing
+Before do |scenario|
+  kaiki.scenario = scenario
+  kaiki.setup_logger
+
+  scenario_file_name = File.basename(scenario.file)
+  if not scenario_file_name.include?('BAT') and kaiki.is_headless
+    kaiki.log.debug "Starting video..."
+    kaiki.headless.video.start_capture
+  end
+
+  @record_file = "features/support/recorded_numbers.yaml"
+  kaiki.record = YAML.load_file(@record_file) if File::exists? @record_file
+  kaiki.record = {} if kaiki.record.eql?(false)
+
+  kaiki.get_date("today")
+  kaiki.puts_method = method(:puts)
+end
+
+# Public: Closes the current driver in preparation for the next scenario.
+#
+# Return nothing.
+After do |scenario|
+  Capybara.current_session.driver.reset!
+  kaiki.visit(kaiki.base_path)
+end
+
+# Public: Writes recorded numbers to a text file, as well takes a screenshot of
+#         the browser window on test failure.
 #
 # Parameters:
 #	  scenario - set of tests or tasks.
 #
 # Returns nothing
 After do |scenario|
+  record_file = File.open(@record_file, "w")
+  record_file.puts kaiki.record.to_yaml
+  record_file.close
   if scenario.failed?
-    screenshot_file = scenario.file_colon_line.file_safe + '_' +              \
+    screenshot_file = File.basename(scenario.file_colon_line) + '_' +          \
+                      scenario.name.gsub(/\s/, '-').gsub('/', '').gsub(':', '.')\
+                      + '_' +      \
                       Time.now.strftime("%Y%m%d%H%M%S")
     kaiki.screenshot(screenshot_file)
   end
@@ -125,9 +175,11 @@ end
 After do |scenario|
   #if scenario.failed?
     path = video_path(scenario)
-    kaiki.headless.video.stop_and_save(path) if kaiki.is_headless
-    print "Saved video file to #{path}\n" if kaiki.is_headless
-    kaiki.log.debug "Stopping video..."
+    if kaiki.is_headless
+      kaiki.headless.video.stop_and_save(path)
+      print "Saved video file to #{path}\n"
+      kaiki.log.debug "Stopping video..."
+    end
     #else
     #kaiki.headless.video.stop_and_discard
   #end
@@ -147,9 +199,10 @@ def video_path(scenario)
   #f.close
   #"features/videos/#{scenario.file_colon_line.split(':')[0]}.mov"
   #basename = File.basename(scenario.file_colon_line.split(':')[0])
-  basename = File.basename(scenario.file_colon_line)
-  if basename =~ /^(.+):(\d+)$/
-    basename = "#{$1}__%04d" % $2.to_i
-  end
-  File.join(Dir::pwd, 'features', 'videos', basename+".mov")
+   basename = File.basename(scenario.file_colon_line)
+   if basename =~ /^(.+):(\d+)$/
+     basename = "#{$1}_%04d" % $2.to_i
+   end
+   basename += "_#{scenario.name.gsub(/\s/,'-').gsub('/', '')}"
+   File.join(Dir::pwd, 'features', 'videos', basename+".mov")
 end

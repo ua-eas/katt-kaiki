@@ -1,6 +1,7 @@
 {
   "cdf": {
-    "code":             "cdf"
+    "code":             "cdf",
+    "host":             "uaz-ka-a10.mosaic.arizona.edu"
   },
   "cfg": {
     "code":             "cfg"
@@ -9,7 +10,8 @@
     "code":             "cnv"
   },
   "dev": {
-    "code":             "dev"
+    "code":             "dev",
+    "host":             "uaz-kf-a02.mosaic.arizona.edu"
   },
   "dmo": {
     "code":             "dmo"
