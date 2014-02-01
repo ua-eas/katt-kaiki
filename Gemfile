@@ -9,7 +9,7 @@
 source 'http://rubygems.org'
 
 gem 'rails', '3.2.0'
-gem "net-ssh", "~> 2.4.0"
+gem "net-ssh", "~> 2.5.1"
 gem 'actionpack'
 gem 'capybara', '< 2.0'
 gem 'chunky_png'
