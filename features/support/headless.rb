@@ -11,16 +11,20 @@
 #	  display - which desktop environment to create the display on.
 #
 # Returns nothing
-# unless ENV['BUILD_NUMBER'].nil?
-  # require 'headless'
+#unless ENV['BUILD_NUMBER'].nil?
+#  require 'headless'
 
   #headless = Headless.new(:display => SERVER_PORT)
-  # headless = Headless.new(:display => 97)
-  # headless.start
-#
-  # at_exit do
-    # headless.destroy
-  # end
+#  display = ENV['BUILD_NUMBER']
+#  headless = Headless.new(:display => display)
+#  headless.start
+  
+#  print "Created Headless Display-headless.rb\n"
+
+#  at_exit do
+#    headless.destroy
+#  end
+
 
   # Public: Creates a video of the headless browser, before each scenario.
   #
@@ -53,11 +57,11 @@
   #   scenario - current running test.
   #
   # Returns file path of video
-  # def video_path(scenario)
-    # basename = File.basename(scenario.file_colon_line)
-    # if basename =~ /^(.+):(\d+)$/
-      # basename = "#{$1}__%04d" % $2.to_i
-    # end
-    # File.join(Dir::pwd, 'features', 'videos', basename+".mov")
-  # end
-# end
+#  def video_path(scenario)
+#    basename = File.basename(scenario.file_colon_line)
+#    if basename =~ /^(.+):(\d+)$/
+#      basename = "#{$1}__%04d" % $2.to_i
+#    end
+#    File.join(Dir::pwd, 'features', 'videos', basename+".mov")
+#  end
+#end

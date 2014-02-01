@@ -63,6 +63,12 @@ class KaikiWorld
     { |o,c| o.const_get c }
 
   @@kaiki = app.new(username, password, options)
+
+#OLD:  @@kaiki = Kaiki::CapybaraDriver::Base.new(username, password, :envs => env, \
+#                                            :is_headless => is_headless,      \
+#                                            :firefox_profile => firefox_profile,\
+#                                            :firefox_path => firefox_path)
+
   @@kaiki.mk_screenshot_dir(File.join(Dir::pwd, 'features', 'screenshots'))
   @@kaiki.start_session
   @@kaiki.maximize_ish
@@ -150,6 +156,16 @@ After do |scenario|
   end
 end
 
+
+# Public: Creates a video of the headless browser, before each scenario.
+#
+# Returns nothing
+Before do
+  kaiki.log.debug "Starting video..."
+  kaiki.headless.video.start_capture if kaiki.is_headless
+  kaiki.puts_method = method(:puts)
+end
+
 # Public: Stops video recording after each scenario.
 #
 # Parameters:
@@ -183,10 +199,10 @@ def video_path(scenario)
   #f.close
   #"features/videos/#{scenario.file_colon_line.split(':')[0]}.mov"
   #basename = File.basename(scenario.file_colon_line.split(':')[0])
-  basename = File.basename(scenario.file_colon_line)
-  if basename =~ /^(.+):(\d+)$/
-    basename = "#{$1}_%04d" % $2.to_i
-  end
-  basename += "_#{scenario.name.gsub(/\s/,'-').gsub('/', '')}"
-  File.join(Dir::pwd, 'features', 'videos', basename+".mov")
+   basename = File.basename(scenario.file_colon_line)
+   if basename =~ /^(.+):(\d+)$/
+     basename = "#{$1}_%04d" % $2.to_i
+   end
+   basename += "_#{scenario.name.gsub(/\s/,'-').gsub('/', '')}"
+   File.join(Dir::pwd, 'features', 'videos', basename+".mov")
 end

@@ -348,6 +348,7 @@ When (/^I (?:click|click the) "([^"]*)" link$/) do |link|
   kaiki.find_approximate_element(approximate_xpath).click
 end
 
+
 # KFS BAT001-01 (Batch)
 
 # Description: This step clicks the button on the page if the specified message
@@ -398,6 +399,32 @@ When (/^I click the "(.*?)" button if the "(.*?)" message is displayed$/)   \
     steps %{
       And I click the "#{button}" button
     }
+
+# Public: This step set the pause time back to 0.5 seconds.
+#
+# Returns nothing.
+When (/^I am fast$/) do
+  kaiki.log.debug "I am fast (pause_time = #{kaiki.default_pause_time})"
+  kaiki.pause_time = kaiki.default_pause_time
+end
+
+# Public: This step increases the pause time by 4 seconds by default, but can
+#         also increase the pause tiem by a specified amount.
+#
+# Parameters:
+#   how_much - placeholder for conditional "a lot" text
+#
+# Returns nothing.
+When (/^I slow down(?:| by (.*?))$/) do |how_much|
+  if how_much == "a lot"
+    kaiki.log.debug "I slow down (pause_time = #{kaiki.pause_time + 10})"
+    kaiki.pause_time += 10
+  elsif how_much == nil
+    kaiki.log.debug "I slow down (pause_time = #{kaiki.pause_time + 4})"
+    kaiki.pause_time += 4
+  else
+    kaiki.log.debug "I slow down (pause_time = #{kaiki.pause_time + how_much.to_f})"
+    kaiki.pause_time += how_much.to_f
   end
 end
 

@@ -582,8 +582,88 @@ Then (/^I should see the "([^"]*)" table row "([^"]*)" filled with:$/)         \
   end
 end
 
+
 # KC Feat. 2 (Contacts)
 # KC Feat. 8 (Key Personnel)
+
+# Public: Verifies the given values from the table are present on the web page
+#         in the correct place
+#
+# table_name - name of the table to be filled in
+# table      - table of data being read in from the feature file
+#
+# Returns nothing.
+Then(/^I should see (?:Budget Totals|Total) calculated as:$/) do |table|
+  kaiki.pause
+  kaiki.switch_default_content
+  kaiki.select_frame("iframeportlet")
+  table.rows_hash.each do |key, value|
+    kaiki.should(have_content(value))
+  end
+end
+
+# Public: Waits for the page to finish loading
+#
+# Parameters:
+#	  value - frame being loaded i e, iframeportlet
+#
+# Returns nothing.
+When(/^I wait for the document to finish being processed$/) do
+  if @element[:title] == "submit" || @element[:title] == "Blanket Approve"
+    @xpath = "//input[@title = '#{@element[:title]}'"
+  elsif @element[:name] == "methodToCall.processAnswer.button1"
+    @xpath = "//input[@name = '#{@element[:name]}'"
+  end
+
+  i = 0
+  if @xpath != nil
+    while kaiki.should(have_xpath(@xpath)) do
+      kaiki.pause(1)
+      i += 1
+      break if i > 90
+    end
+  end
+
+  kaiki.switch_default_content
+  kaiki.select_frame("iframeportlet")
+  j = 0
+  content_check = kaiki.has_content?('The document is being processed.')
+  while content_check == true do
+    kaiki.pause(1)
+    content_check = kaiki.has_content?('The document is being processed.')
+    j += 1
+    break if j > 90
+  end
+  kaiki.log.debug "Document processing: waited #{j+i} seconds..."
+end
+
+#Public: Verifies that the Institutional Proposal has been generated
+#
+#Parameters:
+#	text1 - first value being checked for i e, "Institutional Proposal"
+#	text2 - second value being checked for ie, "has been generated"
+#
+# Returns nothing.
+Then(/^I should see a message starting with "([^"]*)" and ending with "([^"]*)"$/) \
+  do |text1, text2|
+  kaiki.pause
+  kaiki.switch_default_content
+  kaiki.select_frame("iframeportlet")
+  kaiki.wait_for(:xpath, "//div[@class='left-errmsg']")
+  kaiki.should(have_content(text1))
+  kaiki.should(have_content(text2))
+end
+
+#Public: Verifies that the search returns at least one item
+#
+#Returns nothing.
+Then(/^I should see one or more items retrieved$/) do
+  kaiki.pause
+  kaiki.switch_default_content
+  kaiki.select_frame("iframeportlet")
+  kaiki.should(have_content('retrieved'))
+end
+
 
 # Description: This step verifies a row of data for the Combined Credit Split table contains
 #              the correct value.
@@ -1452,7 +1532,35 @@ end
 # Returns nothing
 Then (/^I shouldn't get an HTTP Status (\d+)$/) do |status_no|
   kaiki.should_not(have_content("HTTP Status #{status_no}"))
+
+
+# Description: Checks the state of a certain checkbox if it's checked or not.
+#
+# Parameters:
+#   status_no - what is being displayed
+#
+# Returns nothing.
+Then(/^I should see the "(.*?)" checkbox is "(.*?)"$/) do |check_name, value|    #Added for Test 8
+  kaiki.pause
+  kaiki.switch_default_content
+  kaiki.select_frame("iframeportlet")
+  factory1 =
+    ApproximationsFactory.transpose_build(
+      "//%s[@title='#{check_name}']",
+      ['tr/td/div/input'],
+      ['tr/td/input'])
+  approximate_xpath = factory1
+  element = kaiki.find_approximate_element(approximate_xpath)
+  if value.downcase == "checked"
+    value = "true"
+  elsif value.downcase == "unchecked"
+    value = nil
+  end
+  if element[:checked] != value
+    raise Capybara::ExpectationNotMet
+  end
 end
+
 
 # Description: Verifies 'Incident Report' does not appear on the page
 #
@@ -1460,6 +1568,7 @@ end
 Then (/^I shouldn't see an incident report/) do
   kaiki.should_not(have_content('Incident Report'))
 end
+
 
 # Decription: Verifies that the provided text shows up inside the given frame
 #

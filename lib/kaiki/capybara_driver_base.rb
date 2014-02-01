@@ -92,12 +92,17 @@ class Kaiki::CapybaraDriver::Base
     else
       @default_pause_time  = 0.5
     end
+    
     @pause_time           = options[:pause_time] || @default_pause_time
     @is_headless          = options[:is_headless]
     @highlight_on         = options[:highlight_on]
     @firefox_profile_name = options[:firefox_profile]
     @firefox_path         = options[:firefox_path]
 
+    print "default_pause_time: #{@default_pause_time}\n"
+ #   print "pause_time        : #{@pause_time}\n"
+ #   print "should both be 0.5 for local, 5 for jenkins\n"
+    
     @record = {}
   end
 
@@ -365,12 +370,12 @@ class Kaiki::CapybaraDriver::Base
         Selenium::WebDriver::Firefox.path = @firefox_path
       end
 
-      if @is_headless
-        display = ENV['BUILD_NUMBER'] || 99
-        @headless = Headless.new(:display => display, :dimensions => DEFAULT_DIMENSIONS)
-        @headless.start
-      end
-
+        if is_headless
+          display = ENV['BUILD_NUMBER'] || 99
+          @headless = Headless.new(:display => display, :dimensions => DEFAULT_DIMENSIONS)
+          @headless.start
+        end
+    
       Capybara.run_server = false
       Capybara.app_host = host
       Capybara.default_wait_time = DEFAULT_TIMEOUT
