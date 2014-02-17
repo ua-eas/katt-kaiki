@@ -1532,7 +1532,7 @@ end
 # Returns nothing
 Then (/^I shouldn't get an HTTP Status (\d+)$/) do |status_no|
   kaiki.should_not(have_content("HTTP Status #{status_no}"))
-
+end
 
 # Description: Checks the state of a certain checkbox if it's checked or not.
 #
