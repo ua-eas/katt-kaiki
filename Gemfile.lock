@@ -71,4 +71,3 @@ DEPENDENCIES
   nokogiri
   rspec
   selenium-webdriver (~> 2.35.0)
-

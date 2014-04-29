@@ -203,9 +203,11 @@ class Kaiki::CapybaraDriver::Base
     retries =2
     begin
       password ||= self.class.shared_password_for username
+      print "Username=#{username} Password=#{password} \n"
+      print "firefox_path  #{@firefox_path} \n"
       sleep 1
-      fill_in 'NetID', :with => username
-      fill_in 'Password', :with => password
+      fill_in 'username', :with => username
+      fill_in 'password', :with => password
       click_button('LOGIN')
       sleep 1
     rescue Selenium::WebDriver::Error::WebDriverError => error
