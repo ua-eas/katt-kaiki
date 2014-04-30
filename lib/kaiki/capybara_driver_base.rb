@@ -204,8 +204,8 @@ class Kaiki::CapybaraDriver::Base
     begin
       password ||= self.class.shared_password_for username
       sleep 1
-      fill_in 'NetID', :with => username
-      fill_in 'Password', :with => password
+      fill_in 'username', :with => username
+      fill_in 'password', :with => password
       click_button('LOGIN')
       sleep 1
     rescue Selenium::WebDriver::Error::WebDriverError => error
